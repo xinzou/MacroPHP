@@ -1,0 +1,43 @@
+{
+    "name": "needcaffeine/slim-skeleton",
+    "description": "This is a quick-start skeleton for applications built with the Slim Framework for PHP.",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vic Vijayakumar",
+            "homepage": "http://vicvijayakumar.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "php": ">=5.4.0",
+        "slim/slim": "*",
+        "slim/views": "*",
+        "twig/twig": "*",
+        "doctrine/common": "*",
+        "doctrine/orm": "*",
+        "zendframework/zend-authentication": "2.*",
+        "zendframework/zend-cache": "2.*",
+        "zendframework/zend-serializer": "2.*",
+        "zendframework/zend-inputfilter": "2.*",
+        "rych/phpass": "2.*",
+        "entomb/slim-json-api": "dev-master",
+        "doctrine/collections": "~1.2",
+        "doctrine/dbal": ">=2.5-dev,<2.6-dev",
+        "doctrine/instantiator": "~1.0.1",
+        "doctrine/cache": "~1.4",
+        "symfony/console": "~2.5"
+    },
+    "require-dev": {
+            "composer/composer": "1.*",
+            "symfony/yaml": "~2.1",
+            "phpunit/phpunit": "~4.0",
+            "satooshi/php-coveralls": "dev-master"
+    },
+    "autoload": {
+        "psr-0": {
+            "Entity": "app/data"
+        }
+    }
+}
