@@ -8,7 +8,10 @@ $config = array(
         'templates.path' => __DIR__ . '/../templates',
         'log.level' => Slim\Log::DEBUG,
         'log.enabled' => true,
-        'view' => new \Slim\Views\Twig()
+        'view' => new \Slim\Views\Twig(),
+        'controller.class_prefix'    => '\\controller',
+        'controller.method_suffix'   => 'Action',
+        'controller.template_suffix' => 'twig',
     ),
 
     'twig' => array(

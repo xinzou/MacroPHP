@@ -7,13 +7,17 @@ use vendor\Middleware\Authentication;
 use vendor\Middleware\HttpAuthentication;
 use Slim\Extras\Views\Twig;
 use Zend\Authentication\AuthenticationService;
+use SlimController\Slim;
+
+define("APP_PATH", dirname(__DIR__));
 
 defined('APPLICATION_ENV') || define('APPLICATION_ENV', 'development');
 $config = require __DIR__ . '/../app/config/config.php';
 //Session::start($config['session']);
 
 // Prepare app.
-$app = new Slim\Slim($config['slim']);
+//$app = new Slim\Slim($config['slim']);
+$app = new Slim($config['slim']);
 $app->configureMode(APPLICATION_ENV, function () {
 	error_reporting(-1);
 	ini_set('display_errors', 1);
@@ -47,15 +51,18 @@ $entityManager = \Doctrine\ORM\EntityManager::create(
 		__DIR__ . '/../app/data/Proxies',
 		new \Doctrine\Common\Cache\ArrayCache)
 );
-print_r($entityManager);
-
 
 // Include our required UDFs.
 require '../app/lib/functions.php';
 // Add any middleware.
+//$app->request->getPathInfo()
+if($file = requireRouteFile($app)){
+    echo  '../app/routes/'.$file.'_route.php';;
+    require '../app/routes/'.$file.'_route.php';
+}
 
-require '../app/routes/session.php';
-require '../app/routes/member.php';
-require '../app/routes/admin.php';
+//require '../app/routes/session.php';
+//require '../app/routes/member_route.php';
+//require '../app/routes/admin.php';
 
 $app->run();

@@ -8,7 +8,6 @@ $app->get('/hello/:name', function ($name) use ($app,$view , $entityManager) {
 	$userName = "aass";
 	echo "asdasdas";
 	$user = new \Entity\User();
-print_r($user);
 	$user->setName($userName);
 
 	$user->setPassword(md5('1234'));
