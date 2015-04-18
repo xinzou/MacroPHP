@@ -1,0 +1,16 @@
+Entity\CarSeries:
+    type: entity
+    table: car_series
+    repositoryClass: CarSeriesRepository
+    id:
+        id:
+            type: integer
+    fields:
+        series_code:
+            type: string
+            length: 45
+            nullable: true
+        label:
+            type: string
+            length: 45
+            nullable: true

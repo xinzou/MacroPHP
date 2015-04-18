@@ -1,0 +1,68 @@
+Entity\EavAttribute:
+    type: entity
+    table: eav_attribute
+    repositoryClass: EavAttributeRepository
+    indexes:
+        fk_eav_attribute_eav_entity_type1_idx:
+            columns: [ entity_type_id ]
+    id:
+        id:
+            type: integer
+            generator:
+                strategy: AUTO
+    fields:
+        attribute_code:
+            type: string
+            length: 45
+            nullable: true
+        is_required:
+            type: string
+            length: 45
+            nullable: true
+        is_user_defined:
+            type: string
+            length: 45
+            nullable: true
+        default_value:
+            type: string
+            length: 45
+            nullable: true
+        is_unique:
+            type: string
+            length: 45
+            nullable: true
+        note:
+            type: string
+            length: 45
+            nullable: true
+        entity_type_id:
+            type: integer
+    oneToMany:
+        carEntityMediaGalleries:
+            targetEntity: CarEntityMediaGallery
+            mappedBy: eavAttribute
+            joinColumn:
+                name: id
+                referencedColumnName: attribute_id
+    manyToOne:
+        eavEntityType:
+            targetEntity: EavEntityType
+            inversedBy: eavAttributes
+            joinColumn:
+                name: entity_type_id
+                referencedColumnName: entity_type_id
+    manyToMany:
+        cars:
+            targetEntity: Car
+            mappedBy: eavAttributes
+        accessories:
+            targetEntity: Accessory
+            inversedBy: eavAttributes
+            joinTable:
+                name: eav_attribute_accessories
+                joinColumns:
+                    eav_attribute_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    accessories_id:
+                        referencedColumnName: id

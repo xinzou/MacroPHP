@@ -1,0 +1,63 @@
+Entity\Car:
+    type: entity
+    table: car
+    repositoryClass: CarRepository
+    indexes:
+        fk_car_category_entity1_idx:
+            columns: [ category_entity_id ]
+    id:
+        id:
+            type: integer
+        category_entity_id:
+            type: integer
+    fields:
+        sku:
+            type: string
+            length: 45
+            nullable: true
+        name:
+            type: string
+            length: 45
+            nullable: true
+        pinyin:
+            type: string
+            length: 45
+            nullable: true
+        pinyin_jm:
+            type: string
+            length: 45
+            nullable: true
+        create_at:
+            type: string
+            length: 45
+            nullable: true
+        update_at:
+            type: string
+            length: 45
+            nullable: true
+    oneToMany:
+        carEntityMediaGalleries:
+            targetEntity: CarEntityMediaGallery
+            mappedBy: car
+            joinColumn:
+                name: id
+                referencedColumnName: entity_id
+    manyToOne:
+        categoryEntity:
+            targetEntity: CategoryEntity
+            inversedBy: cars
+            joinColumn:
+                name: category_entity_id
+                referencedColumnName: entity_id
+    manyToMany:
+        eav_attributes:
+            targetEntity: EavAttribute
+            inversedBy: cars
+            joinTable:
+                name: car_eav_attribute
+                joinColumns:
+                    car_id:
+                        referencedColumnName: id
+                inverseJoinColumns:
+                    eav_attribute_id:
+                        referencedColumnName: id

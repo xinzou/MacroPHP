@@ -1,0 +1,24 @@
+Entity\Accessory:
+    type: entity
+    table: accessories
+    repositoryClass: AccessoryRepository
+    id:
+        id:
+            type: integer
+    fields:
+        name:
+            type: string
+            length: 45
+            nullable: true
+        create_at:
+            type: string
+            length: 45
+            nullable: true
+        update_at:
+            type: string
+            length: 45
+            nullable: true
+    manyToMany:
+        eav_attributes:
+            targetEntity: EavAttribute
+            mappedBy: accessories

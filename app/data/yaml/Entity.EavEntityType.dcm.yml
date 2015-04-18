@@ -1,0 +1,19 @@
+Entity\EavEntityType:
+    type: entity
+    table: eav_entity_type
+    repositoryClass: EavEntityTypeRepository
+    id:
+        entity_type_id:
+            type: integer
+    fields:
+        entity_type_code:
+            type: string
+            length: 45
+            nullable: true
+    oneToMany:
+        eavAttributes:
+            targetEntity: EavAttribute
+            mappedBy: eavEntityType
+            joinColumn:
+                name: entity_type_id
+                referencedColumnName: entity_type_id
