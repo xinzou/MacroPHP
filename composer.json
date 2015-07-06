@@ -19,13 +19,24 @@
         "doctrine/instantiator": "~1.0.1",
         "doctrine/cache": "~1.4",
         "symfony/console": "~2.5",
-        "slimcontroller/slimcontroller":"*"
+        "slimcontroller/slimcontroller":"*",
+        "ext-pdo": "*",
+		"ext-simplexml": "*"
     },
     "require-dev": {
             "composer/composer": "1.*",
-            "symfony/yaml": "~2.1",
+            "symfony/yaml": "2.5.*@dev",
+            "satooshi/php-coveralls": "dev-master",
+            "mysql-workbench-schema-exporter/mysql-workbench-schema-exporter": "dev-master",
             "phpunit/phpunit": "~4.0",
-            "satooshi/php-coveralls": "dev-master"
+            "phpunit/dbunit":"1.*",
+            "phpunit/php-invoker":"~1.1"
+    },
+    "bin": [
+        "composer/bin/dbunit"
+    ],
+    "config": {
+        "bin-dir": "bin"
     },
     "autoload": {
         "psr-0": {

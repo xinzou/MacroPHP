@@ -36,11 +36,11 @@ $config = array(
     'db' => array(
     	'development' => array(
 			'driver' => 'pdo_mysql',
-			'host' => 'localhost',
+			'host' => '127.0.0.1',
 			'port' => '3306',
 			'user' => 'root',
 			'password' => 'root',
-			'dbname' => 'test'
+			'dbname' => 'sakila'
 		),
 	'production' => array(
 		'driver' => 'pdo_mysql',

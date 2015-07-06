@@ -51,7 +51,7 @@ class Store
      * @ORM\OneToMany(targetEntity="Staff", mappedBy="store")
      * @ORM\JoinColumn(name="store_id", referencedColumnName="store_id")
      */
-    protected $staff;
+    protected $staff_info;
 
     /**
      * @ORM\ManyToOne(targetEntity="Staff", inversedBy="stores")
@@ -267,7 +267,7 @@ class Store
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getStaff()
+    public function getStaffInfo()
     {
         return $this->staff;
     }

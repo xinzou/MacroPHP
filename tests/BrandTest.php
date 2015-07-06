@@ -2,6 +2,7 @@
 use \PHPUnit_Framework_TestCase as TestCase;
 use boot\Bootstrap;
 use Entity\Brand;
+use Entity\Actor;
 
 /**
  * Brand test case.
@@ -48,13 +49,13 @@ class BrandTest extends TestCase
      */
     public function testSetId()
     {
-        $product = new Brand();
-        $product->setBrandType("nemo22222");
-        $product->setBrandCode("aaaaa");
-        $product->setLabel("label");
-       $abc = $this->entityManager;
-       $abc -> persist($product);
-        $abc->flush($product);
+        $this->assertEquals(1, 2);
+/*         $actor = new Actor();
+        $actor->setFirstName("chen");
+       $actor->setLastName("macro");
+       $actor->setLastUpdate(new DateTime(time()));
+       $this->entityManager -> persist($actor);
+        $this->entityManager->flush($actor); */
     }
 
 }
