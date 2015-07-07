@@ -6,12 +6,14 @@ $config = array(
     'slim' => array(
         'mode' => APPLICATION_ENV,
         'templates.path' => __DIR__ . '/../templates',
-        'log.level' => Slim\Log::DEBUG,
+        'log.level' => Slim\Log::ERROR,
         'log.enabled' => true,
         'view' => new \Slim\Views\Twig(),
         'controller.class_prefix'    => '\\controller',
         'controller.method_suffix'   => 'Action',
         'controller.template_suffix' => 'twig',
+        'debug' => true,
+        "cookies.httponly"=>true
     ),
 
     'twig' => array(
@@ -27,7 +29,7 @@ $config = array(
         'path' => '/',
         'domain' => null,
         'secure' => false,
-        'httponly' => false,
+        'httponly' => true,
         'name' => 'untitledapp_session',
         'secret' => 'changethiskeytosomethingelseasap',
         'cipher' => MCRYPT_RIJNDAEL_256,

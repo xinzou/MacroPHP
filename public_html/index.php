@@ -1,7 +1,6 @@
 <?php
-ini_set("display_errors"  , 1);
-error_reporting(E_ALL);
-require '../vendor/autoload.php';
+define("APP_PATH", dirname(__DIR__));
+require APP_PATH.'/vendor/autoload.php';
 use vendor\Authentication\Storage\EncryptedCookie;
 use vendor\Middleware\Authentication;
 use vendor\Middleware\HttpAuthentication;
@@ -9,17 +8,15 @@ use Slim\Extras\Views\Twig;
 use Zend\Authentication\AuthenticationService;
 use SlimController\Slim;
 
-define("APP_PATH", dirname(__DIR__));
-
 defined('APPLICATION_ENV') || define('APPLICATION_ENV', 'development');
-$config = require __DIR__ . '/../app/config/config.php';
+$config = require APP_PATH. '/app/config/config.php';
 //Session::start($config['session']);
 
 // Prepare app.
 //$app = new Slim\Slim($config['slim']);
 $app = new Slim($config['slim']);
 $app->configureMode(APPLICATION_ENV, function () {
-	error_reporting(-1);
+	error_reporting(E_ALL);
 	ini_set('display_errors', 1);
 	ini_set('display_startup_errors', 1);
 });
@@ -41,24 +38,23 @@ $entityManager = \Doctrine\ORM\EntityManager::create(
 		'dbname'   => $config['db'][APPLICATION_ENV]['dbname']
 	),
 	/*\Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(
-		array(__DIR__ . '/../app/data/Entity'),
+		array(APP_PATH . '/app/data/Entity'),
 		APPLICATION_ENV == 'development',
-		__DIR__ . '/../app/data/Proxies',
+		APP_PATH . '/app/data/Proxies',
 		new \Doctrine\Common\Cache\ArrayCache
 	)*/
 	\Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(__DIR__."/../app/data/yaml"), 
 		APPLICATION_ENV == 'development',
-		__DIR__ . '/../app/data/Proxies',
+		APP_PATH . '/app/data/Proxies',
 		new \Doctrine\Common\Cache\ArrayCache)
 );
 
 // Include our required UDFs.
-require '../app/lib/functions.php';
+require APP_PATH.'/app/lib/functions.php';
 // Add any middleware.
 //$app->request->getPathInfo()
 if($file = requireRouteFile($app)){
-    echo  '../app/routes/'.$file.'_route.php';;
-    require '../app/routes/'.$file.'_route.php';
+    require APP_PATH.'/app/routes/'.$file.'_route.php';
 }
 
 //require '../app/routes/session.php';

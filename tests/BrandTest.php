@@ -49,13 +49,14 @@ class BrandTest extends TestCase
      */
     public function testSetId()
     {
-        $this->assertEquals(1, 2);
-/*         $actor = new Actor();
+        $actor = new Actor();
         $actor->setFirstName("chen");
        $actor->setLastName("macro");
-       $actor->setLastUpdate(new DateTime(time()));
+       $dateTimeZone = new DateTimeZone("Asia/Shanghai");
+       $actor->setLastUpdate(new DateTime(time(), $dateTimeZone));
+       print_r($actor->getLastUpdate());
        $this->entityManager -> persist($actor);
-        $this->entityManager->flush($actor); */
+        $this->entityManager->flush($actor);
     }
 
 }
