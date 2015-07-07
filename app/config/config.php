@@ -5,7 +5,7 @@ $config = array(
 	),
     'slim' => array(
         'mode' => APPLICATION_ENV,
-        'templates.path' => __DIR__ . '/../templates',
+        'templates.path' => APP_PATH . '/app/templates',
         'log.level' => Slim\Log::ERROR,
         'log.enabled' => true,
         'view' => new \Slim\Views\Twig(),
@@ -13,12 +13,13 @@ $config = array(
         'controller.method_suffix'   => 'Action',
         'controller.template_suffix' => 'twig',
         'debug' => true,
-        "cookies.httponly"=>true
+        "cookies.httponly"=>true,
+        "slim.errors"=>APP_PATH."/app/log/error.log"
     ),
 
     'twig' => array(
         'charset' => 'utf-8',
-        'cache' => realpath(__DIR__ . '/../templates/cache'),
+        'cache' => APP_PATH . '/app/templates/cache',
         'auto_reload' => true,
         'strict_variables' => false,
         'autoescape' => true

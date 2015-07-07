@@ -1,4 +1,6 @@
 <?php 
+$app = \Slim\Slim::getInstance("default");
+
 $app->addRoutes(array(
     
     '/hello/index' => array("Hello:index",function(){
@@ -6,19 +8,24 @@ $app->addRoutes(array(
     }),
     
     "/hello/show/:name"=> array('GET' => array("Hello:show",function () {
-        echo "12345";
+        echo "show action first middleware<br/>";
     } , function(){
-        echo "45656656";return ;
-    })),
+         echo "show action second middleware<br/>";
+         return ;
+    },function(){
+        echo "show action third middleware<br/>";
+    }
+    )),
     
     '/hello/admin/:name' => array(
         "GET"=>array(
             "Hello:admin",
             function() use ($app){
-               $app->status(404);
                 return false;
             },
         ),
     ),
     
-),array('mw1' , 'mw2'));
+),array('mw1' , 'mw2',function() use ($app){
+        echo "This is middleware 3...<br/>";
+}));

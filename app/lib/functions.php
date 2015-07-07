@@ -1,4 +1,5 @@
 <?php
+use Slim\Slim;
 /**
  * @desc 常用函数的文件
  * @author macro chen  <macro_fengye@163.com>
@@ -24,11 +25,11 @@ function requireRouteFile($app){
 
 //以下为常用中间件{{{
 function mw1() {
-    echo "This is middleware!";
+    echo "This is middleware!<br/>";
 }
 
 function mw2() {
-    echo "This is middleware!";
+    echo "This is middleware!<br/>";
 }
 
 //关于管理员的中间件

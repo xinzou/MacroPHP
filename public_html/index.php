@@ -1,11 +1,6 @@
 <?php
 define("APP_PATH", dirname(__DIR__));
 require APP_PATH.'/vendor/autoload.php';
-use vendor\Authentication\Storage\EncryptedCookie;
-use vendor\Middleware\Authentication;
-use vendor\Middleware\HttpAuthentication;
-use Slim\Extras\Views\Twig;
-use Zend\Authentication\AuthenticationService;
 use SlimController\Slim;
 
 defined('APPLICATION_ENV') || define('APPLICATION_ENV', 'development');
@@ -53,6 +48,7 @@ $entityManager = \Doctrine\ORM\EntityManager::create(
 require APP_PATH.'/app/lib/functions.php';
 // Add any middleware.
 //$app->request->getPathInfo()
+$app->setName("default");
 if($file = requireRouteFile($app)){
     require APP_PATH.'/app/routes/'.$file.'_route.php';
 }
@@ -60,5 +56,6 @@ if($file = requireRouteFile($app)){
 //require '../app/routes/session.php';
 //require '../app/routes/member_route.php';
 //require '../app/routes/admin.php';
+
 
 $app->run();

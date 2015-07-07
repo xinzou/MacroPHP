@@ -10,14 +10,13 @@ class Hello extends SlimController{
     }
     
     public function showAction(){
-        $client = new Client();
-        $response = $client->get("http://guzzlephp.org");
-        print_r($response->getResponseBody());
-        $this->render("/home/hello" , array('name'=>'Macro'));
+        //$client = new Client();
+        //$response = $client->get("http://guzzlephp.org");
+        //print_r($response->getResponseBody());
+        $this->render("/home/hello" , array('name'=>'Macro' , 'title'=>"这是第一个页面哦"));
     }
     
     public function adminAction(){
-        print_r(get_class_methods($this->app->response));
         if($this->app->response->getStatus() == 404){
             check_login();
         }
