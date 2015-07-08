@@ -42,13 +42,7 @@ class ActorTest extends TestCase
     protected function tearDown()
     {
         // TODO Auto-generated ActorTest::tearDown()
-        
-        $this->actor->setFirstName("chen");
-        $this->actor->setLastName("macro");
-        
-        $this->entityManager->persist($this->actor);
-        $this->entityManager->flush($this->actor);
-        
+       
         $this->actor = null;
         
         parent::tearDown();
@@ -210,7 +204,7 @@ class ActorTest extends TestCase
     {
         $actor = new Actor();
         $actor->setFirstName("chen");
-        $actor->setLastName("macro");
+        $actor->setLastName("macro24");
         $this->entityManager -> persist($actor);
         $this->entityManager->flush($actor);
     }

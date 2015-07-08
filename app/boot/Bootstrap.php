@@ -1,7 +1,6 @@
 <?php
 namespace boot;
 
-use Zend\Session\Container;
 use SlimController\Slim;
 use SlimController\SlimController;
 
@@ -75,7 +74,7 @@ class Bootstrap
      */
     private static function getConfig($key)
     {
-        $config = require __DIR__ . '/../config/config.php';
+        $config = require APP_PATH . '/app/config/config.php';
         return $config[$key];
     }
 
@@ -90,9 +89,9 @@ class Bootstrap
         $app = static::getApp();
         $path_info = $app->request->getPathInfo();
         if (strlen($path_info) == 1) {
-            require __DIR__ . '/../routes/home_route.php';
+            require APP_PATH . '/app/routes/home_route.php';
         }
-        require __DIR__ . '/../routes/' . explode("/", $path_info)[1] . '_route.php';
+        require APP_PATH. '/app/routes/' . explode("/", $path_info)[1] . '_route.php';
     }
 
     /**
@@ -116,14 +115,14 @@ class Bootstrap
                 'dbname' => $config['db'][APPLICATION_ENV]['dbname']
             ),
                 /*\Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(
-                 array(__DIR__ . '/../app/data/Entity'),
+                 array(APP_PATH. '/app/data/Entity'),
                     APPLICATION_ENV == 'development',
-                    __DIR__ . '/../app/data/Proxies',
+                    APP_PATH . '/app/data/Proxies',
                     new \Doctrine\Common\Cache\ArrayCache
                 )*/
                 \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
-                __DIR__ . "/../data/yaml/"
-            ), APPLICATION_ENV == 'development', __DIR__ . '/../data/Proxies', new \Doctrine\Common\Cache\ArrayCache()));
+                APP_PATH . "/app/data/yaml/"
+            ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies', new \Doctrine\Common\Cache\ArrayCache()));
         });
     }
 }
