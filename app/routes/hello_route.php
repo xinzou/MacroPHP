@@ -17,7 +17,9 @@ $app->addRoutes(array(
     }
     )),
     
-    "/hello/test"=>array("Hello:test"),
+    "/hello/addItem"=>array("Hello:addItem" , function(){
+        echo "addItem....";
+    }),
     
     '/hello/admin/:name' => array(
         "GET"=>array(
