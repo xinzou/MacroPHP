@@ -32,7 +32,6 @@ class ActorTest extends TestCase
         
         $this->actor = new Actor(/* parameters */);
         $this->entityManager = Bootstrap::startUnit()->container->get("entityManager");
-        echo get_class($this->entityManager);
         
     }
 
@@ -203,6 +202,7 @@ class ActorTest extends TestCase
     public function test_insert()
     {
         $actor = new Actor();
+       
         $actor->setFirstName("php");
         $actor->setLastName("unit");
         $this->entityManager -> persist($actor);

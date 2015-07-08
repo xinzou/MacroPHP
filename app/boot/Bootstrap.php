@@ -57,7 +57,7 @@ class Bootstrap
     }
     
     /**
-     * 单元测试的启动
+     * 引导单元测试
      * 
      * @author macro chen <macro_fengye@163.com>
      */
@@ -139,7 +139,7 @@ class Bootstrap
      */
     private static function setEntityManager()
     {
-        $config['db'] = static::getConfig('db');
+        $config['db'] = self::getConfig('db');
         self :: $app->container->singleton("entityManager", function () use($config) {
             return \Doctrine\ORM\EntityManager::create(array(
                 'driver' => $config['db'][APPLICATION_ENV]['driver'],
@@ -156,8 +156,8 @@ class Bootstrap
                     new \Doctrine\Common\Cache\ArrayCache
                 ) */
                 \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
-                APP_PATH . "/app/data/yaml/"
-            ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies', new \Doctrine\Common\Cache\ArrayCache()));
+                APP_PATH . "/app/data/Yaml/"
+            ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache()));
         });
     }
 }
