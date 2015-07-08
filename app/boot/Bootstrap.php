@@ -105,10 +105,13 @@ class Bootstrap
     {
         $app = self::getApp();
         $path_info = $app->request->getPathInfo();
-        if (strlen($path_info) == 1) {
-            require APP_PATH . '/app/routes/home_route.php';
+        $file = "";
+        if (strcmp($path_info, "/")==0) {
+            $file = "home";
+        }else{
+            $file =  explode("/", $path_info)[1];
         }
-        require APP_PATH. '/app/routes/' . explode("/", $path_info)[1] . '_route.php';
+        require APP_PATH. '/app/routes/' . $file . '_route.php';
     }
     
     /**
