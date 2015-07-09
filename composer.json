@@ -40,7 +40,10 @@
         "psr-0": {
             "Entity": "app/data",
             "controller":"app",
-            "boot":"app"
+            "boot":"app",
+            "validate":"app",
+            "listener":"app",
+            "subscriber":"app"
         }
     }
 }

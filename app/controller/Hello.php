@@ -5,8 +5,6 @@ use SlimController\SlimController;
 use Guzzle\Http\Client;
 use boot\Bootstrap;
 use Entity\Actor;
-use Entity\City;
-use Entity\Country;
 
 class Hello extends SlimController{
     public function indexAction(){
@@ -24,7 +22,7 @@ class Hello extends SlimController{
         $em = Bootstrap::getEntityManager();
 /*         $conn = $em->getConnection(); */
         $actor = new Actor();
-        $actor->setFirstName('aaaa');
+        $actor->setFirstName('macro');
        $actor->setLastName("bbb");
         $em->persist($actor);
         $em->flush($actor);

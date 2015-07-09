@@ -3,12 +3,26 @@ namespace boot;
 
 use SlimController\Slim;
 use SlimController\SlimController;
-
+use Doctrine\Common\EventManager;
 
 class Bootstrap
 {
     //@var Application $app
     private static $app = NULL;
+    
+    //@var EventManager $evm;
+    private static $evm;
+    
+    /**
+     * 配置entityManager的事件映射对象，因为addEventListener不能识别config.php配置的字符串，故设置这个数组
+     * @var \Doctrine\ORM\Events $eventTypeMapping 
+     */
+    private static $eventTypeMapping = array(
+        "Events::prePersist"=> \Doctrine\ORM\Events::prePersist,
+        "Events::preFlush"=>\Doctrine\ORM\Events::preFlush,
+        "Events::preUpdate"=>\Doctrine\ORM\Events::preUpdate,
+        "Events::preRemove"=>\Doctrine\ORM\Events::preRemove,
+    );
     
     /**
      * 引导整个应用
@@ -93,7 +107,10 @@ class Bootstrap
     private static function getConfig($key)
     {
         $config = require APP_PATH . '/app/config/config.php';
-        return $config[$key];
+        if(isset($config[$key])){
+            return $config[$key];
+        }
+        return null;
     }
 
     /**
@@ -129,6 +146,29 @@ class Bootstrap
         }
         return $em;
     }
+    
+    /**
+     * 创建事件管理器 
+     * 
+     * @author macro chen <macro_fengye@163.com>
+     */
+    
+    protected static function createEventManager(){
+        if(NULL == self::$evm){
+            self::$evm = new EventManager();
+        }
+        if(self::getConfig("evm")){
+            $evmConfig =self::getConfig("evm");
+            foreach($evmConfig['listener'] as $key=>$listener){
+                echo $key;
+                self::$evm->addEventListener(array(self::$eventTypeMapping[$key]), new $listener());
+            }
+            foreach($evmConfig['subscriber'] as $key=>$subscriber){
+                self::$evm->addEventSubscriber(new $subscriber());
+            }
+        }
+        return self::$evm;
+    }
 
     /**
      * 设置doctrine2的entityManager
@@ -155,10 +195,11 @@ class Bootstrap
                     APP_PATH . '/app/data/Proxies/',
                     new \Doctrine\Common\Cache\ArrayCache,
                     false
-                )
+                ),
                /*  \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
                 APP_PATH . "/app/data/Yaml/"
-            ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache()) */);
+            ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache()), */
+                self::createEventManager());
         });
     }
 }
