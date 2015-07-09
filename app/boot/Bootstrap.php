@@ -4,6 +4,8 @@ namespace boot;
 use SlimController\Slim;
 use SlimController\SlimController;
 use Doctrine\Common\EventManager;
+use Respect\Validation\Validator as v;
+use Respect\Validation\Validator;
 
 class Bootstrap
 {
@@ -14,7 +16,7 @@ class Bootstrap
     private static $evm;
     
     /**
-     * 配置entityManager的事件映射对象，因为addEventListener不能识别config.php配置的字符串，故设置这个数组
+     * 配置entityManager的事件映射对象，因为addEventListener不能识别config.php配置的字符串，因此设置这个数组
      * @var \Doctrine\ORM\Events $eventTypeMapping 
      */
     private static $eventTypeMapping = array(
@@ -33,6 +35,7 @@ class Bootstrap
     {
         $app = self::getApp();
         self::setEntityManager();
+        self::registerValidateComponent();
         $app->configureMode(APPLICATION_ENV, function () {
             error_reporting(- 1);
             ini_set('display_errors', 1);
@@ -78,6 +81,7 @@ class Bootstrap
     public static function startUnit(){
         self::getApp();
         self::setEntityManager();
+        self::registerValidateComponent();
         return self::$app;
     }
 
@@ -160,7 +164,6 @@ class Bootstrap
         if(self::getConfig("evm")){
             $evmConfig =self::getConfig("evm");
             foreach($evmConfig['listener'] as $key=>$listener){
-                echo $key;
                 self::$evm->addEventListener(array(self::$eventTypeMapping[$key]), new $listener());
             }
             foreach($evmConfig['subscriber'] as $key=>$subscriber){
@@ -169,6 +172,18 @@ class Bootstrap
         }
         return self::$evm;
     }
+    
+    /**
+     * 注册验证組建
+     * 
+     * @author macro chen <macro_fengye@163.com>
+     */
+    
+    public static function registerValidateComponent(){
+        self :: $app->container->singleton('v', function () {
+            return Validator::create();
+        });
+    } 
 
     /**
      * 设置doctrine2的entityManager

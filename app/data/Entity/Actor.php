@@ -6,13 +6,11 @@ use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping\HasLifecycleCallbacks;
 use Doctrine\ORM\Mapping\PrePersist;
-use Doctrine\ORM\Mapping\PreFlush;
-use Doctrine\ORM\Event\PreFlushEventArgs;
-use Doctrine\Common\EventArgs;
-use Doctrine\ORM\Event\PreUpdateEventArgs;
+use Doctrine\ORM\Mapping\EntityListeners;
 use boot\Bootstrap;
-use listener\MyOtherEventListener;
-use Doctrine\ORM\Events;
+use event\TestEvent;
+use subscriber\TestEventSubscriber;
+use Doctrine\Common\EventArgs;
 
 
 /**
@@ -20,7 +18,7 @@ use Doctrine\ORM\Events;
  *
  * @ORM\Entity(repositoryClass="ActorRepository")
  * @ORM\Table(name="actor", indexes={@ORM\Index(name="idx_actor_last_name", columns={"last_name"})})
- * @HasLifecycleCallbacks
+ * @EntityListeners({"listener\PrePersisterExampleListener"}) 
  */
 class Actor
 {
@@ -52,34 +50,16 @@ class Actor
      */
     protected $filmActors;
 
-    
-    /**
-     * @PrePersist
-     */
-    public function aaa(){
-        if($this->getFirstName()!="macro"){
-            throw new \Exception("aaaaaa", 100);
-        }else{
-            $this->setFirstName($this->getFirstName() . "50");
-        }
-    }
-    
-        /** @PrePersist */
-    public function doStuffOnPrePersist()
-    {
-        $this->last_name = $this->last_name." enha";
-    }
-
-    /** @PrePersist */
-    public function doOtherStuffOnPrePersist()
-    {
-        $this->last_name = $this->last_name." oopppoo";
-    }
 
     public function __construct()
     {
-        Bootstrap::getEntityManager()->getEventManager()->addEventListener(array(Events::prePersist), new MyOtherEventListener());
-        $this->filmActors = new ArrayCollection();
+        //Bootstrap::getEntityManager()->getEventManager()->addEventListener(array(Events::prePersist), new MyOtherEventListener());
+       // Bootstrap::getEntityManager()->getEventManager()->addEventListener((Events::prePersist), new PrePersisterExampleListener());
+       // Bootstrap::getEntityManager()->getEventManager()->addEventListener(array(Events::preFlush), new PrePersisterExampleListener());
+       $test = new TestEvent(Bootstrap::getEntityManager()->getEventManager());
+       /* $eventSubscriber = new TestEventSubscriber();
+       Bootstrap::getEntityManager()->getEventManager()->addEventSubscriber($eventSubscriber); */
+       $this->filmActors = new ArrayCollection();
     }
 
     /**
@@ -114,7 +94,6 @@ class Actor
     public function setFirstName($first_name)
     {
         $this->first_name = $first_name;
-
         return $this;
     }
 

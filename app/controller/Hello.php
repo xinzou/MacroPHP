@@ -5,6 +5,9 @@ use SlimController\SlimController;
 use Guzzle\Http\Client;
 use boot\Bootstrap;
 use Entity\Actor;
+use Doctrine\Common\EventArgs;
+use event\TestEvent;
+use subscriber\TestEventSubscriber;
 
 class Hello extends SlimController{
     public function indexAction(){
@@ -24,8 +27,16 @@ class Hello extends SlimController{
         $actor = new Actor();
         $actor->setFirstName('macro');
        $actor->setLastName("bbb");
+       $eventArgs = new EventArgs();
+       $eventArgs->obj= $actor;
+       //$testEvent = new TestEvent(Bootstrap::getEntityManager()->getEventManager());
+       $eventSubscriber = new TestEventSubscriber();
+       Bootstrap::getEntityManager()->getEventManager()->addEventSubscriber($eventSubscriber);
+       Bootstrap::getEntityManager()->getEventManager()->dispatchEvent(TestEvent::preFoo ,  $eventArgs);
+       
         $em->persist($actor);
         $em->flush($actor);
+        
 /*         $metadata = $em->getClassMetadata(get_class($actor));
         $tableName = $metadata->getQuotedTableName($conn);
         echo $tableName;

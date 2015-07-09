@@ -77,6 +77,7 @@ $config = array(
     
     //登录的URL
     'login.url' => '/login',
+    
     //后台管理URL
     'secured.urls' => array(
         array('path' => '/admin'),
