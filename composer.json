@@ -30,7 +30,7 @@
     "require-dev": {
             "composer/composer": "1.*",
             "symfony/yaml": "2.5.*@dev",
-            "satooshi/php-coveralls": "dev-master"
+            "satooshi/php-coveralls": "dev-master",
             "phpunit/phpunit": "~4.0",
             "phpunit/dbunit":"1.*"
     },
