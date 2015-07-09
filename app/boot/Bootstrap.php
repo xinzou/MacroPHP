@@ -149,15 +149,16 @@ class Bootstrap
                 'password' => $config['db'][APPLICATION_ENV]['password'],
                 'dbname' => $config['db'][APPLICATION_ENV]['dbname']
             ),
-                /* \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(
+                \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(
                  array(APP_PATH. '/app/data/Entity/'),
                     APPLICATION_ENV == 'development',
                     APP_PATH . '/app/data/Proxies/',
-                    new \Doctrine\Common\Cache\ArrayCache
-                ) */
-                \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
+                    new \Doctrine\Common\Cache\ArrayCache,
+                    false
+                )
+               /*  \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
                 APP_PATH . "/app/data/Yaml/"
-            ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache()));
+            ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache()) */);
         });
     }
 }

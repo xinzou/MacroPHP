@@ -5,6 +5,8 @@ use SlimController\SlimController;
 use Guzzle\Http\Client;
 use boot\Bootstrap;
 use Entity\Actor;
+use Entity\City;
+use Entity\Country;
 
 class Hello extends SlimController{
     public function indexAction(){
@@ -20,14 +22,18 @@ class Hello extends SlimController{
     
     public function addItemAction(){
         $em = Bootstrap::getEntityManager();
-        $conn = $em->getConnection();
+/*         $conn = $em->getConnection(); */
         $actor = new Actor();
-        $metadata = $em->getClassMetadata(get_class($actor));
+        $actor->setFirstName('aaaa');
+       $actor->setLastName("bbb");
+        $em->persist($actor);
+        $em->flush($actor);
+/*         $metadata = $em->getClassMetadata(get_class($actor));
         $tableName = $metadata->getQuotedTableName($conn);
         echo $tableName;
         print_r($metadata->getTableName());
         $results = $conn->query("select * from " . $tableName);
-        print_r($metadata->getAssociationMappings());
+        print_r($metadata->getAssociationMappings()); */
        /*  $actor->setFirstName("zhao");
         $actor->setLastName("haha");
         $em->persist($actor);
