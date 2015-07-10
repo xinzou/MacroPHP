@@ -47,14 +47,16 @@ class Hello extends Controller
         $client = new Client();
         $response = $client->get("http://guzzlephp.org");
         
-        //$post = $this->app->request()->get();
-       // print_r( $this->app->request()->put());
-       print_r($this->param('name'));
+        // $post = $this->app->request()->get();
+        // print_r( $this->app->request()->put());
+        print_r($this->param('name'));
         // print_r($response->getResponseBody());
-/*         $this->render("/home/hello", array(
-            'name' => 'Macro',
-            'title' => "这是第一个页面哦"
-        )); */
+        /*
+         * $this->render("/home/hello", array(
+         * 'name' => 'Macro',
+         * 'title' => "这是第一个页面哦"
+         * ));
+         */
     }
 
     public function addItemAction()

@@ -1,8 +1,6 @@
 <?php
 namespace boot;
 
-use SlimController\Slim;
-use SlimController\SlimController;
 use Doctrine\Common\EventManager;
 use Respect\Validation\Validator;
 
@@ -16,7 +14,7 @@ class Bootstrap
 
     /**
      * 配置entityManager的事件映射对象，因为addEventListener不能识别config.php配置的字符串，因此设置这个数组
-     * 
+     *
      * @var \Doctrine\ORM\Events $eventTypeMapping
      */
     private static $eventTypeMapping = array(
@@ -58,7 +56,7 @@ class Bootstrap
             $app->render('404.html');
         });
         
-        self::requireRouteFile();     
+        self::requireRouteFile();
         $app->run();
     }
 
@@ -72,6 +70,7 @@ class Bootstrap
         if (NULL == self::$app) {
             self::$app = new \Slim\Slim(self::getConfig('slim'));
         }
+        self::$app->add(new \Slim\Middleware\SessionCookie(self::getConfig('cookies')));
         return self::$app;
     }
 
@@ -135,29 +134,31 @@ class Bootstrap
         }
         require APP_PATH . '/app/routes/' . $file . '_route.php';
     }
-    
+
     /**
      * 注册Hook函数
-     * 
+     *
      * @author macro chen <macro_fengye@163.com>
      */
-    protected static function registerHook($name , $callable , $priority){
-        self::getApp()->hook($name, $callable,$priority);
+    protected static function registerHook($name, $callable, $priority)
+    {
+        self::getApp()->hook($name, $callable, $priority);
     }
-    
+
     /**
      * 动态路由，根据请求的URL来动态的添加路由表
-     * 
+     *
      * @author macro chen <macro_fengye@163.com>
      */
-    protected static function dynamicAddRoter(){
+    protected static function dynamicAddRoter()
+    {
         $path_info = self::$app->request()->getPathInfo();
         $path_infos = explode("/", trim($path_info));
-        $route = ucfirst($path_infos[1]).":".$path_infos[2];
-        self::$app->addControllerRoute("/".$path_infos[1]."/".$path_infos[2]."/:name",  $route  , array(
-            function(){
-            }
-        ))->via(self::$app->request()->getMethod());
+        $route = ucfirst($path_infos[1]) . ":" . $path_infos[2];
+        self::$app->addControllerRoute("/" . $path_infos[1] . "/" . $path_infos[2] . "/:name", $route, array(
+            function () {}
+        ))->via(self::$app->request()
+            ->getMethod());
     }
 
     /**
