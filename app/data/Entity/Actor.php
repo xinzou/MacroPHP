@@ -1,5 +1,4 @@
 <?php
-
 namespace Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -12,16 +11,16 @@ use event\TestEvent;
 use subscriber\TestEventSubscriber;
 use Doctrine\Common\EventArgs;
 
-
 /**
  * Entity\Actor
  *
  * @ORM\Entity(repositoryClass="ActorRepository")
  * @ORM\Table(name="actor", indexes={@ORM\Index(name="idx_actor_last_name", columns={"last_name"})})
- * @EntityListeners({"listener\PrePersisterExampleListener"}) 
+ * @EntityListeners({"listener\PrePersisterExampleListener"})
  */
 class Actor
 {
+
     /**
      * @ORM\Id
      * @ORM\Column(type="smallint", options={"unsigned":true})
@@ -50,28 +49,29 @@ class Actor
      */
     protected $filmActors;
 
-
     public function __construct()
     {
-        //Bootstrap::getEntityManager()->getEventManager()->addEventListener(array(Events::prePersist), new MyOtherEventListener());
-       // Bootstrap::getEntityManager()->getEventManager()->addEventListener((Events::prePersist), new PrePersisterExampleListener());
-       // Bootstrap::getEntityManager()->getEventManager()->addEventListener(array(Events::preFlush), new PrePersisterExampleListener());
-       $test = new TestEvent(Bootstrap::getEntityManager()->getEventManager());
-       /* $eventSubscriber = new TestEventSubscriber();
-       Bootstrap::getEntityManager()->getEventManager()->addEventSubscriber($eventSubscriber); */
-       $this->filmActors = new ArrayCollection();
+        // Bootstrap::getEntityManager()->getEventManager()->addEventListener(array(Events::prePersist), new MyOtherEventListener());
+        // Bootstrap::getEntityManager()->getEventManager()->addEventListener((Events::prePersist), new PrePersisterExampleListener());
+        // Bootstrap::getEntityManager()->getEventManager()->addEventListener(array(Events::preFlush), new PrePersisterExampleListener());
+        $test = new TestEvent(Bootstrap::getEntityManager()->getEventManager());
+        /*
+         * $eventSubscriber = new TestEventSubscriber();
+         * Bootstrap::getEntityManager()->getEventManager()->addEventSubscriber($eventSubscriber);
+         */
+        $this->filmActors = new ArrayCollection();
     }
 
     /**
      * Set the value of actor_id.
      *
-     * @param integer $actor_id
+     * @param integer $actor_id            
      * @return \Entity\Actor
      */
     public function setActorId($actor_id)
     {
         $this->actor_id = $actor_id;
-
+        
         return $this;
     }
 
@@ -88,7 +88,7 @@ class Actor
     /**
      * Set the value of first_name.
      *
-     * @param string $first_name
+     * @param string $first_name            
      * @return \Entity\Actor
      */
     public function setFirstName($first_name)
@@ -110,13 +110,13 @@ class Actor
     /**
      * Set the value of last_name.
      *
-     * @param string $last_name
+     * @param string $last_name            
      * @return \Entity\Actor
      */
     public function setLastName($last_name)
     {
         $this->last_name = $last_name;
-
+        
         return $this;
     }
 
@@ -133,13 +133,13 @@ class Actor
     /**
      * Set the value of last_update.
      *
-     * @param \DateTime $last_update
+     * @param \DateTime $last_update            
      * @return \Entity\Actor
      */
     public function setLastUpdate($last_update)
     {
         $this->last_update = $last_update;
-
+        
         return $this;
     }
 
@@ -156,26 +156,26 @@ class Actor
     /**
      * Add FilmActor entity to collection (one to many).
      *
-     * @param \Entity\FilmActor $filmActor
+     * @param \Entity\FilmActor $filmActor            
      * @return \Entity\Actor
      */
     public function addFilmActor(FilmActor $filmActor)
     {
         $this->filmActors[] = $filmActor;
-
+        
         return $this;
     }
 
     /**
      * Remove FilmActor entity from collection (one to many).
      *
-     * @param \Entity\FilmActor $filmActor
+     * @param \Entity\FilmActor $filmActor            
      * @return \Entity\Actor
      */
     public function removeFilmActor(FilmActor $filmActor)
     {
         $this->filmActors->removeElement($filmActor);
-
+        
         return $this;
     }
 

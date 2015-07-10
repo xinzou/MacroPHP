@@ -8,6 +8,7 @@ $config = array(
     
     //应用的配置
     'slim' => array(
+        'controller.param_prefix'=>'prefix',
         'mode' => APPLICATION_ENV,
         'templates.path' => APP_PATH . '/app/templates',
         'log.level' => Slim\Log::ERROR,
@@ -16,9 +17,11 @@ $config = array(
         'controller.class_prefix'    => '\\controller',
         'controller.method_suffix'   => 'Action',
         'controller.template_suffix' => 'twig',
+        "routes.case_sensitive"=>"true",
         'debug' => true,
         "cookies.httponly"=>true,
-        "slim.errors"=>APP_PATH."/app/log/error.log"
+        "slim.errors"=>APP_PATH."/app/log/error.log",
+        'log.writer' => new \Slim\LogWriter(@fopen(APP_PATH."/app/log/error.log" , "w"))
     ),
     
     //配置模板实例
