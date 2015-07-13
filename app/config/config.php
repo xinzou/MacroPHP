@@ -56,8 +56,8 @@ $config = array(
         'manager' => array(
             'remember_me_seconds' => 1200,
             'name' => 'php_assemble',
-            'phpSaveHandler' => 'redis',
-            'savePath' => 'tcp://127.0.0.1:6379?weight=1&timeout=1',
+            //'phpSaveHandler' => 'redis',
+            //'savePath' => 'tcp://127.0.0.1:6379?weight=1&timeout=1',
             'use_cookies' => true
         ),
         'container' => array(
