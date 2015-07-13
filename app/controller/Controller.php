@@ -1,6 +1,6 @@
 <?php
 /**
- * 所有控制都必须集成该类
+ * 所有控制必须集成该类
  * 
  * @author macro chen <macro_fengye@163.com>
  */
@@ -38,13 +38,29 @@ class Controller
     /**
      * 引用的请求参数
      *
-     * @author amcro chen <macro_fengye@163.com>
+     * @author macro chen <macro_fengye@163.com>
      * @var array $params
      */
     protected $params;
 
     /**
-     * 集成SlimController,并j添加自定义的逻辑
+     * 获取引用的SessionManager
+     *
+     * @author macro chen <macro_fengye@163.com>
+     * @var SessionManager $sessionManager
+     */
+    protected $sessionManager;
+
+    /**
+     * 获取引用的SessionContainer
+     *
+     * @author macro chen <macro_fengye@163.com>
+     * @var SessionContainer $sessionContainer
+     */
+    protected $sessionContainer;
+
+    /**
+     * 控制器
      *
      * @author macro chen <macro_fengye@163.com>
      */
@@ -52,7 +68,10 @@ class Controller
     {
         $this->app = Bootstrap::getApp();
         $this->analyzeRequestParams();
+        $this->sessionManager = $this->app->container->get('sessionManager');
+        $this->sessionContainer = $this->app->container->get('sessionContainer');
         $this->registerHooks();
+        $this->initSession();
     }
 
     /**
@@ -123,6 +142,16 @@ class Controller
     protected function render($template, $data = array(), $status = null)
     {
         $this->app->render($template, $data, $status);
+    }
+
+    /**
+     * 在开启SessionCookie中间件的情况下，需要调用此函数，以初始化Cookie
+     *
+     * @author macro chen <macro_fengye@163.com>
+     */
+    protected function initSession()
+    {
+        $this->sessionContainer->_PHPASSEMBLE = "PHPASSEMBLE";
     }
 }
 

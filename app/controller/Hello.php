@@ -9,8 +9,6 @@ use Doctrine\Common\EventArgs;
 use event\TestEvent;
 use subscriber\TestEventSubscriber;
 use Zend\Validator\EmailAddress;
-use Zend\Session\SessionManager;
-use Zend\Session\Storage\ArrayStorage;
 
 class Hello extends Controller
 {
@@ -34,6 +32,7 @@ class Hello extends Controller
 
     public function index()
     {
+        $this->sessionContainer->pageNum11 = 10;
         $validator = new EmailAddress();
         $name = array(
             'name' => "macro"
@@ -45,36 +44,22 @@ class Hello extends Controller
     }
 
     public function show()
-    {
+    {/* 
         $client = new Client();
-        $response = $client->get("http://guzzlephp.org");
-        $sessionManager= ($this->app->container->get('sessionManager'));
-        $sessionContainer = ($this->app->container->get('sessionContainer'));
-        $sessionContainer->pageNum  =  10;
-        $sessionContainer->limit = "Macro chen";
-        $sessionContainer->parans = "AAAAAAAAa";
-        $sessionContainer->parans = "FFFFFFFFFFFFF";
-        $sessionContainer->parans = "CCCCCCCCCC";
-        // $post = $this->app->request()->get();
-        // print_r( $this->app->request()->put());
+        $response = $client->get("http://guzzlephp.org"); */
+        $this->sessionContainer->pageNum = 10;
+        $this->sessionContainer->limit = "Macro chen";
+        $this->sessionContainer->parans = "AAAAAAAAa";
+        echo $this->sessionContainer->parans;
         print_r($this->param('name'));
-        // print_r($response->getResponseBody());
-        /*
-         * $this->render("/home/hello", array(
-         * 'name' => 'Macro',
-         * 'title' => "这是第一个页面哦"
-         * ));
-         */
-    }
-    
-    public function test(){
-      $sessionContainer = ($this->app->container->get('sessionContainer'));
-      print_r( get_class_methods($sessionContainer));
-     echo $sessionContainer->pageNum;
-      print_r($_SESSION);
     }
 
-    public function addItemAction()
+    public function test()
+    {
+        print_r($this->sessionContainer->pageNum);
+    }
+
+    public function addItem()
     {
         $this->app->applyHook('aaa');
         print_r(get_class_methods($this->app));
@@ -109,7 +94,7 @@ class Hello extends Controller
          */
     }
 
-    public function adminAction()
+    public function admin()
     {
         if ($this->app->response->getStatus() == 404) {
             check_login();

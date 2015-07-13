@@ -42,7 +42,6 @@ class Bootstrap
     public static function start()
     {
         $app = self::getApp();
-        self::sessionStart();
         self::setEntityManager();
         self::registerValidateComponent();
         
@@ -52,7 +51,7 @@ class Bootstrap
             ini_set('display_startup_errors', 1);
         });
         
-        // Prepare view
+        // 初始化视图对象
         $view = $app->view();
         $view->parserOptions = self::getConfig('twig');
         $view->parserExtensions = array(
@@ -66,7 +65,7 @@ class Bootstrap
         $app->notFound(function () use($app) {
             $app->render('404.html');
         });
-        
+        self::sessionStart();
         self::requireRouteFile();
         $app->run();
     }
@@ -92,9 +91,7 @@ class Bootstrap
      */
     private static function cookieStart()
     {
-        if (self::getConfig('session')['manager']['use_cookies']) {
-            self::$app->add(new \Slim\Middleware\SessionCookie(self::getConfig('cookies')));
-        }
+        self::$app->add(new \Slim\Middleware\SessionCookie(self::getConfig('cookies')));
     }
 
     /**
@@ -104,7 +101,9 @@ class Bootstrap
      */
     private static function sessionStart()
     {
-        self::cookieStart();
+        if (self::getConfig('session')['manager']['use_cookies'] && self::getConfig("customer")['use_seesioncookie_middleware']) {
+            self::cookieStart();
+        }
         self::sessionManager();
         self::sessionContainer();
     }

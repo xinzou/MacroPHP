@@ -1,6 +1,11 @@
 <?php
 // 整个引用的配置
 $config = array(
+    // 自定义的配置(额外的配置)
+    'customer' => array(
+        'use_seesioncookie_middleware' => true
+    ),
+    
     // 应用的配置
     'slim' => array(
         'controller.param_prefix' => 'prefix',
@@ -56,12 +61,12 @@ $config = array(
         'manager' => array(
             'remember_me_seconds' => 1200,
             'name' => 'php_assemble',
-            //'phpSaveHandler' => 'redis',
-            //'savePath' => 'tcp://127.0.0.1:6379?weight=1&timeout=1',
+            // 'phpSaveHandler' => 'redis',
+            // 'savePath' => 'tcp://127.0.0.1:6379?weight=1&timeout=1',
             'use_cookies' => true
         ),
         'container' => array(
-            'namespace' => 'namespace'
+            'namespace' => 'php_assemble'
         )
     ),
     
