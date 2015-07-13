@@ -9,6 +9,7 @@ use Doctrine\Common\EventArgs;
 use event\TestEvent;
 use subscriber\TestEventSubscriber;
 use Zend\Validator\EmailAddress;
+use Zend\EventManager\EventManager;
 
 class Hello extends Controller
 {
@@ -41,6 +42,15 @@ class Hello extends Controller
         $this->render('/home/index.twig', array(
             'somevar' => $name['name']
         ));
+        $eventArgs = new EventArgs();
+        $eventArgs->obj = array(1,2,3,4,5,6);
+        // $testEvent = new TestEvent(Bootstrap::getEntityManager()->getEventManager());
+        $eventSubscriber = new TestEventSubscriber();
+        $test = new TestEvent(Bootstrap::getEvm());
+        $test->preFoo($eventArgs);
+        Bootstrap::getEvm()->addEventSubscriber($eventSubscriber);
+        Bootstrap::getEvm()->dispatchEvent(TestEvent::preFoo, $eventArgs);
+    //   print_r(Bootstrap::getEvm()->getListeners());
     }
 
     public function show()

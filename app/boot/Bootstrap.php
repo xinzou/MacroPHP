@@ -277,6 +277,15 @@ class Bootstrap
             return Validator::create();
         });
     }
+    
+    /**
+     * 获取事件组建
+     * 
+     * @author macro chen <macro_fengye@163.com>
+     */
+    public static function getEvm(){
+        return self::getEntityManager()->getEventManager();
+    }
 
     /**
      * 设置doctrine2的entityManager

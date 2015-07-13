@@ -26,8 +26,8 @@ class TestEventSubscriber implements EventSubscriber
         echo "<br/>this is : " . Bootstrap::getApp()->container->get('v')
             ->string()
             ->validate($number) . "<br/>";
-        $args->obj->setFirstName($filter->filter("kkkkk 123456"));
-        $firtName = $args->obj->getFirstName();
+       // $args->obj->setFirstName($filter->filter("kkkkk 123456"));
+        print_r($args->obj);
         $this->preFooInvoked = true;
         echo "adadsdad";
     }

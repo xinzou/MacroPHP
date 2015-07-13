@@ -28,9 +28,8 @@ class TestEvent
     public function preFoo(EventArgs $e)
     {
         $obj = $e->obj;
-        $obj->setFirstName('mmm');
         $this->preFooInvoked = true;
-        echo "1111<br/>";
+         $e->obj[0] = 9000;
     }
 
     public function postFoo(EventArgs $e)
