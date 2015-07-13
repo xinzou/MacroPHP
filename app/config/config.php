@@ -1,11 +1,6 @@
 <?php
 // 整个引用的配置
 $config = array(
-    // Session的配置
-    'session' => array(
-        'name' => 'UNTITLEDAPP'
-    ),
-    
     // 应用的配置
     'slim' => array(
         'controller.param_prefix' => 'prefix',
@@ -48,12 +43,26 @@ $config = array(
         'expires' => '60 minutes',
         'path' => '/',
         'domain' => null,
-        'secure' => true,
+        // 'secure' => true,
         'httponly' => true,
-        'name' => 'untitledapp_session',
+        'name' => 'php_assemble',
         'secret' => 'changethiskeytosomethingelseasap',
         'cipher' => MCRYPT_RIJNDAEL_256,
         'cipher_mode' => MCRYPT_MODE_CBC
+    ),
+    
+    // Session的配置
+    'session' => array(
+        'manager' => array(
+            'remember_me_seconds' => 1200,
+            'name' => 'php_assemble',
+            'phpSaveHandler' => 'redis',
+            'savePath' => 'tcp://127.0.0.1:6379?weight=1&timeout=1',
+            'use_cookies' => true
+        ),
+        'container' => array(
+            'namespace' => 'namespace'
+        )
     ),
     
     // 数据库配置

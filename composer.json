@@ -25,7 +25,9 @@
 		"zendframework/zend-filter":"*",
 		"zendframework/zend-i18n":"*",
 		"zendframework/zend-i18n-resources":"*",
-		"zendframework/zend-validator":"2.*"
+		"zendframework/zend-validator":"2.*",
+		"zendframework/zend-session":"2.*",
+		"jeremykendall/slim-auth": "*"
     },
     "require-dev": {
             "composer/composer": "1.*",

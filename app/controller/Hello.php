@@ -9,6 +9,8 @@ use Doctrine\Common\EventArgs;
 use event\TestEvent;
 use subscriber\TestEventSubscriber;
 use Zend\Validator\EmailAddress;
+use Zend\Session\SessionManager;
+use Zend\Session\Storage\ArrayStorage;
 
 class Hello extends Controller
 {
@@ -46,7 +48,13 @@ class Hello extends Controller
     {
         $client = new Client();
         $response = $client->get("http://guzzlephp.org");
-        
+        $sessionManager= ($this->app->container->get('sessionManager'));
+        $sessionContainer = ($this->app->container->get('sessionContainer'));
+        $sessionContainer->pageNum  =  10;
+        $sessionContainer->limit = "Macro chen";
+        $sessionContainer->parans = "AAAAAAAAa";
+        $sessionContainer->parans = "FFFFFFFFFFFFF";
+        $sessionContainer->parans = "CCCCCCCCCC";
         // $post = $this->app->request()->get();
         // print_r( $this->app->request()->put());
         print_r($this->param('name'));
@@ -57,6 +65,13 @@ class Hello extends Controller
          * 'title' => "这是第一个页面哦"
          * ));
          */
+    }
+    
+    public function test(){
+      $sessionContainer = ($this->app->container->get('sessionContainer'));
+      print_r( get_class_methods($sessionContainer));
+     echo $sessionContainer->pageNum;
+      print_r($_SESSION);
     }
 
     public function addItemAction()

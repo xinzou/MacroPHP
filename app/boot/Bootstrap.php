@@ -3,6 +3,10 @@ namespace boot;
 
 use Doctrine\Common\EventManager;
 use Respect\Validation\Validator;
+use Zend\Session\Config\SessionConfig;
+use Zend\Session\SessionManager;
+use Zend\Session\Container;
+use Slim\Slim;
 
 class Bootstrap
 {
@@ -11,6 +15,12 @@ class Bootstrap
     
     // @var EventManager $evm;
     private static $evm;
+    
+    // @var sessionManager
+    private static $sessionManager = NULL;
+    
+    // @var sessionContainer
+    private static $sessionContainer = NULL;
 
     /**
      * 配置entityManager的事件映射对象，因为addEventListener不能识别config.php配置的字符串，因此设置这个数组
@@ -32,6 +42,7 @@ class Bootstrap
     public static function start()
     {
         $app = self::getApp();
+        self::sessionStart();
         self::setEntityManager();
         self::registerValidateComponent();
         
@@ -70,8 +81,63 @@ class Bootstrap
         if (NULL == self::$app) {
             self::$app = new \Slim\Slim(self::getConfig('slim'));
         }
-        self::$app->add(new \Slim\Middleware\SessionCookie(self::getConfig('cookies')));
         return self::$app;
+    }
+
+    /**
+     * 配置Cookie中间件
+     * 如果zendframework-session设置了使用Cookie(use_cookies : true)
+     *
+     * @author macro chen <macro_fengye@163.com>
+     */
+    private static function cookieStart()
+    {
+        if (self::getConfig('session')['manager']['use_cookies']) {
+            self::$app->add(new \Slim\Middleware\SessionCookie(self::getConfig('cookies')));
+        }
+    }
+
+    /**
+     * 配置并启动session管理器
+     *
+     * @author macro chen <macro_fengye@163.com>
+     */
+    private static function sessionStart()
+    {
+        self::cookieStart();
+        self::sessionManager();
+        self::sessionContainer();
+    }
+
+    /**
+     * 获取sessionManager
+     *
+     * @author macro chen <macro_fengye@163.com>
+     */
+    private static function sessionManager()
+    {
+        $config = new SessionConfig();
+        $config->setOptions(self::getConfig("session")['manager']);
+        self::$app->container->singleton('sessionManager', function () use($config) {
+            $sessionManager = new SessionManager($config);
+            $sessionManager->start();
+            return $sessionManager;
+        });
+    }
+
+    /**
+     * 获取SessionContainer
+     *
+     * @author macro chen <macro_fengye@163.com>
+     */
+    private static function sessionContainer()
+    {
+        self::$app->container->singleton("sessionContainer", function () {
+            $sessionManager = self::$app->container->get('sessionManager');
+            $container = Container::setDefaultManager($sessionManager);
+            $container = new Container(self::getConfig("session")['container']['namespace']);
+            return $container;
+        });
     }
 
     /**
