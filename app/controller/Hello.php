@@ -32,7 +32,7 @@ class Hello extends Controller
         }
     }
 
-    public function indexAction()
+    public function index()
     {
         $validator = new EmailAddress();
         $name = array(

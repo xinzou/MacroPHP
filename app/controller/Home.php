@@ -1,14 +1,12 @@
 <?php
 namespace controller;
 
-use SlimController\SlimController;
-
-class Home extends SlimController{
-    public function indexAction(){
-        $this->render('/home/index' , array('somevar'=>date('c')));
+class Home extends Controller{
+    public function index(){
+        $this->render('/home/index.twig' , array('somevar'=>date('c')));
     }
     
-    public function helloAction(){
+    public function hello(){
         $this->render("/home/hello" , array('name'=>'Macro'));
     }
 }

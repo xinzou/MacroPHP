@@ -1,5 +1,7 @@
 <?php 
-$app->addRoutes(array(
+$app = \Slim\Slim::getInstance("default");
+$app->map("/" , "controller\\Home:index")->via("GET");;
+/* $app->addRoutes(array(
     '/' => array("Home:index",function(){
         echo "aggagag";
     }),
@@ -8,4 +10,4 @@ $app->addRoutes(array(
     } , function(){
         echo "45656656";return ;
     }))
-),array('mw1' , 'mw2'));
+),array('mw1' , 'mw2')); */

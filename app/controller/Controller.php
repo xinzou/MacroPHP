@@ -111,6 +111,19 @@ class Controller
     {
         return (isset($this->params[$key]) ? $this->params[$key] : "");
     }
+
+    /**
+     * 渲染模板
+     *
+     * @author macro chen <macro_fengye@163.com>
+     * @param string $template            
+     * @param array $data            
+     * @param string $status            
+     */
+    protected function render($template, $data = array(), $status = null)
+    {
+        $this->app->render($template, $data, $status);
+    }
 }
 
 ?>
