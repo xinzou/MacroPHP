@@ -10,6 +10,7 @@ use event\TestEvent;
 use subscriber\TestEventSubscriber;
 use Zend\Validator\EmailAddress;
 use Zend\EventManager\EventManager;
+use Zend\Permissions\Rbac\Rbac;
 
 class Hello extends Controller
 {
@@ -17,13 +18,14 @@ class Hello extends Controller
     protected $hooks = array(
         "the.hook.name" => array(
             array()
-        )
+        ),
+        "slim.after.dispatch"=>array(array("black" , "red"))
     );
 
     protected function registerHooks()
     {
         foreach ($this->hooks as $key => $val) {
-            $this->app->hook($key, function ($data) {
+            $this->app->hook($key, function () use ($val) {
                 $data['name'] = "jack";
                 echo $data['name'];
                 echo "registerHooks";
@@ -109,5 +111,21 @@ class Hello extends Controller
         if ($this->app->response->getStatus() == 404) {
             check_login();
         }
+    }
+    
+    public function rbac(){
+        $rbac = new Rbac();
+        $rbac->addRole("foo");
+        var_dump($rbac->hasRole('foo'));
+        echo "rbac";
+    }
+    
+    public function rbac1(){
+        print_r($this->params);
+        echo "rbac1";
+    }
+    
+    public function login(){
+        echo "Login....";
     }
 }

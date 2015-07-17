@@ -42,9 +42,6 @@ class Bootstrap
     public static function start()
     {
         $app = self::getApp();
-        self::setEntityManager();
-        self::registerValidateComponent();
-        
         $app->configureMode(APPLICATION_ENV, function () {
             error_reporting(- 1);
             ini_set('display_errors', 1);
@@ -57,6 +54,12 @@ class Bootstrap
         $view->parserExtensions = array(
             new \Slim\Views\TwigExtension()
         );
+        // 注册slim.before.router的hook
+        self::registerHook("slim.before.router", self::slimBeforeRouter(), 10);
+        // 注册slim.before.dispatch的hook
+        self::registerHook("slim.after.router", self::slimBeforeDispatch(), 10);
+        // 注册slim.before.dispatch的hook
+        self::registerHook("slim.stop", self::slimStop(), 10);
         // 处理500错误
         $app->error(function (\Exception $e) use($app) {
             $app->render('error.php');
@@ -65,9 +68,38 @@ class Bootstrap
         $app->notFound(function () use($app) {
             $app->render('404.html');
         });
+        self::setEntityManager();
+        self::registerValidateComponent();
         self::sessionStart();
         self::requireRouteFile();
+        self::dynamicAddRoter();
         $app->run();
+    }
+
+    /**
+     * 处理slim.before.router事件的回调函数
+     *
+     * @author macro chen <macro_fengye@163.com>
+     */
+    private static function slimBeforeRouter()
+    {}
+
+    /**
+     * 处理slim.before.dispatch事件的回调函数
+     *
+     * @author macro chen <macro_fengye@163.com>
+     */
+    private static function slimBeforeDispatch()
+    {}
+
+    /**
+     * 处理slim.stop事件的回调函数
+     *
+     * @author macro chen <macro_fengye@163.com>
+     */
+    private static function slimStop()
+    {
+        echo "1111";
     }
 
     /**
@@ -189,7 +221,7 @@ class Bootstrap
      */
     private static function requireRouteFile()
     {
-        $app = self::getApp();
+        $app = self::$app;
         $path_info = $app->request->getPathInfo();
         $file = "";
         if (strcmp($path_info, "/") == 0) {
@@ -207,11 +239,12 @@ class Bootstrap
      */
     protected static function registerHook($name, $callable, $priority)
     {
-        self::getApp()->hook($name, $callable, $priority);
+        self::$app->hook($name, $callable, $priority);
     }
 
     /**
-     * 动态路由，根据请求的URL来动态的添加路由表
+     * 如果没有手动的配置路由信息
+     * 则动态的添加路由，根据请求的URL来动态的添加路由表,
      *
      * @author macro chen <macro_fengye@163.com>
      */
@@ -219,11 +252,22 @@ class Bootstrap
     {
         $path_info = self::$app->request()->getPathInfo();
         $path_infos = explode("/", trim($path_info));
-        $route = ucfirst($path_infos[1]) . ":" . $path_infos[2];
-        self::$app->addControllerRoute("/" . $path_infos[1] . "/" . $path_infos[2] . "/:name", $route, array(
-            function () {}
-        ))->via(self::$app->request()
-            ->getMethod());
+        $route_name = $path_infos[1] . '.' . $path_infos[2];
+        if (! self::$app->router()->getNamedRoute($route_name)) {
+            $route = "controller\\" . ucfirst($path_infos[1]) . ":" . $path_infos[2];
+            self::$app->map("/" . $path_infos[1] . "/" . $path_infos[2] . "(/:param1)(/:param2)(/:param3)(/:param4)(/:other+)", $route)
+                ->via("GET", "POST", "PUT")
+                ->name($route_name)
+                ->setMiddleware([
+                function () {
+                    if (! preg_match("/login/", self::$app->request->getResourceUri())) {
+                        self::$app->flash('error', 'Login required');
+                        self::$app->redirect('/hello/login');
+                    }
+                },
+                function () {}
+            ]);
+        }
     }
 
     /**
@@ -234,10 +278,10 @@ class Bootstrap
      */
     public static function getEntityManager()
     {
-        $em = static::getApp()->container->get("entityManager");
+        $em = self::$app()->container->get("entityManager");
         if (! $em) {
             self::setEntityManager();
-            $em = static::getApp()->container->get("entityManager");
+            $em = self::$app->container->get("entityManager");
         }
         return $em;
     }
@@ -267,7 +311,7 @@ class Bootstrap
     }
 
     /**
-     * 注册验证組建
+     * 注册验证组件
      *
      * @author macro chen <macro_fengye@163.com>
      */
@@ -277,13 +321,14 @@ class Bootstrap
             return Validator::create();
         });
     }
-    
+
     /**
-     * 获取事件组建
-     * 
+     * 获取事件组件
+     *
      * @author macro chen <macro_fengye@163.com>
      */
-    public static function getEvm(){
+    public static function getEvm()
+    {
         return self::getEntityManager()->getEventManager();
     }
 

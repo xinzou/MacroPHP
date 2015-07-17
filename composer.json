@@ -8,10 +8,6 @@
         "twig/twig": "*",
         "doctrine/common": "*",
         "doctrine/orm": "*",
-        "zendframework/zend-authentication": "2.*",
-        "zendframework/zend-cache": "2.*",
-        "zendframework/zend-serializer": "2.*",
-        "zendframework/zend-inputfilter": "2.*",
         "rych/phpass": "2.*",
         "entomb/slim-json-api": "dev-master",
         "doctrine/collections": "~1.2",
@@ -27,14 +23,20 @@
 		"zendframework/zend-i18n-resources":"*",
 		"zendframework/zend-validator":"2.*",
 		"zendframework/zend-session":"2.*",
-		"jeremykendall/slim-auth": "*"
+		"zendframework/zend-permissions-rbac":"2.*",
+		"zendframework/zend-permissions-acl":"2.*",
+		"zendframework/zend-authentication": "2.*",
+        "zendframework/zend-cache": "2.*",
+        "zendframework/zend-serializer": "2.*",
+        "zendframework/zend-inputfilter": "2.*"
     },
     "require-dev": {
             "composer/composer": "1.*",
             "symfony/yaml": "2.5.*@dev",
             "satooshi/php-coveralls": "dev-master",
             "phpunit/phpunit": "~4.0",
-            "phpunit/dbunit":"1.*"
+            "phpunit/dbunit":"1.*",
+            "facebook/webdriver": "~1.0"
     },
     "bin": [
         "composer/bin/dbunit"

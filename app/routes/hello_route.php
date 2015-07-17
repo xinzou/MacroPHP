@@ -1,11 +1,11 @@
 <?php
 $app = \Slim\Slim::getInstance("default");
 
-$app->map("/hello/show(/:name)", "controller\\Hello:show")
+/* $app->map("/hello/show(/:name)", "controller\\Hello:show")
     ->via('GET', 'POST', 'PUT')
-    ->name('foo');
+    ->name('show');
 
-$app->map("/hello/test", "controller\\Hello:test")->via("GET");
+$app->map("/hello/test", "controller\\Hello:test")->via("GET")->name("test");
 
 $app->map("/hello/index", "controller\\Hello:index")
     ->via("GET")
@@ -16,4 +16,8 @@ $app->map("/hello/index", "controller\\Hello:index")
     function () {
         echo "333333333";
     }
-]);
+])->name("index");
+
+$app->map("/hello/rbac", "controller\\Hello:rbac")
+    ->via("POST")
+    ->name("rbac"); */
