@@ -252,6 +252,8 @@ class Bootstrap
     {
         $path_info = self::$app->request()->getPathInfo();
         $path_infos = explode("/", trim($path_info));
+        $path_infos[1] = empty($path_infos[1]) ? 'home' : $path_infos[1];
+        $path_infos[2] = empty($path_infos[2]) ? 'index' : $path_infos[2];
         $route_name = $path_infos[1] . '.' . $path_infos[2];
         if (! self::$app->router()->getNamedRoute($route_name)) {
             $route = "controller\\" . ucfirst($path_infos[1]) . ":" . $path_infos[2];
