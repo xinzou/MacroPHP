@@ -207,7 +207,7 @@ class Bootstrap
      */
     private static function getConfig($key)
     {
-        $config = require_once APP_PATH . '/app/config/config.php';
+        $config = require APP_PATH . '/app/config/config.php';
         if (isset($config[$key])) {
             return $config[$key];
         }
