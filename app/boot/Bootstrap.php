@@ -23,7 +23,7 @@ class Bootstrap
     private static $sessionContainer = NULL;
 
     /**
-     * 配置entityManager的事件映射对象，因为addEventListener不能识别config.php配置的字符串，因此设置这个数组
+     * 配置entityManager的事件映射对象，因为addEventListener不能识别config.php配置的字符串，因此设置此映射数组
      *
      * @var \Doctrine\ORM\Events $eventTypeMapping
      */
@@ -99,7 +99,7 @@ class Bootstrap
      */
     private static function slimStop()
     {
-        echo "1111";
+        echo "slim.stop";
     }
 
     /**
@@ -185,7 +185,7 @@ class Bootstrap
     }
 
     /**
-     * 获取指定的模型实体
+     * 获取指定的模型实体(还未实现)
      *
      * @author macro chen <macro_fengye@163.com>
      */
@@ -207,7 +207,7 @@ class Bootstrap
      */
     private static function getConfig($key)
     {
-        $config = require APP_PATH . '/app/config/config.php';
+        $config = require_once APP_PATH . '/app/config/config.php';
         if (isset($config[$key])) {
             return $config[$key];
         }
@@ -229,7 +229,7 @@ class Bootstrap
         } else {
             $file = explode("/", $path_info)[1];
         }
-        require APP_PATH . '/app/routes/' . $file . '_route.php';
+        require_once APP_PATH . '/app/routes/' . $file . '_route.php';
     }
 
     /**
@@ -316,6 +316,7 @@ class Bootstrap
      * 注册验证组件
      *
      * @author macro chen <macro_fengye@163.com>
+     * @return \Respect\Validation\Validator
      */
     public static function registerValidateComponent()
     {
@@ -328,6 +329,7 @@ class Bootstrap
      * 获取事件组件
      *
      * @author macro chen <macro_fengye@163.com>
+     * @return \Doctrine\Common\EventManager
      */
     public static function getEvm()
     {

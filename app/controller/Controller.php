@@ -1,6 +1,6 @@
 <?php
 /**
- * 所有控制必须集成该类
+ * 所有控制器必须集成该类
  * 
  * @author macro chen <macro_fengye@163.com>
  */
@@ -36,7 +36,7 @@ class Controller
     protected $event;
 
     /**
-     * 引用的请求参数
+     * 应用的请求参数
      *
      * @author macro chen <macro_fengye@163.com>
      * @var array $params
@@ -44,7 +44,7 @@ class Controller
     protected $params;
 
     /**
-     * 获取引用的SessionManager
+     * 获取应用的SessionManager
      *
      * @author macro chen <macro_fengye@163.com>
      * @var SessionManager $sessionManager
@@ -52,7 +52,7 @@ class Controller
     protected $sessionManager;
 
     /**
-     * 获取引用的SessionContainer
+     * 获取应用的SessionContainer
      *
      * @author macro chen <macro_fengye@163.com>
      * @var SessionContainer $sessionContainer
@@ -60,7 +60,7 @@ class Controller
     protected $sessionContainer;
 
     /**
-     * 控制器
+     * 控制器构造函数
      *
      * @author macro chen <macro_fengye@163.com>
      */
