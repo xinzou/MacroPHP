@@ -3,7 +3,7 @@
     "prefer-stable": true,
     "require": {
         "php": ">=5.4.0",
-        "slim/slim": "*",
+        "slim/slim": "2.*",
         "slim/views": "*",
         "twig/twig": "*",
         "doctrine/common": "*",
