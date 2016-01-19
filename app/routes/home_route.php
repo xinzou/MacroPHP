@@ -1,6 +1,6 @@
-<?php 
+<?php
 $app = \Slim\Slim::getInstance("default");
-$app->map("/" , "controller\\Home:index")->via("GET");;
+$app->map("/", "controller\\Home:index")->via("GET");;
 /* $app->addRoutes(array(
     '/' => array("Home:index",function(){
         echo "aggagag";

@@ -31,7 +31,7 @@ class ActorTest extends TestCase
         // TODO Auto-generated ActorTest::setUp()
         
         $this->actor = new Actor(/* parameters */);
-        $this->entityManager = Bootstrap::startUnit()->container->get("entityManager");
+        $this->entityManager = Bootstrap::getPimple("entityManager");
         
     }
 

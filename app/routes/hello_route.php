@@ -1,11 +1,13 @@
 <?php
 $app = \Slim\Slim::getInstance("default");
 
-/* $app->map("/hello/show(/:name)", "controller\\Hello:show")
+ $app->map("/hello/show(/:name)", "controller\\Hello:show")
     ->via('GET', 'POST', 'PUT')
-    ->name('show');
+    ->name('show')->setMiddleware([function(){
+         echo __FILE__;
+     }]);
 
-$app->map("/hello/test", "controller\\Hello:test")->via("GET")->name("test");
+/*$app->map("/hello/test", "controller\\Hello:test")->via("GET")->name("test");
 
 $app->map("/hello/index", "controller\\Hello:index")
     ->via("GET")

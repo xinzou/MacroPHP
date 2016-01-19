@@ -41,16 +41,48 @@ class Bootstrap
      * 初始化依赖管理器
      * @author macro chen <macro_fengye@163.com>
      */
-    private static function initPimple(){
+    private static function initPimple()
+    {
         self::$pimpleContainer = new \Pimple\Container();
-        self::$pimpleContainer['session_storage'] = function ($c) {
-            return new SessionStorage('SESSION_ID');
-        };
-        self::$pimpleContainer['session'] = function ($c) {
-            return new Session($c['session_storage']);
-        };
-        self::$pimpleContainer["app"] = function($c){
+        self::$pimpleContainer["app"] = function ($c) {
             return new \Slim\Slim(self::getConfig('slim'));
+        };
+        self::$pimpleContainer["v"] = function ($c) {
+            return Validator::create();
+        };
+        self::$pimpleContainer['sessionManager'] = function ($c) {
+            $config = new SessionConfig();
+            $config->setOptions(self::getConfig("session")['manager']);
+            $sessionManager = new SessionManager($config);
+            $sessionManager->start();
+            return $sessionManager;
+        };
+        self::$pimpleContainer["sessionContainer"] = function ($c) {
+            $sessionManager = self::getApp()->container->get('sessionManager');
+            Container::setDefaultManager($sessionManager);
+            $container = new Container(self::getConfig("session")['container']['namespace']);
+            return $container;
+        };
+        self::$pimpleContainer["entityManager"] = function ($c) {
+            $config['db'] = self::getConfig('db');
+            return \Doctrine\ORM\EntityManager::create(array(
+                'driver' => $config['db'][APPLICATION_ENV]['driver'],
+                'host' => $config['db'][APPLICATION_ENV]['host'],
+                'port' => $config['db'][APPLICATION_ENV]['port'],
+                'user' => $config['db'][APPLICATION_ENV]['user'],
+                'password' => $config['db'][APPLICATION_ENV]['password'],
+                'dbname' => $config['db'][APPLICATION_ENV]['dbname'],
+            ), \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(array(
+                APP_PATH . '/app/data/Entity/',
+            ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache(), false),
+                /*  \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
+                APP_PATH . "/app/data/Yaml/"
+                ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache()), */
+                self::createEventManager());
+        };
+        self::$pimpleContainer["APP_CONFIG"] = function ($c) {
+            $config = require APP_PATH . '/app/config/config.php';
+            return $config;
         };
     }
 
@@ -62,19 +94,19 @@ class Bootstrap
     public static function start()
     {
         self::initPimple();
-        self::$app = $app = self::$pimpleContainer['app'];
+        $app = self::getApp();
         $app->configureMode(APPLICATION_ENV, function () {
             error_reporting(-1);
             ini_set('display_errors', 1);
             ini_set('display_startup_errors', 1);
         });
-
         // 初始化视图对象
         $view = $app->view();
         $view->parserOptions = self::getConfig('twig');
         $view->parserExtensions = array(
             new \Slim\Views\TwigExtension(),
         );
+        self::registerHook("slim.before.dispatch", self::dealRouter(), 1);
         // 注册slim.before.router的hook
         self::registerHook("slim.before.router", self::slimBeforeRouter(), 10);
         // 注册slim.before.dispatch的hook
@@ -88,12 +120,10 @@ class Bootstrap
         // 处理404
         $app->notFound(function () use ($app) {
             $app->render('404.html');
+            //避免路由两次
         });
-        self::setEntityManager();
-        self::registerValidateComponent();
-        self::sessionStart();
-        self::requireRouteFile();
-        self::dynamicAddRoter();
+        //self::dealRouter();
+        //self::sessionStart();
         $app->run();
     }
 
@@ -132,10 +162,7 @@ class Bootstrap
      */
     public static function getApp()
     {
-        if (NULL == self::$app) {
-            self::$app = new \Slim\Slim(self::getConfig('slim'));
-        }
-        return self::$app;
+        return self::$pimpleContainer["app"];
     }
 
     /**
@@ -146,7 +173,7 @@ class Bootstrap
      */
     private static function cookieStart()
     {
-        self::$app->add(new \Slim\Middleware\SessionCookie(self::getConfig('cookies')));
+        self::getApp()->add(new \Slim\Middleware\SessionCookie(self::getConfig('cookies')));
     }
 
     /**
@@ -159,52 +186,6 @@ class Bootstrap
         if (self::getConfig('session')['manager']['use_cookies'] && self::getConfig("customer")['use_seesioncookie_middleware']) {
             self::cookieStart();
         }
-        self::sessionManager();
-        self::sessionContainer();
-    }
-
-    /**
-     * 获取sessionManager
-     *
-     * @author macro chen <macro_fengye@163.com>
-     */
-    private static function sessionManager()
-    {
-        $config = new SessionConfig();
-        $config->setOptions(self::getConfig("session")['manager']);
-        self::$app->container->singleton('sessionManager', function () use ($config) {
-            $sessionManager = new SessionManager($config);
-            $sessionManager->start();
-            return $sessionManager;
-        });
-    }
-
-    /**
-     * 获取SessionContainer
-     *
-     * @author macro chen <macro_fengye@163.com>
-     */
-    private static function sessionContainer()
-    {
-        self::$app->container->singleton("sessionContainer", function () {
-            $sessionManager = self::$app->container->get('sessionManager');
-            $container = Container::setDefaultManager($sessionManager);
-            $container = new Container(self::getConfig("session")['container']['namespace']);
-            return $container;
-        });
-    }
-
-    /**
-     * 引导单元测试
-     *
-     * @author macro chen <macro_fengye@163.com>
-     */
-    public static function startUnit()
-    {
-        self::getApp();
-        self::setEntityManager();
-        self::registerValidateComponent();
-        return self::$app;
     }
 
     /**
@@ -215,11 +196,11 @@ class Bootstrap
     public static function getModel($model)
     {
         $model_str = md5($model);
-        if (!self::$app->container->get($model_str)) {
-            self::$app->container->singleton($model_str, function () {
+        if (!self::getApp()->container->get($model_str)) {
+            self::getApp()->container->singleton($model_str, function () {
             });
         }
-        return self::$app->container->get($model_str);
+        return self::getApp()->container->get($model_str);
     }
 
     /**
@@ -231,29 +212,10 @@ class Bootstrap
      */
     private static function getConfig($key)
     {
-        $config = require APP_PATH . '/app/config/config.php';
-        if (isset($config[$key])) {
-            return $config[$key];
+        if (isset(self::$pimpleContainer["APP_CONFIG"][$key])) {
+            return self::$pimpleContainer["APP_CONFIG"][$key];
         }
         return null;
-    }
-
-    /**
-     * 根据URI包含路由文件
-     *
-     * @author macro chen <macro_fengye@163.com>
-     */
-    private static function requireRouteFile()
-    {
-        $app = self::$app;
-        $path_info = $app->request->getPathInfo();
-        $file = "";
-        if (strcmp($path_info, "/") == 0) {
-            $file = "home";
-        } else {
-            $file = explode("/", $path_info)[1];
-        }
-        require_once APP_PATH . '/app/routes/' . $file . '_route.php';
     }
 
     /**
@@ -263,37 +225,55 @@ class Bootstrap
      */
     protected static function registerHook($name, $callable, $priority)
     {
-        self::$app->hook($name, $callable, $priority);
+        self::getApp()->hook($name, $callable, $priority);
     }
 
     /**
-     * 如果没有手动的配置路由信息
+     * 路由配置
      * 则动态的添加路由，根据请求的URL来动态的添加路由表,
      *
      * @author macro chen <macro_fengye@163.com>
      */
-    protected static function dynamicAddRoter()
+    protected static function dealRouter()
     {
-        $path_info = self::$app->request()->getPathInfo();
+        $path_info = self::getApp()->request->getPathInfo();
         $path_infos = explode("/", trim($path_info));
         $path_infos[1] = empty($path_infos[1]) ? 'home' : $path_infos[1];
         $path_infos[2] = empty($path_infos[2]) ? 'index' : $path_infos[2];
         $route_name = $path_infos[1] . '.' . $path_infos[2];
-        if (!self::$app->router()->getNamedRoute($route_name)) {
-            $route = "controller\\" . ucfirst($path_infos[1]) . ":" . $path_infos[2];
-            self::$app->map("/" . $path_infos[1] . "/" . $path_infos[2] . "(/:param1)(/:param2)(/:param3)(/:param4)(/:other+)", $route)
-                ->via("GET", "POST", "PUT")
-                ->name($route_name)
-                ->setMiddleware([
-                    function () {
-                        if (!preg_match("/login/", self::$app->request->getResourceUri())) {
-                            self::$app->flash('error', 'Login required');
-                            self::$app->redirect('/hello/login');
-                        }
-                    },
-                    function () {
-                    },
-                ]);
+        if (strcmp($path_info, "/") == 0) {
+            $route_file = "home";
+        } else {
+            $route_file = $path_infos[1];
+        }
+        $isDynamicAddRoute = false;
+        if (file_exists(APP_PATH . '/app/routes/' . $route_file . '_route.php')) {
+            require_once APP_PATH . '/app/routes/' . $route_file . '_route.php';
+            if (!(self::getApp()->container->get("router")->getNamedRoute($route_name))) {
+                $isDynamicAddRoute = true;
+            }
+        }
+        if ($isDynamicAddRoute) {
+            if (!self::getApp()->container->get("router")->getNamedRoute($route_name)) {
+                $route = "controller\\" . ucfirst($path_infos[1]) . ":" . $path_infos[2];
+                self::getApp()->map("/" . $path_infos[1] . "/" . $path_infos[2] . "(/:param1)(/:param2)(/:param3)(/:param4)(/:other+)", $route)
+                    ->via("GET", "POST", "PUT")
+                    ->name($route_name)
+                    ->setMiddleware([
+                        function () {
+                            echo __FILE__;
+                            /*if (!preg_match("/login/", self::getApp()->request->getResourceUri())) {
+                                self::getApp()->flash('error', 'Login required');
+                                self::getApp()->redirect('/hello/login');
+                            }*/
+                        },
+                        function () {
+                            /*self::getApp()->notFound(function(){
+                                self::getApp()->render("404.html");
+                            });*/
+                        },
+                    ]);
+            }
         }
     }
 
@@ -305,11 +285,7 @@ class Bootstrap
      */
     public static function getEntityManager()
     {
-        $em = self::$app()->container->get("entityManager");
-        if (!$em) {
-            self::setEntityManager();
-            $em = self::$app->container->get("entityManager");
-        }
+        $em = self::$pimpleContainer["entityManager"];
         return $em;
     }
 
@@ -338,19 +314,6 @@ class Bootstrap
     }
 
     /**
-     * 注册验证组件
-     *
-     * @author macro chen <macro_fengye@163.com>
-     * @return \Respect\Validation\Validator
-     */
-    public static function registerValidateComponent()
-    {
-        self::$app->container->singleton('v', function () {
-            return Validator::create();
-        });
-    }
-
-    /**
      * 获取事件组件
      *
      * @author macro chen <macro_fengye@163.com>
@@ -362,30 +325,12 @@ class Bootstrap
     }
 
     /**
-     * 设置doctrine2的entityManager
-     *
-     * @author macro chen <macro_fengye@163.com>
-     * @param SlimController\Slim $app
-     * @return \Doctrine\ORM\EntityManager
+     * 获取指定组件名字的对象
+     * @param $conponet_name
+     * @return mixed
      */
-    private static function setEntityManager()
+    public static function getPimple($conponet_name)
     {
-        $config['db'] = self::getConfig('db');
-        self::$app->container->singleton("entityManager", function () use ($config) {
-            return \Doctrine\ORM\EntityManager::create(array(
-                'driver' => $config['db'][APPLICATION_ENV]['driver'],
-                'host' => $config['db'][APPLICATION_ENV]['host'],
-                'port' => $config['db'][APPLICATION_ENV]['port'],
-                'user' => $config['db'][APPLICATION_ENV]['user'],
-                'password' => $config['db'][APPLICATION_ENV]['password'],
-                'dbname' => $config['db'][APPLICATION_ENV]['dbname'],
-            ), \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(array(
-                APP_PATH . '/app/data/Entity/',
-            ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache(), false),
-                /*  \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
-                APP_PATH . "/app/data/Yaml/"
-                ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache()), */
-                self::createEventManager());
-        });
+        return self::$pimpleContainer[$conponet_name];
     }
 }

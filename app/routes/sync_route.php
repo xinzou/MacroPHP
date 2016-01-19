@@ -3,9 +3,10 @@ $app->addRoutes([
     "/sync/test" => [
         "Synchronization:sync"
     ],
-    
-    "/sync/add"=>[
+
+    "/sync/add" => [
         "Synchronization:add",
-        function(){},
+        function () {
+        },
     ],
 ]);

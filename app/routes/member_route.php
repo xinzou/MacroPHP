@@ -1,5 +1,5 @@
-<?php 
+<?php
 $app->addRoutes(array(
     '/' => "Home:index",
-    "/hello/:name"=>"Home:hello"
+    "/hello/:name" => "Home:hello"
 ));
