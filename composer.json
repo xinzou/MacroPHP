@@ -28,7 +28,8 @@
 		"zendframework/zend-authentication": "2.*",
         "zendframework/zend-cache": "2.*",
         "zendframework/zend-serializer": "2.*",
-        "zendframework/zend-inputfilter": "2.*"
+        "zendframework/zend-inputfilter": "2.*",
+        "pimple/pimple": "~3.0"
     },
     "require-dev": {
             "composer/composer": "1.*",
