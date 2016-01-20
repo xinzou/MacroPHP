@@ -1,2 +1,2 @@
 # MacroPHP
-Macrophp一个轻量级的PHP框架
+MacroPHP一个可组合的PHP框架
