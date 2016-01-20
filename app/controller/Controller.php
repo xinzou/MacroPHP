@@ -10,7 +10,6 @@ use boot\Bootstrap;
 
 class Controller
 {
-
     /**
      * 每个控制器可以自定义$hooks
      *

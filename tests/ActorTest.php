@@ -205,7 +205,7 @@ class ActorTest extends TestCase
        
         $actor->setFirstName("php");
         $actor->setLastName("unit");
-        $this->entityManager -> persist($actor);
+        $this->entityManager->persist($actor);
         $this->entityManager->flush($actor);
     }
 }

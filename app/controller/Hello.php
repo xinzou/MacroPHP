@@ -85,8 +85,8 @@ class Hello extends Controller
         $eventArgs->obj = $actor;
         // $testEvent = new TestEvent(Bootstrap::getEntityManager()->getEventManager());
         $eventSubscriber = new TestEventSubscriber();
-        Bootstrap::getEntityManager()->getEventManager()->addEventSubscriber($eventSubscriber);
-        Bootstrap::getEntityManager()->getEventManager()->dispatchEvent(TestEvent::preFoo, $eventArgs);
+        $this->getEventManager()->addEventSubscriber($eventSubscriber);
+        $this->getEventManager()->dispatchEvent(TestEvent::preFoo, $eventArgs);
 
         $em->persist($actor);
         $em->flush($actor);

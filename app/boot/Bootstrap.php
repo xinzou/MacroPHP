@@ -3,25 +3,12 @@ namespace boot;
 
 use Doctrine\Common\EventManager;
 use Respect\Validation\Validator;
-use Slim\Slim;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
 use Zend\Session\SessionManager;
 
 class Bootstrap
 {
-    // @var Application $app
-    private static $app = NULL;
-
-    // @var EventManager $evm;
-    private static $evm;
-
-    // @var sessionManager
-    private static $sessionManager = NULL;
-
-    // @var sessionContainer
-    private static $sessionContainer = NULL;
-
     //@var PimpleContainer
     private static $pimpleContainer = NULL;
 
@@ -78,11 +65,15 @@ class Bootstrap
                 /*  \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
                 APP_PATH . "/app/data/Yaml/"
                 ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache()), */
-                self::createEventManager());
+                /*self::createEventManager()*/
+                self::getPimple("eventManager"));
         };
         self::$pimpleContainer["APP_CONFIG"] = function ($c) {
             $config = require APP_PATH . '/app/config/config.php';
             return $config;
+        };
+        self::$pimpleContainer["eventManager"] = function ($c) {
+            return new EventManager();
         };
     }
 
@@ -106,6 +97,9 @@ class Bootstrap
         $view->parserExtensions = array(
             new \Slim\Views\TwigExtension(),
         );
+        // 注册slim.before的hook
+        self::registerHook("slim.before", self::addSystemEvent(), 1);
+        // 注册slim.before.dispatch的hook
         self::registerHook("slim.before.dispatch", self::dealRouter(), 1);
         // 注册slim.before.router的hook
         self::registerHook("slim.before.router", self::slimBeforeRouter(), 10);
@@ -122,9 +116,17 @@ class Bootstrap
             $app->render('404.html');
             //避免路由两次
         });
-        //self::dealRouter();
-        //self::sessionStart();
         $app->run();
+    }
+
+    /**
+     * 引导单元测试
+     *
+     * @author macro chen <macro_fengye@163.com>
+     */
+    public static function startUnit()
+    {
+        self::initPimple();
     }
 
     /**
@@ -290,27 +292,52 @@ class Bootstrap
     }
 
     /**
-     * 创建事件管理器
-     *
+     * @添加系统配置的事件（监听器，订阅器）
      * @author macro chen <macro_fengye@163.com>
      */
-    protected static function createEventManager()
+    private static function addSystemEvent()
     {
-        if (NULL == self::$evm) {
-            self::$evm = new EventManager();
-        }
         if (self::getConfig("evm")) {
-            $evmConfig = self::getConfig("evm");
+            self::addEvent(self::getConfig("evm"));
+        }
+    }
+
+    /**
+     * @添加自定义的事件（监听器，订阅器）
+     * @param array $evm
+     * @author macro chen <macro_fengye@163.com>
+     * @return mixed
+     */
+
+    private static function addCustomEvent(array $evm = array())
+    {
+        if ($evm) {
+            return self::addEvent(self::getConfig("evm"));
+        }
+        return NULL;
+    }
+
+    /**
+     * 添加事件到事件管理器
+     * @param $evm 需要添加的事件
+     * @author macro chen <macro_fengye@163.com>
+     * @return  mixed
+     */
+    private static function addEvent(array $evm = array())
+    {
+        if (isset($evmConfig['listener'])) {
             foreach ($evmConfig['listener'] as $key => $listener) {
-                self::$evm->addEventListener(array(
+                self::getPimple('eventManager')->addEventListener(array(
                     self::$eventTypeMapping[$key],
                 ), new $listener());
             }
-            foreach ($evmConfig['subscriber'] as $key => $subscriber) {
-                self::$evm->addEventSubscriber(new $subscriber());
-            }
         }
-        return self::$evm;
+        if (isset($evmConfig['subscriber'])) {
+            foreach ($evmConfig['subscriber'] as $key => $subscriber) {
+                self::getPimple('eventManager')->addEventSubscriber(new $subscriber());
+            }
+            return self::getPimple('eventManager');
+        }
     }
 
     /**

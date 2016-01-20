@@ -22,10 +22,10 @@ class TestEventSubscriber implements EventSubscriber
     {
         $filter = new \Zend\I18n\Filter\Alpha();
         $number = '12222sss333';
-        echo Validator::string()->validate($number);
+       /* echo Validator::string()->validate($number);
         echo "<br/>this is : " . Bootstrap::getApp()->container->get('v')
             ->string()
-            ->validate($number) . "<br/>";
+            ->validate($number) . "<br/>";*/
        // $args->obj->setFirstName($filter->filter("kkkkk 123456"));
         print_r($args->obj);
         $this->preFooInvoked = true;
