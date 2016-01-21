@@ -45,7 +45,7 @@ class Bootstrap
             return $sessionManager;
         };
         self::$pimpleContainer["sessionContainer"] = function ($c) {
-            $sessionManager = self::getApp()->container->get('sessionManager');
+            $sessionManager = self::getPimple("sessionManager");
             Container::setDefaultManager($sessionManager);
             $container = new Container(self::getConfig("session")['container']['namespace']);
             return $container;
