@@ -151,7 +151,7 @@ class Controller
      */
     protected function initSession()
     {
-        $this->sessionContainer->_PHPASSEMBLE = "LWPHP";
+        $this->sessionContainer->_MACROPHP = "macro_php";
     }
 }
 

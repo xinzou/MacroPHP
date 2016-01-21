@@ -4,6 +4,7 @@ $config = array(
     // 自定义的配置(额外的配置)
     'customer' => array(
         'use_seesioncookie_middleware' => true,
+        'show_use_memory' => true,
     ),
 
     // 应用的配置
@@ -50,7 +51,7 @@ $config = array(
         'domain' => null,
         // 'secure' => true,
         'httponly' => true,
-        'name' => 'lwphp',
+        'name' => 'macro_php',
         'secret' => 'changethiskeytosomethingelseasap',
         'cipher' => MCRYPT_RIJNDAEL_256,
         'cipher_mode' => MCRYPT_MODE_CBC,
@@ -60,13 +61,13 @@ $config = array(
     'session' => array(
         'manager' => array(
             'remember_me_seconds' => 1200,
-            'name' => 'php_assemble',
+            'name' => 'macro_php',
             // 'phpSaveHandler' => 'redis',
             // 'savePath' => 'tcp://127.0.0.1:6379?weight=1&timeout=1',
             'use_cookies' => true,
         ),
         'container' => array(
-            'namespace' => 'php_assemble',
+            'namespace' => 'macro_php',
         ),
     ),
 

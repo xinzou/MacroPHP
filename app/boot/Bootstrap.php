@@ -117,6 +117,10 @@ class Bootstrap
             //避免路由两次
         });
         $app->run();
+        if(self::getConfig('customer')['show_use_memory']){
+            echo convert(memory_get_usage(true));
+            echo convert(memory_get_peak_usage(true));
+        }
     }
 
     /**
