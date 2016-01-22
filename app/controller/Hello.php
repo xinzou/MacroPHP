@@ -135,13 +135,11 @@ class Hello extends Controller
 
     /**测试SessionContainer**/
     public function setsession(){
-        $container = Bootstrap::getPimple("sessionContainer");
-        $container->name = "macro oop";
+        var_dump($this->sessionContainer->user);
+        $this->sessionContainer->name = "macro oop";
     }
 
     public function getsession(){
-        $container = Bootstrap::getPimple("sessionContainer");
-        echo $container->name;
-        print_r($container);
+        echo $this->sessionContainer->name;
     }
 }
