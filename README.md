@@ -5,7 +5,7 @@
 
 
 # 安装
-* 安装依
+* 安装依赖
 ```
 php composer.phar install
 ```
