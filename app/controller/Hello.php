@@ -1,6 +1,9 @@
 <?php
 namespace controller;
 
+use Doctrine\Common\Cache\MemcacheCache;
+use Doctrine\ORM\Query\ResultSetMapping;
+
 use boot\Bootstrap;
 use Doctrine\Common\EventArgs;
 use Entity\Actor;
@@ -76,17 +79,17 @@ class Hello extends Controller
     {
         $this->app->applyHook('aaa');
         print_r(get_class_methods($this->app));
-        $em = Bootstrap::getEntityManager();
+        $em = $this->getPimple("entityManager");
         /* $conn = $em->getConnection(); */
         $actor = new Actor();
         $actor->setFirstName('macro');
-        $actor->setLastName("bbb");
+        $actor->setLastName("bbbddddddd");
         $eventArgs = new EventArgs();
         $eventArgs->obj = $actor;
         // $testEvent = new TestEvent(Bootstrap::getEntityManager()->getEventManager());
         $eventSubscriber = new TestEventSubscriber();
-        $this->getEventManager()->addEventSubscriber($eventSubscriber);
-        $this->getEventManager()->dispatchEvent(TestEvent::preFoo, $eventArgs);
+        $this->getPimple("eventManager")->addEventSubscriber($eventSubscriber);
+        $this->getPimple("eventManager")->dispatchEvent(TestEvent::preFoo, $eventArgs);
 
         $em->persist($actor);
         $em->flush($actor);
@@ -105,6 +108,38 @@ class Hello extends Controller
      * $em->persist($actor);
      * $em->flush($actor );
      */
+    }
+
+    public function getItems()
+    {
+        $em = $this->getPimple("entityManager");
+        $query = $em->createQuery('SELECT u FROM Entity\Actor u WHERE u.actor_id = ?1');
+        $query->setParameter(1, 15);
+        $query->setResultCacheDriver($this->getPimple("redisCacheDriver"));
+        $query->useResultCache(true)
+            ->setResultCacheLifeTime($seconds = 3600);
+        //$result = $query->getResult(); // cache miss
+        //$query->expireResultCache(true);
+        //$result = $query->getResult(); // forced expire, cache miss
+        //$query->setResultCacheId('aaaaaaa');
+        $result = $query->getResult(); // saved in given result cache id.
+        $redis = $this->getPimple("redisCache");
+        $redis->setItem("key1" , "Key Key...");
+        $redis->setItem("key2" , "sdadadasd");
+        echo $redis->getItem("key1");
+
+        $this->getPimple("serviceManager");
+        return;
+// or call useResultCache() with all parameters:
+        $query->useResultCache(true, $seconds = 3600, 'my_query_result');
+        $result = $query->getResult(); // cache hit!
+
+// Introspection
+        $queryCacheProfile = $query->getQueryCacheProfile();
+        $cacheDriver = $query->getResultCacheDriver();
+        $lifetime = $query->getLifetime();
+
+
     }
 
     public function admin()
@@ -134,12 +169,14 @@ class Hello extends Controller
     }
 
     /**测试SessionContainer**/
-    public function setsession(){
+    public function setsession()
+    {
         var_dump($this->sessionContainer->user);
         $this->sessionContainer->name = "macro oop";
     }
 
-    public function getsession(){
+    public function getsession()
+    {
         echo $this->sessionContainer->name;
     }
 }

@@ -1,8 +1,12 @@
 <?php
 namespace boot;
 
+use Doctrine\Common\Cache\MemcachedCache;
+use Doctrine\Common\Cache\RedisCache;
 use Doctrine\Common\EventManager;
 use Respect\Validation\Validator;
+use Zend\Cache\Storage\Adapter\Filesystem;
+use Zend\ServiceManager\ServiceManager;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
 use Zend\Session\SessionManager;
@@ -31,12 +35,51 @@ class Bootstrap
     private static function initPimple()
     {
         self::$pimpleContainer = new \Pimple\Container();
+        /*App*/
         self::$pimpleContainer["app"] = function ($c) {
             return new \Slim\Slim(self::getConfig('slim'));
         };
+        /*Validate Object*/
         self::$pimpleContainer["v"] = function ($c) {
             return Validator::create();
         };
+        /*Doctrine2 Memcache Driver*/
+        self::$pimpleContainer["memcacheCacheDriver"] = function ($c) {
+            $memcacheConfig = self::getConfig('cache')['memcache'];
+            $memcache = new \Memcache();
+            $memcache->connect($memcacheConfig['host'], $memcacheConfig['port']);
+            $memcacheCacheDriver = new MemcachedCache();
+            $memcacheCacheDriver->setMemcache($memcache);
+            return $memcacheCacheDriver;
+        };
+        /*Doctrine2 Redis Driver*/
+        self::$pimpleContainer["redisCacheDriver"] = function ($c) {
+            $redisConfig = self::getConfig("cache")['redis'];
+            $redis = new \Redis();
+            $redis->connect($redisConfig['host'], $redisConfig['port']);
+            $redisCacheDriver = new RedisCache();
+            //设置缓存的命名空间
+            $redisCacheDriver->setNamespace("redisCache");
+            $redisCacheDriver->setRedis($redis);
+            return $redisCacheDriver;
+        };
+        /*ZendFrameWork Redis Object*/
+        self::$pimpleContainer["redisCache"] = function ($c) {
+            $redis = new \Zend\Cache\Storage\Adapter\Redis(array(
+                'server' => self::getConfig("cache")['redis'],
+            ));
+            //设置缓存的命名空间
+            $redis->getOptions()->setNamespace("macrophp");
+            return $redis;
+        };
+        /*ZendFrameWork FileSystemCache*/
+        self::$pimpleContainer["fileSystemCache"] = function () {
+            $fileSystem = new Filesystem(array(
+                "cache_dir" => APP_PATH . "/cache"
+            ));
+            return $fileSystem;
+        };
+        /*SessionManager Object*/
         self::$pimpleContainer['sessionManager'] = function ($c) {
             $config = new SessionConfig();
             $config->setOptions(self::getConfig("session")['manager']);
@@ -44,12 +87,14 @@ class Bootstrap
             $sessionManager->start();
             return $sessionManager;
         };
+        /*SessionManager Container Object*/
         self::$pimpleContainer["sessionContainer"] = function ($c) {
             $sessionManager = self::getPimple("sessionManager");
             Container::setDefaultManager($sessionManager);
             $container = new Container(self::getConfig("session")['container']['namespace']);
             return $container;
         };
+        /*Entity Manager Object*/
         self::$pimpleContainer["entityManager"] = function ($c) {
             $config['db'] = self::getConfig('db');
             return \Doctrine\ORM\EntityManager::create(array(
@@ -68,12 +113,20 @@ class Bootstrap
                 /*self::createEventManager()*/
                 self::getPimple("eventManager"));
         };
+        /*App Config*/
         self::$pimpleContainer["APP_CONFIG"] = function ($c) {
             $config = require APP_PATH . '/app/config/config.php';
             return $config;
         };
+        /*Event Manager Object*/
         self::$pimpleContainer["eventManager"] = function ($c) {
             return new EventManager();
+        };
+        /*Zend ServiceManager*/
+        self::$pimpleContainer['serviceManager'] = function ($c) {
+            $serviceManager = new ServiceManager();
+            print_r(get_class_methods($serviceManager));
+            return $serviceManager;
         };
     }
 
@@ -85,7 +138,7 @@ class Bootstrap
     public static function start()
     {
         self::initPimple();
-        $app = self::getApp();
+        $app = self::getPimple("app");
         $app->configureMode(APPLICATION_ENV, function () {
             error_reporting(-1);
             ini_set('display_errors', 1);
@@ -117,7 +170,7 @@ class Bootstrap
             //避免路由两次
         });
         $app->run();
-        if(self::getConfig('customer')['show_use_memory']){
+        if (self::getConfig('customer')['show_use_memory']) {
             echo convert(memory_get_usage(true));
             echo convert(memory_get_peak_usage(true));
         }
@@ -162,16 +215,6 @@ class Bootstrap
     }
 
     /**
-     * 获取整个应用
-     *
-     * @author macro chen <macro_fengye@163.com>
-     */
-    public static function getApp()
-    {
-        return self::$pimpleContainer["app"];
-    }
-
-    /**
      * 配置Cookie中间件
      * 如果zendframework-session设置了使用Cookie(use_cookies : true)
      *
@@ -179,7 +222,7 @@ class Bootstrap
      */
     private static function cookieStart()
     {
-        self::getApp()->add(new \Slim\Middleware\SessionCookie(self::getConfig('cookies')));
+        self::getPimple("app")->add(new \Slim\Middleware\SessionCookie(self::getConfig('cookies')));
     }
 
     /**
@@ -202,11 +245,11 @@ class Bootstrap
     public static function getModel($model)
     {
         $model_str = md5($model);
-        if (!self::getApp()->container->get($model_str)) {
-            self::getApp()->container->singleton($model_str, function () {
+        if (!self::getPimple("app")->container->get($model_str)) {
+            self::getPimple("app")->container->singleton($model_str, function () {
             });
         }
-        return self::getApp()->container->get($model_str);
+        return self::getPimple("app")->container->get($model_str);
     }
 
     /**
@@ -231,7 +274,7 @@ class Bootstrap
      */
     protected static function registerHook($name, $callable, $priority)
     {
-        self::getApp()->hook($name, $callable, $priority);
+        self::getPimple("app")->hook($name, $callable, $priority);
     }
 
     /**
@@ -242,7 +285,7 @@ class Bootstrap
      */
     protected static function dealRouter()
     {
-        $path_info = self::getApp()->request->getPathInfo();
+        $path_info = self::getPimple("app")->request->getPathInfo();
         $path_infos = explode("/", trim($path_info));
         $path_infos[1] = empty($path_infos[1]) ? 'home' : $path_infos[1];
         $path_infos[2] = empty($path_infos[2]) ? 'index' : $path_infos[2];
@@ -255,44 +298,32 @@ class Bootstrap
         $isDynamicAddRoute = false;
         if (file_exists(APP_PATH . '/app/routes/' . $route_file . '_route.php')) {
             require_once APP_PATH . '/app/routes/' . $route_file . '_route.php';
-            if (!(self::getApp()->container->get("router")->getNamedRoute($route_name))) {
+            if (!(self::getPimple("app")->container->get("router")->getNamedRoute($route_name))) {
                 $isDynamicAddRoute = true;
             }
         }
         if ($isDynamicAddRoute) {
-            if (!self::getApp()->container->get("router")->getNamedRoute($route_name)) {
+            if (!self::getPimple("app")->container->get("router")->getNamedRoute($route_name)) {
                 $route = "controller\\" . ucfirst($path_infos[1]) . ":" . $path_infos[2];
-                self::getApp()->map("/" . $path_infos[1] . "/" . $path_infos[2] . "(/:param1)(/:param2)(/:param3)(/:param4)(/:other+)", $route)
+                self::getPimple("app")->map("/" . $path_infos[1] . "/" . $path_infos[2] . "(/:param1)(/:param2)(/:param3)(/:param4)(/:other+)", $route)
                     ->via("GET", "POST", "PUT")
                     ->name($route_name)
                     ->setMiddleware([
                         function () {
                             echo __FILE__;
-                            /*if (!preg_match("/login/", self::getApp()->request->getResourceUri())) {
-                                self::getApp()->flash('error', 'Login required');
-                                self::getApp()->redirect('/hello/login');
+                            /*if (!preg_match("/login/", self::getPimple("app")->request->getResourceUri())) {
+                                self::getPimple("app")->flash('error', 'Login required');
+                                self::getPimple("app")->redirect('/hello/login');
                             }*/
                         },
                         function () {
-                            /*self::getApp()->notFound(function(){
-                                self::getApp()->render("404.html");
+                            /*self::getPimple("app")->notFound(function(){
+                                self::getPimple("app")->render("404.html");
                             });*/
                         },
                     ]);
             }
         }
-    }
-
-    /**
-     * 获取doctrine2的entityManager
-     *
-     * @author macro chen <macro_fengye@163.com>
-     * @return \Doctrine\ORM\EntityManager
-     */
-    public static function getEntityManager()
-    {
-        $em = self::$pimpleContainer["entityManager"];
-        return $em;
     }
 
     /**

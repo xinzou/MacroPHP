@@ -7,6 +7,19 @@ $config = array(
         'show_use_memory' => true,
     ),
 
+    //缓存的配置
+    'cache' => array(
+        'memcache' => array(
+            "host" => "127.0.0.1",
+            "port" => 11211
+        ),
+        "redis" => array(
+            "host" => "127.0.0.1",
+            "port" => 6379
+        ),
+        "memcached" => array(),
+    ),
+
     // 应用的配置
     'slim' => array(
         'controller.param_prefix' => 'prefix',

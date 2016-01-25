@@ -11,4 +11,4 @@ php composer.phar install
 ```
 * 在app目录下面新建log目录
 * 修改app/templates/cache的权限
-
+* 如果开启文件缓存，请新建对应的缓存文件夹
