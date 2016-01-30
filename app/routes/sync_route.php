@@ -1,5 +1,5 @@
 <?php
-$app = \boot\Bootstrap::getApp();
+$app = \boot\Bootstrap::getPimple("app");
 $app->addRoutes([
     "/sync/test" => [
         "Synchronization:sync"

@@ -27,14 +27,6 @@ class Controller
     protected $app;
 
     /**
-     * 整个应用的事件管理器
-     *
-     * @author amcro chen <macro_fengye@163.com>
-     * @var EventManager
-     */
-    protected $event;
-
-    /**
      * 应用的请求参数
      *
      * @author macro chen <macro_fengye@163.com>
@@ -65,7 +57,7 @@ class Controller
      */
     public function __construct()
     {
-        $this->app = Bootstrap::getApp();
+        $this->app = $this->getPimple("app");
         $this->analyzeRequestParams();
         $this->sessionManager = Bootstrap::getPimple('sessionManager');
         $this->sessionContainer = Bootstrap::getPimple('sessionContainer');
@@ -92,17 +84,6 @@ class Controller
     protected function applyHook($name, $data)
     {
         $this->app->applyHook($name, $data);
-    }
-
-    /**
-     * 获取EventsManager
-     *
-     * @author macro chen <macro_fengye@163.com>
-     */
-    protected function getEventManager()
-    {
-        $this->event = Bootstrap::getEntityManager()->getEventManager();
-        return $this->event;
     }
 
     /**
@@ -152,6 +133,16 @@ class Controller
     protected function initSession()
     {
         $this->sessionContainer->_MACROPHP = "macro_php";
+    }
+
+    /**
+     * 获取指定组件名字的对象
+     * @param $conponet_name
+     * @return mixed
+     */
+    protected function getPimple($conponet_name)
+    {
+        return Bootstrap::getPimple($conponet_name);
     }
 }
 

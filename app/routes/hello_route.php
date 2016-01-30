@@ -1,5 +1,5 @@
 <?php
-$app = \boot\Bootstrap::getApp();
+$app = \boot\Bootstrap::getPimple("app");
 
 $app->map("/hello/show(/:name)", "controller\\Hello:show")
     ->via('GET', 'POST', 'PUT')

@@ -1,5 +1,5 @@
 <?php
-$app = \boot\Bootstrap::getApp();
+$app = \boot\Bootstrap::getPimple("app");
 $app->map("/", "controller\\Home:index")->via("GET");;
 /* $app->addRoutes(array(
     '/' => array("Home:index",function(){
