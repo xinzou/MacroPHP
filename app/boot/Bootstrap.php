@@ -109,7 +109,7 @@ class Bootstrap
         self::registerHook("slim.stop", self::slimStop(), 10);
         // 处理500错误
         $app->error(function (\Exception $e) use ($app) {
-            $app->render('error.php');
+            $app->render('error.html');
         });
         // 处理404
         $app->notFound(function () use ($app) {
@@ -117,7 +117,7 @@ class Bootstrap
             //避免路由两次
         });
         $app->run();
-        if(self::getConfig('customer')['show_use_memory']){
+        if (self::getConfig('customer')['show_use_memory']) {
             echo convert(memory_get_usage(true));
             echo convert(memory_get_peak_usage(true));
         }
@@ -255,12 +255,16 @@ class Bootstrap
         $isDynamicAddRoute = false;
         if (file_exists(APP_PATH . '/app/routes/' . $route_file . '_route.php')) {
             require_once APP_PATH . '/app/routes/' . $route_file . '_route.php';
+        } else {
             if (!(self::getApp()->container->get("router")->getNamedRoute($route_name))) {
                 $isDynamicAddRoute = true;
             }
         }
         if ($isDynamicAddRoute) {
             if (!self::getApp()->container->get("router")->getNamedRoute($route_name)) {
+                if (!method_exists("controller\\" . ucfirst($path_infos[1]), $path_infos[2])) {
+                    return;
+                }
                 $route = "controller\\" . ucfirst($path_infos[1]) . ":" . $path_infos[2];
                 self::getApp()->map("/" . $path_infos[1] . "/" . $path_infos[2] . "(/:param1)(/:param2)(/:param3)(/:param4)(/:other+)", $route)
                     ->via("GET", "POST", "PUT")
@@ -274,9 +278,9 @@ class Bootstrap
                             }*/
                         },
                         function () {
-                            /*self::getApp()->notFound(function(){
+                            self::getApp()->notFound(function () {
                                 self::getApp()->render("404.html");
-                            });*/
+                            });
                         },
                     ]);
             }

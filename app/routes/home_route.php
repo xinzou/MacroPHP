@@ -1,5 +1,5 @@
 <?php
-$app = \Slim\Slim::getInstance("default");
+$app = \boot\Bootstrap::getApp();
 $app->map("/", "controller\\Home:index")->via("GET");;
 /* $app->addRoutes(array(
     '/' => array("Home:index",function(){

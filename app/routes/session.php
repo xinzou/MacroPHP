@@ -1,5 +1,6 @@
 <?php
 //http://nesbot.com/2012/11/5/lazy-loading-slim-controllers-using-pimple
+$app = \boot\Bootstrap::getApp();
 $app->get("/", function () {
     echo "hello kitty";
 });
