@@ -287,30 +287,32 @@ class Bootstrap
     {
         $path_info = self::getPimple("app")->request->getPathInfo();
         $path_infos = explode("/", trim($path_info));
-        $path_infos[1] = empty($path_infos[1]) ? 'home' : $path_infos[1];
-        $path_infos[2] = empty($path_infos[2]) ? 'index' : $path_infos[2];
-        $route_name = $path_infos[1] . '.' . $path_infos[2];
+        $controller = isset($path_infos[1]) ? $path_infos[1] : "home";
+        $action =  (isset($path_infos[2]) && !empty($path_infos[2])) ? $path_infos[2] : "index";
+        $route_name = $controller . '.' . $action;
         if (strcmp($path_info, "/") == 0) {
             $route_file = "home";
         } else {
             $route_file = $path_infos[1];
         }
-        $isDynamicAddRoute = false;
+        $isDynamicAddRoute = true;
         if (file_exists(APP_PATH . '/app/routes/' . $route_file . '_route.php')) {
             require_once APP_PATH . '/app/routes/' . $route_file . '_route.php';
-        } else {
-            if (!(self::getPimple("app")->container->get("router")->getNamedRoute($route_name))) {
-                $isDynamicAddRoute = true;
-            }
+            $isDynamicAddRoute = false;
         }
         if ($isDynamicAddRoute) {
             if (!self::getPimple("app")->container->get("router")->getNamedRoute($route_name)) {
-                if (!method_exists("controller\\" . ucfirst($path_infos[1]), $path_infos[2])) {
+                if (!method_exists("controller\\" . ucfirst($controller), $action)) {
                     return;
                 }
                 if (!self::getPimple("app")->container->get("router")->getNamedRoute($route_name)) {
-                    $route = "controller\\" . ucfirst($path_infos[1]) . ":" . $path_infos[2];
-                    self::getPimple("app")->map("/" . $path_infos[1] . "/" . $path_infos[2] . "(/:param1)(/:param2)(/:param3)(/:param4)(/:other+)", $route)
+                    $route = "controller\\" . ucfirst($controller) . ":" . $action;
+                    if(!isset($path_infos[2]) || empty($path_infos[2])){
+                        $url =  isset($path_infos[2])?"/" . $path_infos[1] . "/":"/" . $path_infos[1];
+                    }else{
+                        $url = "/" . $path_infos[1] . "/" . $path_infos[2] . (strrchr($path_info , "/") == "/" ? "/" : "");
+                    }
+                    self::getPimple("app")->map( $url . "(/:param1)(/:param2)(/:param3)(/:param4)(/:other+)", $route)
                         ->via("GET", "POST", "PUT")
                         ->name($route_name)
                         ->setMiddleware([
