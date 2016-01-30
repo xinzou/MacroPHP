@@ -288,7 +288,7 @@ class Bootstrap
         $path_info = self::getPimple("app")->request->getPathInfo();
         $path_infos = explode("/", trim($path_info));
         $controller = isset($path_infos[1]) ? $path_infos[1] : "home";
-        $action =  (isset($path_infos[2]) && !empty($path_infos[2])) ? $path_infos[2] : "index";
+        $action = (isset($path_infos[2]) && !empty($path_infos[2])) ? $path_infos[2] : "index";
         $route_name = $controller . '.' . $action;
         if (strcmp($path_info, "/") == 0) {
             $route_file = "home";
@@ -307,12 +307,12 @@ class Bootstrap
                 }
                 if (!self::getPimple("app")->container->get("router")->getNamedRoute($route_name)) {
                     $route = "controller\\" . ucfirst($controller) . ":" . $action;
-                    if(!isset($path_infos[2]) || empty($path_infos[2])){
-                        $url =  isset($path_infos[2])?"/" . $path_infos[1] . "/":"/" . $path_infos[1];
-                    }else{
-                        $url = "/" . $path_infos[1] . "/" . $path_infos[2] . (strrchr($path_info , "/") == "/" ? "/" : "");
+                    if (!isset($path_infos[2]) || empty($path_infos[2])) {
+                        $url = isset($path_infos[2]) ? "/" . $path_infos[1] . "/" : "/" . $path_infos[1];
+                    } else {
+                        $url = "/" . $path_infos[1] . "/" . $path_infos[2] . (strrchr($path_info, "/") == "/" ? "/" : "");
                     }
-                    self::getPimple("app")->map( $url . "(/:param1)(/:param2)(/:param3)(/:param4)(/:other+)", $route)
+                    self::getPimple("app")->map($url . "(/:param1)(/:param2)(/:param3)(/:param4)(/:other+)", $route)
                         ->via("GET", "POST", "PUT")
                         ->name($route_name)
                         ->setMiddleware([
