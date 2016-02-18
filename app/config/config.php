@@ -88,21 +88,65 @@ $config = array(
     'db' => array(
         // 开发模式
         'development' => array(
-            'driver' => 'pdo_mysql',
-            'host' => '127.0.0.1',
-            'port' => '3306',
-            'user' => 'root',
-            'password' => 'root',
-            'dbname' => 'sakila',
-        ),
+            "db1" => array(
+                'driver' => 'pdo_mysql',
+                'host' => '127.0.0.1',
+                'port' => '3306',
+                'user' => 'root',
+                'password' => 'root',
+                'dbname' => 'sakila',
+                "charset"=>"UTF8",
+                'sharding' => array(
+                    'federationName' => 'my_database',
+                    'distributionKey' => 'customer_id',
+                )
+            ),
+            "db2" => array(
+                'driver' => 'pdo_mysql',
+                'host' => '127.0.0.1',
+                'port' => '3306',
+                'user' => 'root',
+                'password' => 'root',
+                'dbname' => 'sakila',
+                "charset"=>"UTF8",
+                'sharding' => array(
+                    'federationName' => 'my_database',
+                    'distributionKey' => 'customer_id',
+                )
+            ),
+            "db3" => array(
+                'driver' => 'pdo_mysql',
+                'host' => '127.0.0.1',
+                'port' => '3306',
+                'user' => 'root',
+                'password' => 'root',
+                'dbname' => 'sakila',
+                "charset"=>"UTF8",
+                'sharding' => array(
+                    'federationName' => 'my_database',
+                    'distributionKey' => 'customer_id',
+                )
+            )),
         // 生产模式
         'production' => array(
-            'driver' => 'pdo_mysql',
-            'host' => 'localhost',
-            'port' => '3306',
-            'user' => 'username',
-            'password' => 'password',
-            'dbname' => 'production_dbname',
+            "db1" => array(
+                'driver' => 'pdo_mysql',
+                'host' => 'localhost',
+                'port' => '3306',
+                'user' => 'username',
+                'password' => 'password',
+                'dbname' => 'production_dbname',
+                "charset"=>"UTF8"
+            ),
+            "db2" => array(
+                'driver' => 'pdo_mysql',
+                'host' => 'localhost',
+                'port' => '3306',
+                'user' => 'username',
+                'password' => 'password',
+                'dbname' => 'production_dbname',
+                "charset"=>"UTF8"
+            )
         ),
     ),
 

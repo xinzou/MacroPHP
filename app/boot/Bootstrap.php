@@ -4,6 +4,7 @@ namespace boot;
 use Doctrine\Common\Cache\MemcachedCache;
 use Doctrine\Common\Cache\RedisCache;
 use Doctrine\Common\EventManager;
+use Doctrine\DBAL\DriverManager;
 use Respect\Validation\Validator;
 use Zend\Cache\Storage\Adapter\Filesystem;
 use Zend\ServiceManager\ServiceManager;
@@ -94,24 +95,15 @@ class Bootstrap
             $container = new Container(self::getConfig("session")['container']['namespace']);
             return $container;
         };
+
+        /*DriverManager Object*/
+        self::$pimpleContainer["shardManager"] = function ($c) {
+            return self::databaseConnection("driverManager");
+        };
+
         /*Entity Manager Object*/
         self::$pimpleContainer["entityManager"] = function ($c) {
-            $config['db'] = self::getConfig('db');
-            return \Doctrine\ORM\EntityManager::create(array(
-                'driver' => $config['db'][APPLICATION_ENV]['driver'],
-                'host' => $config['db'][APPLICATION_ENV]['host'],
-                'port' => $config['db'][APPLICATION_ENV]['port'],
-                'user' => $config['db'][APPLICATION_ENV]['user'],
-                'password' => $config['db'][APPLICATION_ENV]['password'],
-                'dbname' => $config['db'][APPLICATION_ENV]['dbname'],
-            ), \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(array(
-                APP_PATH . '/app/data/Entity/',
-            ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache(), false),
-                /*  \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
-                APP_PATH . "/app/data/Yaml/"
-                ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache()), */
-                /*self::createEventManager()*/
-                self::getPimple("eventManager"));
+            return self::databaseConnection("entityManager");
         };
         /*App Config*/
         self::$pimpleContainer["APP_CONFIG"] = function ($c) {
@@ -128,6 +120,37 @@ class Bootstrap
             print_r(get_class_methods($serviceManager));
             return $serviceManager;
         };
+    }
+
+    /**
+     * 根据不同的数据库链接类型，实例化不同的数据库链接对象
+     * $type == entityManager的实例可以支持事务
+     * $type == driverManager支持分库分表
+     * @param $type
+     * @throws \Doctrine\ORM\ORMException
+     * @return array
+     */
+    private static function databaseConnection($type)
+    {
+        $dbConfig = self::getConfig('db')[APPLICATION_ENV];
+        $dataBases = array();
+        foreach ($dbConfig as $key => $config) {
+            $configuration = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(array(
+                APP_PATH . '/app/data/Entity/',
+            ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache(), false);
+            /*  $configuration = \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
+                APP_PATH . "/app/data/Yaml/"
+                ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache()), */
+            /*self::createEventManager()*/
+            if ($type == "entityManager") {
+                $dataBases[$key] = \Doctrine\ORM\EntityManager::create($config
+                    , $configuration, self::getPimple("eventManager"));
+            } else if ($type == "driverManager") {
+                $dataBases[$key] = DriverManager::getConnection($config
+                    , $configuration, self::getPimple("eventManager"));
+            }
+        }
+        return $dataBases;
     }
 
     /**
