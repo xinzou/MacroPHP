@@ -55,5 +55,10 @@
       "subscriber": "app",
       "event": "app"
     }
-  }
+  },
+  "config": {
+    "github-oauth": {
+      "github.com": "282bd6ebbd629205a290df32d733e7de20ce335c"
+      }
+    }
 }
