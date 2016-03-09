@@ -62,7 +62,7 @@
       "CMS\\subscriber\\": "app\\CMS",
       "CMS\\event\\": "app\\CMS"
     },
-    "files": ["core\\Lib\\functions.php" , "core\\Lib\\abc.php"]
+    "files": ["core\\Lib\\functions_include.php"]
   },
   "config": {
     "github-oauth": {
