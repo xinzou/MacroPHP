@@ -1,15 +1,15 @@
 <?php
-$app = \boot\Bootstrap::getPimple("app");
+$app = \Boot\Bootstrap::getPimple("app");
 
-$app->map("/hello/show(/:name)", "controller\\Hello:show")
+$app->map("/hello/show(/:name)", APP_NAME."\\controller\\Hello:show")
     ->via('GET', 'POST', 'PUT')
     ->name('show')->setMiddleware([function () {
         echo __FILE__;
     }]);
 
-/*$app->map("/hello/test", "controller\\Hello:test")->via("GET")->name("test");
+$app->map("/hello/test", APP_NAME."\\controller\\Hello:test")->via("GET")->name("test");
 
-$app->map("/hello/index", "controller\\Hello:index")
+$app->map("/hello/index", APP_NAME."\\controller\\Hello:index")
     ->via("GET")
     ->setMiddleware([
     function () {
@@ -20,6 +20,6 @@ $app->map("/hello/index", "controller\\Hello:index")
     }
 ])->name("index");
 
-$app->map("/hello/rbac", "controller\\Hello:rbac")
+$app->map("/hello/rbac", APP_NAME."\\controller\\Hello:rbac")
     ->via("POST")
-    ->name("rbac"); */
+    ->name("rbac"); 

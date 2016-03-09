@@ -49,18 +49,18 @@
     "psr-4": {
       "Boot\\": "core\\Boot",
       "Controller\\":"core\\Controller",
-      "Blog\\Entity\\": "app\\Blog\\data",
+      "Blog\\Entity\\": "app\\Blog\\data\\Entity",
       "Blog\\controller\\": "app\\Blog\\controller",
       "Blog\\validate\\": "app\\Blog",
       "Blog\\listener\\": "app\\Blog",
-      "Blog\\subscriber\\": "app\\Blog",
-      "Blog\\event\\": "app\\Blog",
-      "CMS\\Entity\\": "app\\CMS\\data",
+      "Blog\\subscriber\\": "app\\Blog\\subscriber",
+      "Blog\\event\\": "app\\Blog\\event",
+      "CMS\\Entity\\": "app\\CMS\\data\\Entity",
       "CMS\\controller\\": "app\\CMS\\controller",
       "CMS\\validate\\": "app\\CMS",
-      "CMS\\listener\\": "app\\CMS",
-      "CMS\\subscriber\\": "app\\CMS",
-      "CMS\\event\\": "app\\CMS"
+      "CMS\\listener\\": "app\\CMS\\listener",
+      "CMS\\subscriber\\": "app\\CMS\\subscriber",
+      "CMS\\event\\": "app\\CMS\\event"
     },
     "files": ["core\\Lib\\functions_include.php"]
   },

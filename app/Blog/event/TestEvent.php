@@ -1,5 +1,5 @@
 <?php
-namespace event;
+namespace Blog\event;
 
 use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventManager;

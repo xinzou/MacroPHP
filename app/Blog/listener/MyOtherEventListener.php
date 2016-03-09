@@ -1,5 +1,5 @@
 <?php
-namespace listener;
+namespace Blog\listener;
 
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Entity\Product;

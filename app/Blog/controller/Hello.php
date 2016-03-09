@@ -4,11 +4,11 @@ namespace Blog\controller;
 use Doctrine\Common\Cache\MemcacheCache;
 use Doctrine\ORM\Query\ResultSetMapping;
 
-use boot\Bootstrap;
+use Boot\Bootstrap;
 use Doctrine\Common\EventArgs;
-use Entity\Actor;
-use event\TestEvent;
-use subscriber\TestEventSubscriber;
+use Blog\Entity\Actor;
+use Blog\event\TestEvent;
+use Blog\subscriber\TestEventSubscriber;
 use Zend\Permissions\Rbac\Rbac;
 use Zend\Validator\EmailAddress;
 
@@ -48,10 +48,10 @@ class Hello extends \Controller\Controller
         $eventArgs->obj = array(1, 2, 3, 4, 5, 6);
         // $testEvent = new TestEvent(Bootstrap::getEntityManager()->getEventManager());
         $eventSubscriber = new TestEventSubscriber();
-        $test = new TestEvent(Bootstrap::getEvm());
+        $test = new TestEvent(Bootstrap::getEvm("db1"));
         $test->preFoo($eventArgs);
-        Bootstrap::getEvm()->addEventSubscriber($eventSubscriber);
-        Bootstrap::getEvm()->dispatchEvent(TestEvent::preFoo, $eventArgs);
+        Bootstrap::getEvm("db1")->addEventSubscriber($eventSubscriber);
+        Bootstrap::getEvm("db1")->dispatchEvent(TestEvent::preFoo, $eventArgs);
         //   print_r(Bootstrap::getEvm()->getListeners());
     }
 

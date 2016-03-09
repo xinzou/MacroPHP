@@ -413,9 +413,9 @@ class Bootstrap
      * @author macro chen <macro_fengye@163.com>
      * @return \Doctrine\Common\EventManager
      */
-    public static function getEvm()
+    public static function getEvm($data_source)
     {
-        return self::getEntityManager()->getEventManager();
+        return self::getPimple("entityManager")[$data_source]->getEventManager();
     }
 
     /**

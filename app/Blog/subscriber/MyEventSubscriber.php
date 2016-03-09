@@ -1,5 +1,5 @@
 <?php
-namespace subscriber;
+namespace Blog\subscriber;
 
 use Doctrine\ORM\Events;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
