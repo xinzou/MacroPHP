@@ -46,15 +46,23 @@
     "bin-dir": "bin"
   },
   "autoload": {
-    "psr-0": {
-      "Entity": "app/data",
-      "controller": "app",
-      "boot": "app",
-      "validate": "app",
-      "listener": "app",
-      "subscriber": "app",
-      "event": "app"
-    }
+    "psr-4": {
+      "Boot\\": "core\\Boot",
+      "Controller\\":"core\\Controller",
+      "Blog\\Entity\\": "app\\Blog\\data",
+      "Blog\\controller\\": "app\\Blog\\controller",
+      "Blog\\validate\\": "app\\Blog",
+      "Blog\\listener\\": "app\\Blog",
+      "Blog\\subscriber\\": "app\\Blog",
+      "Blog\\event\\": "app\\Blog",
+      "CMS\\Entity\\": "app\\CMS\\data",
+      "CMS\\controller\\": "app\\CMS\\controller",
+      "CMS\\validate\\": "app\\CMS",
+      "CMS\\listener\\": "app\\CMS",
+      "CMS\\subscriber\\": "app\\CMS",
+      "CMS\\event\\": "app\\CMS"
+    },
+    "files": ["core\\Lib\\functions.php" , "core\\Lib\\abc.php"]
   },
   "config": {
     "github-oauth": {
