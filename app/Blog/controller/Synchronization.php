@@ -1,5 +1,5 @@
 <?php
-namespace controller;
+namespace Blog\controller;
 
 use boot\Bootstrap;
 use Entity\Brand;

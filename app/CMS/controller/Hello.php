@@ -1,5 +1,5 @@
 <?php
-namespace controller;
+namespace Blog\controller;
 
 use Doctrine\Common\Cache\MemcacheCache;
 use Doctrine\ORM\Query\ResultSetMapping;
@@ -12,7 +12,7 @@ use subscriber\TestEventSubscriber;
 use Zend\Permissions\Rbac\Rbac;
 use Zend\Validator\EmailAddress;
 
-class Hello extends Controller
+class Hello extends \Controller\Controller
 {
 
     protected $hooks = array(

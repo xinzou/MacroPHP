@@ -1,7 +1,7 @@
 <?php
 namespace Blog\controller;
 
-class Home extends \Action\Controller
+class Home extends \Controller\Controller
 {
 
     public function index()
