@@ -42,31 +42,31 @@
   "bin": [
     "composer/bin/dbunit"
   ],
+
   "config": {
-    "bin-dir": "bin"
+    "bin-dir": "bin",
+    "github-oauth": {
+      "github.com": "cf89acb909258049362ff447a473967710ace561"
+    }
   },
+
   "autoload": {
     "psr-4": {
       "Boot\\": "core\\Boot",
       "Controller\\":"core\\Controller",
       "Blog\\Entity\\": "app\\Blog\\data\\Entity",
       "Blog\\controller\\": "app\\Blog\\controller",
-      "Blog\\validate\\": "app\\Blog",
-      "Blog\\listener\\": "app\\Blog",
+      "Blog\\validate\\": "app\\Blog\\validate",
+      "Blog\\listener\\": "app\\Blog\\listener",
       "Blog\\subscriber\\": "app\\Blog\\subscriber",
       "Blog\\event\\": "app\\Blog\\event",
       "CMS\\Entity\\": "app\\CMS\\data\\Entity",
       "CMS\\controller\\": "app\\CMS\\controller",
-      "CMS\\validate\\": "app\\CMS",
+      "CMS\\validate\\": "app\\CMS\\validate",
       "CMS\\listener\\": "app\\CMS\\listener",
       "CMS\\subscriber\\": "app\\CMS\\subscriber",
       "CMS\\event\\": "app\\CMS\\event"
     },
     "files": ["core\\Lib\\functions_include.php"]
-  },
-  "config": {
-    "github-oauth": {
-      "github.com": "282bd6ebbd629205a290df32d733e7de20ce335c"
-      }
-    }
+  }
 }
