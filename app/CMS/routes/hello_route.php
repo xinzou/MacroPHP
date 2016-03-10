@@ -1,7 +1,7 @@
 <?php
 $app = \boot\Bootstrap::getPimple("app");
 
-$app->map("/hello/show(/:name)", "controller\\Hello:show")
+$app->map("/hello/show(/:name)", APP_NAME."\\controller\\Hello:show")
     ->via('GET', 'POST', 'PUT')
     ->name('show')->setMiddleware([function () {
         echo __FILE__;

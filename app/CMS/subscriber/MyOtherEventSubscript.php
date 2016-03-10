@@ -1,5 +1,5 @@
 <?php
-namespace subscriber;
+namespace CMS\subscriber;
 
 use Doctrine\Common\EventSubscriber;
 

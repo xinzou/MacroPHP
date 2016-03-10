@@ -1,10 +1,10 @@
 <?php
-namespace subscriber;
+namespace CMS\subscriber;
 
 use Doctrine\ORM\Events;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\Common\EventSubscriber;
-use Entity\Actor;
+use CMS\Entity\Actor;
 
 class MyEventSubscriber implements EventSubscriber
 {

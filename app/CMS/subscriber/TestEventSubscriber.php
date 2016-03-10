@@ -1,9 +1,9 @@
 <?php
-namespace subscriber;
+namespace CMS\subscriber;
 
 use Doctrine\Common\EventSubscriber;
-use event\TestEvent;
-use boot\Bootstrap;
+use CMS\event\TestEvent;
+use Boot\Bootstrap;
 use Respect\Validation\Validator;
 
 class TestEventSubscriber implements EventSubscriber

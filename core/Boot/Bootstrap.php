@@ -328,16 +328,24 @@ class Bootstrap
         $isDynamicAddRoute = true;
         if (file_exists(APP_PATH . '/routes/' . $route_file . '_route.php')) {
             require_once APP_PATH . '/routes/' . $route_file . '_route.php';
-            $isDynamicAddRoute = false;
+            $namedRoutes = self::getPimple("app")->container->get("router")->getNamedRoutes();
+            $isDynamicAddRoute = true;
+            while ($namedRoutes->valid()) {
+                $routeName = $namedRoutes->current()->getName();
+                if (!strcmp(strtolower($action), $routeName)) {
+                    $isDynamicAddRoute = false;
+                    break;
+                }
+                $namedRoutes->next();
+            }
         }
         if ($isDynamicAddRoute) {
             if (!self::getPimple("app")->container->get("router")->getNamedRoute($route_name)) {
-                if (!method_exists(APP_NAME."\\controller\\" . ucfirst($controller), $action)) {
+                if (!method_exists(APP_NAME . "\\controller\\" . ucfirst($controller), $action)) {
                     return;
                 }
                 if (!self::getPimple("app")->container->get("router")->getNamedRoute($route_name)) {
-                    $route = APP_NAME."\\controller\\" . ucfirst($controller) . ":" . $action;
-                    echo $route;
+                    $route = APP_NAME . "\\controller\\" . ucfirst($controller) . ":" . $action;
                     if (!isset($path_infos[2]) || empty($path_infos[2])) {
                         $url = isset($path_infos[2]) ? "/" . $path_infos[1] . "/" : "/" . $path_infos[1];
                     } else {
@@ -421,6 +429,7 @@ class Bootstrap
      * 获取事件组件
      *
      * @author macro chen <macro_fengye@163.com>
+     * @param string $data_source
      * @return \Doctrine\Common\EventManager
      */
     public static function getEvm($data_source)

@@ -1,5 +1,5 @@
 <?php
-namespace event;
+namespace CMS\event;
 
 use Doctrine\Common\EventArgs;
 use Doctrine\Common\EventManager;
