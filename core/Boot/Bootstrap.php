@@ -196,7 +196,11 @@ class Bootstrap
         });
         // 处理404
         $app->notFound(function () use ($app) {
-            $app->render('404.html');
+            $path_info = self::getPimple("app")->request->getPathInfo();
+            $path_infos = explode("/", trim($path_info));
+            $controller = isset($path_infos[1]) ? $path_infos[1] : "home";
+            $action = (isset($path_infos[2]) && !empty($path_infos[2])) ? $path_infos[2] : "index";
+            $app->render('404.html',array("controller"=>APP_NAME."\\controller\\".ucfirst($controller) , "action"=>$action));
             //避免路由两次
         });
         $app->run();
@@ -351,7 +355,7 @@ class Bootstrap
                         $url = "/" . $path_infos[1] . "/" . $path_infos[2] . (strrchr($path_info, "/") == "/" ? "/" : "");
                     }
                     self::getPimple("app")->map($url . "(/)(:param1)(/)(:param2)(/)(:param3)(/)(:param4)(/)(:other+)(/)", $route)
-                        ->via("GET", "POST", "PUT")
+                        ->via("GET", "POST", "PUT","PATCH","DELETE","OPTIONS")
                         ->name($route_name)
                         ->setMiddleware([
                             function () {
