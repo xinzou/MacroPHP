@@ -14,7 +14,11 @@ use Zend\Session\SessionManager;
 
 class Bootstrap
 {
-    //@var PimpleContainer
+    /**
+     * 依赖注入的容器
+     *
+     * @var \Pimple\Container $pimpleContainer
+     */
     private static $pimpleContainer = NULL;
 
     /**
@@ -31,21 +35,23 @@ class Bootstrap
 
     /**
      * 初始化依赖管理器
+     *
      * @author macro chen <macro_fengye@163.com>
      */
     private static function initPimple()
     {
+        $pimpleConfig = self::getConfig("pimpleConfig");
         self::$pimpleContainer = new \Pimple\Container();
         /*App*/
-        self::$pimpleContainer["app"] = function ($c) {
+        self::$pimpleContainer["app"] = function ($pimpleConfig) {
             return new \Slim\Slim(self::getConfig('slim'));
         };
         /*Validate Object*/
-        self::$pimpleContainer["v"] = function ($c) {
+        self::$pimpleContainer["v"] = function ($pimpleConfig) {
             return Validator::create();
         };
         /*Doctrine2 Memcache Driver*/
-        self::$pimpleContainer["memcacheCacheDriver"] = function ($c) {
+        self::$pimpleContainer["memcacheCacheDriver"] = function ($pimpleConfig) {
             $memcacheConfig = self::getConfig('cache')['memcache'];
             $memcache = new \Memcache();
             $memcache->connect($memcacheConfig['host'], $memcacheConfig['port']);
@@ -54,7 +60,7 @@ class Bootstrap
             return $memcacheCacheDriver;
         };
         /*Doctrine2 Redis Driver*/
-        self::$pimpleContainer["redisCacheDriver"] = function ($c) {
+        self::$pimpleContainer["redisCacheDriver"] = function ($pimpleConfig) {
             $redisConfig = self::getConfig("cache")['redis'];
             $redis = new \Redis();
             $redis->connect($redisConfig['host'], $redisConfig['port']);
@@ -65,7 +71,7 @@ class Bootstrap
             return $redisCacheDriver;
         };
         /*ZendFrameWork Redis Object*/
-        self::$pimpleContainer["redisCache"] = function ($c) {
+        self::$pimpleContainer["redisCache"] = function ($pimpleConfig) {
             $redis = new \Zend\Cache\Storage\Adapter\Redis(array(
                 'server' => self::getConfig("cache")['redis'],
             ));
@@ -74,14 +80,14 @@ class Bootstrap
             return $redis;
         };
         /*ZendFrameWork FileSystemCache*/
-        self::$pimpleContainer["fileSystemCache"] = function () {
+        self::$pimpleContainer["fileSystemCache"] = function ($pimpleConfig) {
             $fileSystem = new Filesystem(array(
                 "cache_dir" => APP_PATH . "/cache"
             ));
             return $fileSystem;
         };
         /*SessionManager Object*/
-        self::$pimpleContainer['sessionManager'] = function ($c) {
+        self::$pimpleContainer['sessionManager'] = function ($pimpleConfig) {
             $config = new SessionConfig();
             $config->setOptions(self::getConfig("session")['manager']);
             $sessionManager = new SessionManager($config);
@@ -89,7 +95,7 @@ class Bootstrap
             return $sessionManager;
         };
         /*SessionManager Container Object*/
-        self::$pimpleContainer["sessionContainer"] = function ($c) {
+        self::$pimpleContainer["sessionContainer"] = function ($pimpleConfig) {
             $sessionManager = self::getPimple("sessionManager");
             Container::setDefaultManager($sessionManager);
             $container = new Container(self::getConfig("session")['container']['namespace']);
@@ -97,25 +103,25 @@ class Bootstrap
         };
 
         /*DriverManager Object*/
-        self::$pimpleContainer["shardManager"] = function ($c) {
+        self::$pimpleContainer["shardManager"] = function ($pimpleConfig) {
             return self::databaseConnection("driverManager");
         };
 
         /*Entity Manager Object*/
-        self::$pimpleContainer["entityManager"] = function ($c) {
+        self::$pimpleContainer["entityManager"] = function ($pimpleConfig) {
             return self::databaseConnection("entityManager");
         };
         /*App Config*/
-        self::$pimpleContainer["APP_CONFIG"] = function ($c) {
+        self::$pimpleContainer["APP_CONFIG"] = function ($pimpleConfig) {
             $config = require APP_PATH . '/config/config.php';
             return $config;
         };
         /*Event Manager Object*/
-        self::$pimpleContainer["eventManager"] = function ($c) {
+        self::$pimpleContainer["eventManager"] = function ($pimpleConfig) {
             return new EventManager();
         };
         /*Zend ServiceManager*/
-        self::$pimpleContainer['serviceManager'] = function ($c) {
+        self::$pimpleContainer['serviceManager'] = function ($pimpleConfig) {
             $serviceManager = new ServiceManager();
             print_r(get_class_methods($serviceManager));
             return $serviceManager;
@@ -124,6 +130,7 @@ class Bootstrap
 
     /**
      * 根据不同的数据库链接类型，实例化不同的数据库链接对象
+     *
      * $type == entityManager的实例可以支持事务
      * $type == driverManager支持分库分表
      * @param $type
@@ -200,11 +207,11 @@ class Bootstrap
     }
 
     /**
-     * 引导单元测试
+     * 引导控制台的引用，包括单元测试及其他的控制台程序(定时任务等...)
      *
      * @author macro chen <macro_fengye@163.com>
      */
-    public static function startUnit()
+    public static function startConsole()
     {
         self::initPimple();
     }
@@ -359,7 +366,8 @@ class Bootstrap
     }
 
     /**
-     * @添加系统配置的事件（监听器，订阅器）
+     * 添加系统配置的事件（监听器，订阅器）
+     *
      * @author macro chen <macro_fengye@163.com>
      */
     private static function addSystemEvent()
@@ -370,7 +378,8 @@ class Bootstrap
     }
 
     /**
-     * @添加自定义的事件（监听器，订阅器）
+     * 添加自定义的事件（监听器，订阅器）
+     *
      * @param array $evm
      * @author macro chen <macro_fengye@163.com>
      * @return mixed
@@ -386,6 +395,7 @@ class Bootstrap
 
     /**
      * 添加事件到事件管理器
+     *
      * @param $evm 需要添加的事件
      * @author macro chen <macro_fengye@163.com>
      * @return  mixed
@@ -420,6 +430,7 @@ class Bootstrap
 
     /**
      * 获取指定组件名字的对象
+     *
      * @param $conponet_name
      * @return mixed
      */

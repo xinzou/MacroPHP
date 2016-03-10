@@ -66,7 +66,7 @@ class Controller
     }
 
     /**
-     * 注册每个控制自己配置的Hooks
+     * 注册每个控制器自定义的Hooks
      *
      * @author macro chen <macro_fengye@163.com>
      */

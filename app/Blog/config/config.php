@@ -7,6 +7,11 @@ $config = array(
         'show_use_memory' => true,
     ),
 
+    //Pimple 容器的配置
+    'pimpleConfig'=>array(
+
+    ),
+
     //缓存的配置
     'cache' => array(
         'memcache' => array(
@@ -50,10 +55,10 @@ $config = array(
     // 配置事件监听器与事件订阅者
     'evm' => array(
         "listener" => array(
-            "Events::prePersist" => 'listener\MyEventListener',
+            "Events::prePersist" => 'Blog\listener\MyEventListener',
         ),
         'subscriber' => array(
-            "" => "subscriber\\MyEventSubscriber",
+            "" => "Blog\subscriber\MyEventSubscriber",
         ),
     ),
 
