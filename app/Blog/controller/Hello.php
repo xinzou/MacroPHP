@@ -60,6 +60,9 @@ class Hello extends \Controller\Controller
         /*
         $client = new Client();
         $response = $client->get("http://guzzlephp.org"); */
+        echo "<br/>";
+        echo $this->param("name") ,"," , $this->param("age");
+        echo "<br/>";
         $this->sessionContainer->pageNum = 10;
         $this->sessionContainer->limit = "Macro chen";
         $this->sessionContainer->parans = "AAAAAAAAa";

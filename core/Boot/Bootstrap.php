@@ -350,7 +350,7 @@ class Bootstrap
                     } else {
                         $url = "/" . $path_infos[1] . "/" . $path_infos[2] . (strrchr($path_info, "/") == "/" ? "/" : "");
                     }
-                    self::getPimple("app")->map($url . "(/:param1)(/:param2)(/:param3)(/:param4)(/:other+)", $route)
+                    self::getPimple("app")->map($url . "(/)(:param1)(/)(:param2)(/)(:param3)(/)(:param4)(/)(:other+)(/)", $route)
                         ->via("GET", "POST", "PUT")
                         ->name($route_name)
                         ->setMiddleware([
