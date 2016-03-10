@@ -329,7 +329,6 @@ class Bootstrap
         if (file_exists(APP_PATH . '/routes/' . $route_file . '_route.php')) {
             require_once APP_PATH . '/routes/' . $route_file . '_route.php';
             $namedRoutes = self::getPimple("app")->container->get("router")->getNamedRoutes();
-            $isDynamicAddRoute = true;
             while ($namedRoutes->valid()) {
                 $routeName = $namedRoutes->current()->getName();
                 if (!strcmp(strtolower($action), $routeName)) {
