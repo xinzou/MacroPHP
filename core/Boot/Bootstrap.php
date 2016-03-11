@@ -43,9 +43,9 @@ class Bootstrap
         $pimpleConfig = self::getConfig("pimpleConfig");
         self::$pimpleContainer = new \Pimple\Container();
         /*App*/
-        self::$pimpleContainer["app"] = function ($pimpleConfig) {
+        /*self::$pimpleContainer["app"] = function ($pimpleConfig) {
             return new \Slim\Slim(self::getConfig('slim'));
-        };
+        };*/
         /*Validate Object*/
         self::$pimpleContainer["v"] = function ($pimpleConfig) {
             return Validator::create();
@@ -168,6 +168,9 @@ class Bootstrap
     public static function start()
     {
         self::initPimple();
+        self::$pimpleContainer["app"] = function ($c) {
+            return new \Slim\Slim(self::getConfig('slim'));
+        };
         $app = self::getPimple("app");
         $app->configureMode(APPLICATION_ENV, function () {
             error_reporting(-1);
