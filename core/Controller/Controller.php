@@ -51,6 +51,14 @@ class Controller
     protected $sessionContainer;
 
     /**
+     * 数据库链接类型
+     * @author macro chen <macro_fengye@163.com>
+     * @var SessionContainer $sessionContainer
+     */
+    const ENTITY = "entityManager";
+    const DRIVER = "driverManager";
+
+    /**
      * 控制器构造函数
      *
      * @author macro chen <macro_fengye@163.com>
@@ -137,23 +145,41 @@ class Controller
 
     /**
      * 获取指定组件名字的对象
-     * @param $conponet_name
+     * @param $componentName
      * @return mixed
      */
-    protected function getPimple($conponetName)
+    protected function getPimple($componentName)
     {
-        return Bootstrap::getPimple($conponetName);
+        return Bootstrap::getPimple($componentName);
     }
 
     /**
      * 获取数据库的实例
      * @author macro chen <macro_fengye@163.com>
+     * @param $type
+     * $type == entityManager的实例可以支持事务
+     * $type == driverManager支持分库分表
      * @param string $dbName
      * @return \Doctrine\Common\EventManager
      */
-    protected function getDbInstance($dbName)
+    protected function getDbInstance($type, $dbName)
     {
-        return Bootstrap::getDbInstance($dbName);
+        return Bootstrap::getDbInstance($type, $dbName);
+    }
+
+    /**
+     * 获取指定数据库实例的事件组件
+     * @author macro chen <macro_fengye@163.com>
+     * @param $type
+     * $type == entityManager的实例可以支持事务
+     * $type == driverManager支持分库分表
+     * @param string $dbName
+     * @param string $dbName
+     * @return \Doctrine\Common\EventManager
+     */
+    public function getDbInstanceEvm($type, $dbName)
+    {
+        return Bootstrap::getDbInstanceEvm($type , $dbName);
     }
 }
 

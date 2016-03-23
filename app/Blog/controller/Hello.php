@@ -61,7 +61,7 @@ class Hello extends \Controller\Controller
         $client = new Client();
         $response = $client->get("http://guzzlephp.org"); */
         echo "<br/>";
-        echo $this->param("name") ,"," , $this->param("age");
+        echo $this->param("name"), ",", $this->param("age");
         echo "<br/>";
         $this->sessionContainer->pageNum = 10;
         $this->sessionContainer->limit = "Macro chen";
@@ -115,8 +115,8 @@ class Hello extends \Controller\Controller
 
     public function getItems()
     {
-        $em = $this->getDbInstance("db1");
-        $query = $em->createQuery('SELECT u FROM Entity\Actor u WHERE u.actor_id = ?1');
+        $em = $this->getDbInstance(self::ENTITY, "db1");
+        $query = $em->createQuery('SELECT u FROM Blog\Entity\Actor u WHERE u.actor_id = ?1');
         $query->setParameter(1, 15);
         $query->setResultCacheDriver($this->getPimple("redisCacheDriver"));
         $query->useResultCache(true)
@@ -127,8 +127,8 @@ class Hello extends \Controller\Controller
         //$query->setResultCacheId('aaaaaaa');
         $result = $query->getResult(); // saved in given result cache id.
         $redis = $this->getPimple("redisCache");
-        $redis->setItem("key1" , "Key Key...");
-        $redis->setItem("key2" , "sdadadasd");
+        $redis->setItem("key1", "Key Key...");
+        $redis->setItem("key2", "sdadadasd");
         echo $redis->getItem("key1");
 
         $this->getPimple("serviceManager");

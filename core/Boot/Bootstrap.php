@@ -102,15 +102,6 @@ class Bootstrap
             return $container;
         };
 
-        /*DriverManager Object*/
-        self::$pimpleContainer["shardManager"] = function ($pimpleConfig) {
-            return self::databaseConnection("driverManager");
-        };
-
-        /*Entity Manager Object*/
-        self::$pimpleContainer["entityManager"] = function ($pimpleConfig) {
-            return self::databaseConnection("entityManager");
-        };
         /*App Config*/
         self::$pimpleContainer["APP_CONFIG"] = function ($pimpleConfig) {
             $config = require APP_PATH . '/config/config.php';
@@ -133,14 +124,16 @@ class Bootstrap
      * @param $type
      * $type == entityManager的实例可以支持事务
      * $type == driverManager支持分库分表
+     * @param $dbName string
      * @throws \Doctrine\ORM\ORMException
      * @return array
      */
-    private static function databaseConnection($type)
+    private static function databaseConnection($type, $dbName)
     {
         $dbConfig = self::getConfig('db')[APPLICATION_ENV];
-        $dataBases = array();
-        foreach ($dbConfig as $key => $config) {
+        $db = NULL;
+        if (isset($dbConfig[$dbName]) && $dbConfig[$dbName]) {
+            $config = $dbConfig[$dbName];
             $configuration = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(array(
                 APP_PATH . '/data/Entity/',
             ), APPLICATION_ENV == 'development', APP_PATH . '/data/Proxies/', self::$pimpleContainer["memcacheCacheDriver"], true);
@@ -149,14 +142,17 @@ class Bootstrap
                 ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache()), */
             /*self::createEventManager()*/
             if ($type == "entityManager") {
-                $dataBases[$key] = \Doctrine\ORM\EntityManager::create($config
+                $db = \Doctrine\ORM\EntityManager::create($config
                     , $configuration, self::getPimple("eventManager"));
             } else if ($type == "driverManager") {
-                $dataBases[$key] = DriverManager::getConnection($config
+                $db = DriverManager::getConnection($config
                     , $configuration, self::getPimple("eventManager"));
             }
         }
-        return $dataBases;
+        if (!self::getPimple("dataBase" . $type . $dbName)) {
+            self::$pimpleContainer["dataBase" . $type . $dbName] = $db;
+        }
+        return $db;
     }
 
     /**
@@ -435,23 +431,40 @@ class Bootstrap
     /**
      * 获取指定数据库实例的事件组件
      * @author macro chen <macro_fengye@163.com>
+     * @param $type
+     * $type == entityManager的实例可以支持事务
+     * $type == driverManager支持分库分表
+     * @param string $dbName
      * @param string $dbName
      * @return \Doctrine\Common\EventManager
      */
-    public static function getDbInstanceEvm($dbName)
+    public static function getDbInstanceEvm($type, $dbName)
     {
-        return self::getPimple("entityManager")[$dbName]->getEventManager();
+        if (self::getPimple("dataBase" . $type . $dbName)) {
+            $db = self::getPimple("dataBase" . $type . $dbName);
+        } else {
+            $db = self::databaseConnection($type, $dbName);
+        }
+        return $db->getEventManager();
     }
 
     /**
      * 获取数据库的实例
      * @author macro chen <macro_fengye@163.com>
+     * @param $type
+     * $type == entityManager的实例可以支持事务
+     * $type == driverManager支持分库分表
      * @param string $dbName
      * @return \Doctrine\Common\EventManager
      */
-    public static function getDbInstance($dbName)
+    public static function getDbInstance($type, $dbName)
     {
-        return self::getPimple("entityManager")[$dbName];
+        if (self::getPimple("dataBase" . $type . $dbName)) {
+            $db = self::getPimple("dataBase" . $type . $dbName);
+        } else {
+            $db = self::databaseConnection($type, $dbName);
+        }
+        return $db;
     }
 
     /**
@@ -462,6 +475,9 @@ class Bootstrap
      */
     public static function getPimple($componentName)
     {
-        return self::$pimpleContainer[$componentName];
+        if (self::$pimpleContainer->offsetExists($componentName)) {
+            return self::$pimpleContainer[$componentName];
+        }
+        return null;
     }
 }
