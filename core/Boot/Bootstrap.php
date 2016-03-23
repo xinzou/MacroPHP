@@ -323,15 +323,15 @@ class Bootstrap
      */
     protected static function dealRouter()
     {
-        $path_info = self::getPimple("app")->request->getPathInfo();
-        $path_infos = explode("/", trim($path_info));
-        $controller = isset($path_infos[1]) ? $path_infos[1] : "home";
-        $action = (isset($path_infos[2]) && !empty($path_infos[2])) ? $path_infos[2] : "index";
+        $pathInfo = self::getPimple("app")->request->getPathInfo();
+        $pathArr = explode("/", trim($pathInfo));
+        $controller = isset($pathArr[1]) ? $pathArr[1] : "home";
+        $action = (isset($pathArr[2]) && !empty($pathArr[2])) ? $pathArr[2] : "index";
         $route_name = $controller . '.' . $action;
-        if (strcmp($path_info, "/") == 0) {
+        if (strcmp($pathInfo, "/") == 0) {
             $route_file = "home";
         } else {
-            $route_file = $path_infos[1];
+            $route_file = $pathArr[1];
         }
         $isDynamicAddRoute = true;
         if (file_exists(APP_PATH . '/routes/' . $route_file . '_route.php')) {
@@ -353,10 +353,10 @@ class Bootstrap
                 }
                 if (!self::getPimple("app")->container->get("router")->getNamedRoute($route_name)) {
                     $route = APP_NAME . "\\controller\\" . ucfirst($controller) . ":" . $action;
-                    if (!isset($path_infos[2]) || empty($path_infos[2])) {
-                        $url = isset($path_infos[2]) ? "/" . $path_infos[1] . "/" : "/" . $path_infos[1];
+                    if (!isset($pathArr[2]) || empty($pathArr[2])) {
+                        $url = isset($pathArr[2]) ? "/" . $pathArr[1] . "/" : "/" . $pathArr[1];
                     } else {
-                        $url = "/" . $path_infos[1] . "/" . $path_infos[2] . (strrchr($path_info, "/") == "/" ? "/" : "");
+                        $url = "/" . $pathArr[1] . "/" . $pathArr[2] . (strrchr($pathInfo, "/") == "/" ? "/" : "");
                     }
                     self::getPimple("app")->map($url . "(/)(:param1)(/)(:param2)(/)(:param3)(/)(:param4)(/)(:other+)(/)", $route)
                         ->via("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
@@ -411,7 +411,7 @@ class Bootstrap
     /**
      * 添加事件到事件管理器
      *
-     * @param $evm 需要添加的事件
+     * @param $evm array 需要添加的事件
      * @author macro chen <macro_fengye@163.com>
      * @return  mixed
      */
@@ -435,7 +435,7 @@ class Bootstrap
     /**
      * 获取指定数据库实例的事件组件
      * @author macro chen <macro_fengye@163.com>
-     * @param string $dataSource
+     * @param string $dbName
      * @return \Doctrine\Common\EventManager
      */
     public static function getDbInstanceEvm($dbName)
