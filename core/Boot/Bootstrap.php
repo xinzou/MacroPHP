@@ -1,7 +1,7 @@
 <?php
 namespace Boot;
 
-use Doctrine\Common\Cache\MemcachedCache;
+use Doctrine\Common\Cache\MemcacheCache;
 use Doctrine\Common\Cache\RedisCache;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
@@ -55,7 +55,7 @@ class Bootstrap
             $memcacheConfig = self::getConfig('cache')['memcache'];
             $memcache = new \Memcache();
             $memcache->connect($memcacheConfig['host'], $memcacheConfig['port']);
-            $memcacheCacheDriver = new MemcachedCache();
+            $memcacheCacheDriver = new MemcacheCache();
             $memcacheCacheDriver->setMemcache($memcache);
             return $memcacheCacheDriver;
         };
@@ -130,10 +130,9 @@ class Bootstrap
 
     /**
      * 根据不同的数据库链接类型，实例化不同的数据库链接对象
-     *
+     * @param $type
      * $type == entityManager的实例可以支持事务
      * $type == driverManager支持分库分表
-     * @param $type
      * @throws \Doctrine\ORM\ORMException
      * @return array
      */
@@ -144,7 +143,7 @@ class Bootstrap
         foreach ($dbConfig as $key => $config) {
             $configuration = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(array(
                 APP_PATH . '/data/Entity/',
-            ), APPLICATION_ENV == 'development', APP_PATH . '/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache(), false);
+            ), APPLICATION_ENV == 'development', APP_PATH . '/data/Proxies/', self::$pimpleContainer["memcacheCacheDriver"], true);
             /*  $configuration = \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
                 APP_PATH . "/app/data/Yaml/"
                 ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache()), */
@@ -199,11 +198,11 @@ class Bootstrap
         });
         // 处理404
         $app->notFound(function () use ($app) {
-            $path_info = self::getPimple("app")->request->getPathInfo();
-            $path_infos = explode("/", trim($path_info));
-            $controller = isset($path_infos[1]) ? $path_infos[1] : "home";
-            $action = (isset($path_infos[2]) && !empty($path_infos[2])) ? $path_infos[2] : "index";
-            $app->render('404.html',array("controller"=>APP_NAME."\\controller\\".ucfirst($controller) , "action"=>$action));
+            $pathInfo = self::getPimple("app")->request->getPathInfo();
+            $pathArr = explode("/", trim($pathInfo));
+            $controller = isset($pathArr[1]) ? $pathArr[1] : "home";
+            $action = (isset($pathArr[2]) && !empty($pathArr[2])) ? $pathArr[2] : "index";
+            $app->render('404.html', array("controller" => APP_NAME . "\\controller\\" . ucfirst($controller), "action" => $action));
             //避免路由两次
         });
         $app->run();
@@ -276,7 +275,7 @@ class Bootstrap
 
     /**
      * 获取指定的模型实体(还未实现)
-     *
+     * @param $model string
      * @author macro chen <macro_fengye@163.com>
      */
     public static function getModel($model)
@@ -306,7 +305,9 @@ class Bootstrap
 
     /**
      * 注册Hook函数
-     *
+     * @param $name string
+     * @param $callable callback
+     * @param $priority int
      * @author macro chen <macro_fengye@163.com>
      */
     protected static function registerHook($name, $callable, $priority)
@@ -358,7 +359,7 @@ class Bootstrap
                         $url = "/" . $path_infos[1] . "/" . $path_infos[2] . (strrchr($path_info, "/") == "/" ? "/" : "");
                     }
                     self::getPimple("app")->map($url . "(/)(:param1)(/)(:param2)(/)(:param3)(/)(:param4)(/)(:other+)(/)", $route)
-                        ->via("GET", "POST", "PUT","PATCH","DELETE","OPTIONS")
+                        ->via("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
                         ->name($route_name)
                         ->setMiddleware([
                             function () {
@@ -432,25 +433,35 @@ class Bootstrap
     }
 
     /**
-     * 获取事件组件
-     *
+     * 获取指定数据库实例的事件组件
      * @author macro chen <macro_fengye@163.com>
-     * @param string $data_source
+     * @param string $dataSource
      * @return \Doctrine\Common\EventManager
      */
-    public static function getEvm($data_source)
+    public static function getDbInstanceEvm($dbName)
     {
-        return self::getPimple("entityManager")[$data_source]->getEventManager();
+        return self::getPimple("entityManager")[$dbName]->getEventManager();
+    }
+
+    /**
+     * 获取数据库的实例
+     * @author macro chen <macro_fengye@163.com>
+     * @param string $dbName
+     * @return \Doctrine\Common\EventManager
+     */
+    public static function getDbInstance($dbName)
+    {
+        return self::getPimple("entityManager")[$dbName];
     }
 
     /**
      * 获取指定组件名字的对象
      *
-     * @param $conponet_name
+     * @param $componentName
      * @return mixed
      */
-    public static function getPimple($conponet_name)
+    public static function getPimple($componentName)
     {
-        return self::$pimpleContainer[$conponet_name];
+        return self::$pimpleContainer[$componentName];
     }
 }

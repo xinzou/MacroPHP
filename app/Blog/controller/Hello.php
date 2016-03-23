@@ -115,7 +115,7 @@ class Hello extends \Controller\Controller
 
     public function getItems()
     {
-        $em = $this->getPimple("entityManager");
+        $em = $this->getDbInstance("db1");
         $query = $em->createQuery('SELECT u FROM Entity\Actor u WHERE u.actor_id = ?1');
         $query->setParameter(1, 15);
         $query->setResultCacheDriver($this->getPimple("redisCacheDriver"));

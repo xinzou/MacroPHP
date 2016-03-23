@@ -140,9 +140,20 @@ class Controller
      * @param $conponet_name
      * @return mixed
      */
-    protected function getPimple($conponet_name)
+    protected function getPimple($conponetName)
     {
-        return Bootstrap::getPimple($conponet_name);
+        return Bootstrap::getPimple($conponetName);
+    }
+
+    /**
+     * 获取数据库的实例
+     * @author macro chen <macro_fengye@163.com>
+     * @param string $dbName
+     * @return \Doctrine\Common\EventManager
+     */
+    protected function getDbInstance($dbName)
+    {
+        return Bootstrap::getDbInstance($dbName);
     }
 }
 
