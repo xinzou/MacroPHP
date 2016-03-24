@@ -37,7 +37,8 @@
     "satooshi/php-coveralls": "dev-master",
     "phpunit/phpunit": "~4.0",
     "phpunit/dbunit": "1.*",
-    "facebook/webdriver": "~1.0"
+    "facebook/webdriver": "~1.0",
+    "mysql-workbench-schema-exporter/mysql-workbench-schema-exporter": "dev-master"
   },
   "bin": [
     "composer/bin/dbunit"
@@ -46,7 +47,7 @@
   "config": {
     "bin-dir": "bin",
     "github-oauth": {
-      "github.com": "cf89acb909258049362ff447a473967710ace561"
+      "github.com": "1ed5a73efc57d8ae0bbfe58b6819abaa754f2130"
     }
   },
 
