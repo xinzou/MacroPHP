@@ -112,9 +112,9 @@ class Hello extends \Controller\Controller
 
     public function getItems()
     {
-        $em = $this->getPimple("entityManager");
-        $query = $em->createQuery('SELECT u FROM Entity\Actor u WHERE u.actor_id = ?1');
-        $query->setParameter(1, 15);
+        $em = $this->getDbInstance(self::ENTITY, "db1");
+        $query = $em->createQuery('SELECT u FROM Blog\Entity\Actor u WHERE u.actor_id = ?1');
+        $query->setParameter(1, 1);
         $query->setResultCacheDriver($this->getPimple("redisCacheDriver"));
         $query->useResultCache(true)
             ->setResultCacheLifeTime($seconds = 3600);
@@ -124,6 +124,9 @@ class Hello extends \Controller\Controller
         //$query->setResultCacheId('aaaaaaa');
         $result = $query->getResult(); // saved in given result cache id.
         $redis = $this->getPimple("redisCache");
+       foreach ($result as $value){
+           print_r($value->getLastName());
+       }
         $redis->setItem("key1" , "Key Key...");
         $redis->setItem("key2" , "sdadadasd");
         echo $redis->getItem("key1");

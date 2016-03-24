@@ -104,7 +104,8 @@ $config = array(
                 'sharding' => array(
                     'federationName' => 'my_database',
                     'distributionKey' => 'customer_id',
-                )
+                ),
+                "useSimpleAnnotationReader"=>true
             ),
             "db2" => array(
                 'driver' => 'pdo_mysql',
@@ -117,7 +118,8 @@ $config = array(
                 'sharding' => array(
                     'federationName' => 'my_database',
                     'distributionKey' => 'customer_id',
-                )
+                ),
+                "useSimpleAnnotationReader"=>true
             ),
             "db3" => array(
                 'driver' => 'pdo_mysql',
@@ -130,7 +132,8 @@ $config = array(
                 'sharding' => array(
                     'federationName' => 'my_database',
                     'distributionKey' => 'customer_id',
-                )
+                ),
+                "useSimpleAnnotationReader"=>true
             )),
         // 生产模式
         'production' => array(
@@ -141,7 +144,12 @@ $config = array(
                 'user' => 'username',
                 'password' => 'password',
                 'dbname' => 'production_dbname',
-                "charset"=>"UTF8"
+                "charset"=>"UTF8",
+                'sharding' => array(
+                    'federationName' => 'my_database',
+                    'distributionKey' => 'customer_id',
+                ),
+                "useSimpleAnnotationReader"=>true
             ),
             "db2" => array(
                 'driver' => 'pdo_mysql',
@@ -150,7 +158,12 @@ $config = array(
                 'user' => 'username',
                 'password' => 'password',
                 'dbname' => 'production_dbname',
-                "charset"=>"UTF8"
+                "charset"=>"UTF8",
+                'sharding' => array(
+                    'federationName' => 'my_database',
+                    'distributionKey' => 'customer_id',
+                ),
+                "useSimpleAnnotationReader"=>true
             )
         ),
     ),
