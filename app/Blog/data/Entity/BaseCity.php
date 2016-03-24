@@ -1,14 +1,14 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Entity\City
+ * Blog\Entity\City
  *
- * @ORM\Entity(repositoryClass="CityRepository")
+ * @ORM\Entity(repositoryClass="Blog\CityRepository")
  * @ORM\Table(name="city", indexes={@ORM\Index(name="idx_fk_country_id", columns={"country_id"})})
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -40,13 +40,13 @@ class BaseCity
 
     /**
      * @ORM\OneToMany(targetEntity="Address", mappedBy="city")
-     * @ORM\JoinColumn(name="city_id", referencedColumnName="city_id")
+     * @ORM\JoinColumn(name="city_id", referencedColumnName="city_id", nullable=false)
      */
     protected $addresses;
 
     /**
      * @ORM\ManyToOne(targetEntity="Country", inversedBy="cities")
-     * @ORM\JoinColumn(name="country_id", referencedColumnName="country_id")
+     * @ORM\JoinColumn(name="country_id", referencedColumnName="country_id", nullable=false)
      */
     protected $country;
 
@@ -59,7 +59,7 @@ class BaseCity
      * Set the value of city_id.
      *
      * @param integer $city_id
-     * @return \Entity\City
+     * @return \Blog\Entity\City
      */
     public function setCityId($city_id)
     {
@@ -82,7 +82,7 @@ class BaseCity
      * Set the value of city.
      *
      * @param string $city
-     * @return \Entity\City
+     * @return \Blog\Entity\City
      */
     public function setCity($city)
     {
@@ -105,7 +105,7 @@ class BaseCity
      * Set the value of country_id.
      *
      * @param integer $country_id
-     * @return \Entity\City
+     * @return \Blog\Entity\City
      */
     public function setCountryId($country_id)
     {
@@ -128,7 +128,7 @@ class BaseCity
      * Set the value of last_update.
      *
      * @param \DateTime $last_update
-     * @return \Entity\City
+     * @return \Blog\Entity\City
      */
     public function setLastUpdate(\DateTime $last_update)
     {
@@ -150,8 +150,8 @@ class BaseCity
     /**
      * Add Address entity to collection (one to many).
      *
-     * @param \Entity\Address $address
-     * @return \Entity\City
+     * @param \Blog\Entity\Address $address
+     * @return \Blog\Entity\City
      */
     public function addAddress(Address $address)
     {
@@ -163,8 +163,8 @@ class BaseCity
     /**
      * Remove Address entity from collection (one to many).
      *
-     * @param \Entity\Address $address
-     * @return \Entity\City
+     * @param \Blog\Entity\Address $address
+     * @return \Blog\Entity\City
      */
     public function removeAddress(Address $address)
     {
@@ -186,8 +186,8 @@ class BaseCity
     /**
      * Set Country entity (many to one).
      *
-     * @param \Entity\Country $country
-     * @return \Entity\City
+     * @param \Blog\Entity\Country $country
+     * @return \Blog\Entity\City
      */
     public function setCountry(Country $country = null)
     {
@@ -199,7 +199,7 @@ class BaseCity
     /**
      * Get Country entity (many to one).
      *
-     * @return \Entity\Country
+     * @return \Blog\Entity\Country
      */
     public function getCountry()
     {

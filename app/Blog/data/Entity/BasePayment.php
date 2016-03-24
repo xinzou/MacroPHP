@@ -1,13 +1,13 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Entity\Payment
+ * Blog\Entity\Payment
  *
- * @ORM\Entity(repositoryClass="PaymentRepository")
+ * @ORM\Entity(repositoryClass="Blog\PaymentRepository")
  * @ORM\Table(name="payment", indexes={@ORM\Index(name="idx_fk_staff_id", columns={"staff_id"}), @ORM\Index(name="idx_fk_customer_id", columns={"customer_id"}), @ORM\Index(name="fk_payment_rental_idx", columns={"rental_id"})})
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -54,19 +54,19 @@ class BasePayment
 
     /**
      * @ORM\ManyToOne(targetEntity="Customer", inversedBy="payments")
-     * @ORM\JoinColumn(name="customer_id", referencedColumnName="customer_id")
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="customer_id", nullable=false)
      */
     protected $customer;
 
     /**
      * @ORM\ManyToOne(targetEntity="Staff", inversedBy="payments")
-     * @ORM\JoinColumn(name="staff_id", referencedColumnName="staff_id")
+     * @ORM\JoinColumn(name="staff_id", referencedColumnName="staff_id", nullable=false)
      */
     protected $staff;
 
     /**
      * @ORM\ManyToOne(targetEntity="Rental", inversedBy="payments")
-     * @ORM\JoinColumn(name="rental_id", referencedColumnName="rental_id", nullable=true, onDelete="SET NULL")
+     * @ORM\JoinColumn(name="rental_id", referencedColumnName="rental_id", onDelete="SET NULL")
      */
     protected $rental;
 
@@ -78,7 +78,7 @@ class BasePayment
      * Set the value of payment_id.
      *
      * @param integer $payment_id
-     * @return \Entity\Payment
+     * @return \Blog\Entity\Payment
      */
     public function setPaymentId($payment_id)
     {
@@ -101,7 +101,7 @@ class BasePayment
      * Set the value of customer_id.
      *
      * @param integer $customer_id
-     * @return \Entity\Payment
+     * @return \Blog\Entity\Payment
      */
     public function setCustomerId($customer_id)
     {
@@ -124,7 +124,7 @@ class BasePayment
      * Set the value of staff_id.
      *
      * @param integer $staff_id
-     * @return \Entity\Payment
+     * @return \Blog\Entity\Payment
      */
     public function setStaffId($staff_id)
     {
@@ -147,7 +147,7 @@ class BasePayment
      * Set the value of rental_id.
      *
      * @param integer $rental_id
-     * @return \Entity\Payment
+     * @return \Blog\Entity\Payment
      */
     public function setRentalId($rental_id)
     {
@@ -170,7 +170,7 @@ class BasePayment
      * Set the value of amount.
      *
      * @param float $amount
-     * @return \Entity\Payment
+     * @return \Blog\Entity\Payment
      */
     public function setAmount($amount)
     {
@@ -193,7 +193,7 @@ class BasePayment
      * Set the value of payment_date.
      *
      * @param \DateTime $payment_date
-     * @return \Entity\Payment
+     * @return \Blog\Entity\Payment
      */
     public function setPaymentDate(\DateTime $payment_date)
     {
@@ -216,7 +216,7 @@ class BasePayment
      * Set the value of last_update.
      *
      * @param \DateTime $last_update
-     * @return \Entity\Payment
+     * @return \Blog\Entity\Payment
      */
     public function setLastUpdate(\DateTime $last_update)
     {
@@ -238,8 +238,8 @@ class BasePayment
     /**
      * Set Customer entity (many to one).
      *
-     * @param \Entity\Customer $customer
-     * @return \Entity\Payment
+     * @param \Blog\Entity\Customer $customer
+     * @return \Blog\Entity\Payment
      */
     public function setCustomer(Customer $customer = null)
     {
@@ -251,7 +251,7 @@ class BasePayment
     /**
      * Get Customer entity (many to one).
      *
-     * @return \Entity\Customer
+     * @return \Blog\Entity\Customer
      */
     public function getCustomer()
     {
@@ -261,8 +261,8 @@ class BasePayment
     /**
      * Set Staff entity (many to one).
      *
-     * @param \Entity\Staff $staff
-     * @return \Entity\Payment
+     * @param \Blog\Entity\Staff $staff
+     * @return \Blog\Entity\Payment
      */
     public function setStaff(Staff $staff = null)
     {
@@ -274,7 +274,7 @@ class BasePayment
     /**
      * Get Staff entity (many to one).
      *
-     * @return \Entity\Staff
+     * @return \Blog\Entity\Staff
      */
     public function getStaff()
     {
@@ -284,8 +284,8 @@ class BasePayment
     /**
      * Set Rental entity (many to one).
      *
-     * @param \Entity\Rental $rental
-     * @return \Entity\Payment
+     * @param \Blog\Entity\Rental $rental
+     * @return \Blog\Entity\Payment
      */
     public function setRental(Rental $rental = null)
     {
@@ -297,7 +297,7 @@ class BasePayment
     /**
      * Get Rental entity (many to one).
      *
-     * @return \Entity\Rental
+     * @return \Blog\Entity\Rental
      */
     public function getRental()
     {

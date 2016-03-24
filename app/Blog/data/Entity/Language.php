@@ -1,12 +1,12 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Entity\BaseLanguage;
+use Blog\Entity\BaseLanguage;
 
 /**
- * Entity\Language
+ * Blog\Entity\Language
  *
  * @ORM\Entity(repositoryClass="LanguageRepository")
  */

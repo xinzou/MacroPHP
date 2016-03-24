@@ -1,12 +1,12 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Entity\BaseCustomer;
+use Blog\Entity\BaseCustomer;
 
 /**
- * Entity\Customer
+ * Blog\Entity\Customer
  *
  * @ORM\Entity(repositoryClass="CustomerRepository")
  */

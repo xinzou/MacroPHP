@@ -1,13 +1,13 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Entity\FilmText
+ * Blog\Entity\FilmText
  *
- * @ORM\Entity(repositoryClass="FilmTextRepository")
+ * @ORM\Entity(repositoryClass="Blog\FilmTextRepository")
  * @ORM\Table(name="film_text", indexes={@ORM\Index(name="fk_film_text_idx", columns={"film_id"})})
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -33,7 +33,7 @@ class BaseFilmText
 
     /**
      * @ORM\ManyToOne(targetEntity="Inventory", inversedBy="filmTexts")
-     * @ORM\JoinColumn(name="film_id", referencedColumnName="film_id")
+     * @ORM\JoinColumn(name="film_id", referencedColumnName="film_id", nullable=false)
      */
     protected $inventory;
 
@@ -45,7 +45,7 @@ class BaseFilmText
      * Set the value of film_id.
      *
      * @param integer $film_id
-     * @return \Entity\FilmText
+     * @return \Blog\Entity\FilmText
      */
     public function setFilmId($film_id)
     {
@@ -68,7 +68,7 @@ class BaseFilmText
      * Set the value of title.
      *
      * @param string $title
-     * @return \Entity\FilmText
+     * @return \Blog\Entity\FilmText
      */
     public function setTitle($title)
     {
@@ -91,7 +91,7 @@ class BaseFilmText
      * Set the value of description.
      *
      * @param string $description
-     * @return \Entity\FilmText
+     * @return \Blog\Entity\FilmText
      */
     public function setDescription($description)
     {
@@ -113,8 +113,8 @@ class BaseFilmText
     /**
      * Set Inventory entity (many to one).
      *
-     * @param \Entity\Inventory $inventory
-     * @return \Entity\FilmText
+     * @param \Blog\Entity\Inventory $inventory
+     * @return \Blog\Entity\FilmText
      */
     public function setInventory(Inventory $inventory = null)
     {
@@ -126,7 +126,7 @@ class BaseFilmText
     /**
      * Get Inventory entity (many to one).
      *
-     * @return \Entity\Inventory
+     * @return \Blog\Entity\Inventory
      */
     public function getInventory()
     {

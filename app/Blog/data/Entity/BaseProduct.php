@@ -1,13 +1,13 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Entity\Product
+ * Blog\Entity\Product
  *
- * @ORM\Entity(repositoryClass="ProductRepository")
+ * @ORM\Entity(repositoryClass="Blog\ProductRepository")
  * @ORM\Table(name="product")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -40,7 +40,7 @@ class BaseProduct
      * Set the value of id.
      *
      * @param integer $id
-     * @return \Entity\Product
+     * @return \Blog\Entity\Product
      */
     public function setId($id)
     {
@@ -63,7 +63,7 @@ class BaseProduct
      * Set the value of name.
      *
      * @param string $name
-     * @return \Entity\Product
+     * @return \Blog\Entity\Product
      */
     public function setName($name)
     {
@@ -86,7 +86,7 @@ class BaseProduct
      * Set the value of price.
      *
      * @param float $price
-     * @return \Entity\Product
+     * @return \Blog\Entity\Product
      */
     public function setPrice($price)
     {

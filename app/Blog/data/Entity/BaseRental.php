@@ -1,14 +1,14 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Entity\Rental
+ * Blog\Entity\Rental
  *
- * @ORM\Entity(repositoryClass="RentalRepository")
+ * @ORM\Entity(repositoryClass="Blog\RentalRepository")
  * @ORM\Table(name="rental", indexes={@ORM\Index(name="idx_fk_inventory_id", columns={"inventory_id"}), @ORM\Index(name="idx_fk_customer_id", columns={"customer_id"}), @ORM\Index(name="idx_fk_staff_id", columns={"staff_id"})}, uniqueConstraints={@ORM\UniqueConstraint(name="idx_rental", columns={"rental_date", "inventory_id", "customer_id"})})
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -55,25 +55,25 @@ class BaseRental
 
     /**
      * @ORM\OneToMany(targetEntity="Payment", mappedBy="rental")
-     * @ORM\JoinColumn(name="rental_id", referencedColumnName="rental_id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="rental_id", referencedColumnName="rental_id", nullable=false, onDelete="SET NULL")
      */
     protected $payments;
 
     /**
      * @ORM\ManyToOne(targetEntity="Inventory", inversedBy="rentals")
-     * @ORM\JoinColumn(name="inventory_id", referencedColumnName="inventory_id")
+     * @ORM\JoinColumn(name="inventory_id", referencedColumnName="inventory_id", nullable=false)
      */
     protected $inventory;
 
     /**
      * @ORM\ManyToOne(targetEntity="Customer", inversedBy="rentals")
-     * @ORM\JoinColumn(name="customer_id", referencedColumnName="customer_id")
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="customer_id", nullable=false)
      */
     protected $customer;
 
     /**
      * @ORM\ManyToOne(targetEntity="Staff", inversedBy="rentals")
-     * @ORM\JoinColumn(name="staff_id", referencedColumnName="staff_id")
+     * @ORM\JoinColumn(name="staff_id", referencedColumnName="staff_id", nullable=false)
      */
     protected $staff;
 
@@ -86,7 +86,7 @@ class BaseRental
      * Set the value of rental_id.
      *
      * @param integer $rental_id
-     * @return \Entity\Rental
+     * @return \Blog\Entity\Rental
      */
     public function setRentalId($rental_id)
     {
@@ -109,7 +109,7 @@ class BaseRental
      * Set the value of rental_date.
      *
      * @param \DateTime $rental_date
-     * @return \Entity\Rental
+     * @return \Blog\Entity\Rental
      */
     public function setRentalDate(\DateTime $rental_date)
     {
@@ -132,7 +132,7 @@ class BaseRental
      * Set the value of inventory_id.
      *
      * @param integer $inventory_id
-     * @return \Entity\Rental
+     * @return \Blog\Entity\Rental
      */
     public function setInventoryId($inventory_id)
     {
@@ -155,7 +155,7 @@ class BaseRental
      * Set the value of customer_id.
      *
      * @param integer $customer_id
-     * @return \Entity\Rental
+     * @return \Blog\Entity\Rental
      */
     public function setCustomerId($customer_id)
     {
@@ -178,7 +178,7 @@ class BaseRental
      * Set the value of return_date.
      *
      * @param \DateTime $return_date
-     * @return \Entity\Rental
+     * @return \Blog\Entity\Rental
      */
     public function setReturnDate(\DateTime $return_date)
     {
@@ -201,7 +201,7 @@ class BaseRental
      * Set the value of staff_id.
      *
      * @param integer $staff_id
-     * @return \Entity\Rental
+     * @return \Blog\Entity\Rental
      */
     public function setStaffId($staff_id)
     {
@@ -224,7 +224,7 @@ class BaseRental
      * Set the value of last_update.
      *
      * @param \DateTime $last_update
-     * @return \Entity\Rental
+     * @return \Blog\Entity\Rental
      */
     public function setLastUpdate(\DateTime $last_update)
     {
@@ -246,8 +246,8 @@ class BaseRental
     /**
      * Add Payment entity to collection (one to many).
      *
-     * @param \Entity\Payment $payment
-     * @return \Entity\Rental
+     * @param \Blog\Entity\Payment $payment
+     * @return \Blog\Entity\Rental
      */
     public function addPayment(Payment $payment)
     {
@@ -259,8 +259,8 @@ class BaseRental
     /**
      * Remove Payment entity from collection (one to many).
      *
-     * @param \Entity\Payment $payment
-     * @return \Entity\Rental
+     * @param \Blog\Entity\Payment $payment
+     * @return \Blog\Entity\Rental
      */
     public function removePayment(Payment $payment)
     {
@@ -282,8 +282,8 @@ class BaseRental
     /**
      * Set Inventory entity (many to one).
      *
-     * @param \Entity\Inventory $inventory
-     * @return \Entity\Rental
+     * @param \Blog\Entity\Inventory $inventory
+     * @return \Blog\Entity\Rental
      */
     public function setInventory(Inventory $inventory = null)
     {
@@ -295,7 +295,7 @@ class BaseRental
     /**
      * Get Inventory entity (many to one).
      *
-     * @return \Entity\Inventory
+     * @return \Blog\Entity\Inventory
      */
     public function getInventory()
     {
@@ -305,8 +305,8 @@ class BaseRental
     /**
      * Set Customer entity (many to one).
      *
-     * @param \Entity\Customer $customer
-     * @return \Entity\Rental
+     * @param \Blog\Entity\Customer $customer
+     * @return \Blog\Entity\Rental
      */
     public function setCustomer(Customer $customer = null)
     {
@@ -318,7 +318,7 @@ class BaseRental
     /**
      * Get Customer entity (many to one).
      *
-     * @return \Entity\Customer
+     * @return \Blog\Entity\Customer
      */
     public function getCustomer()
     {
@@ -328,8 +328,8 @@ class BaseRental
     /**
      * Set Staff entity (many to one).
      *
-     * @param \Entity\Staff $staff
-     * @return \Entity\Rental
+     * @param \Blog\Entity\Staff $staff
+     * @return \Blog\Entity\Rental
      */
     public function setStaff(Staff $staff = null)
     {
@@ -341,7 +341,7 @@ class BaseRental
     /**
      * Get Staff entity (many to one).
      *
-     * @return \Entity\Staff
+     * @return \Blog\Entity\Staff
      */
     public function getStaff()
     {

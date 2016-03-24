@@ -1,14 +1,14 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Entity\Country
+ * Blog\Entity\Country
  *
- * @ORM\Entity(repositoryClass="CountryRepository")
+ * @ORM\Entity(repositoryClass="Blog\CountryRepository")
  * @ORM\Table(name="country")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -35,7 +35,7 @@ class BaseCountry
 
     /**
      * @ORM\OneToMany(targetEntity="City", mappedBy="country")
-     * @ORM\JoinColumn(name="country_id", referencedColumnName="country_id")
+     * @ORM\JoinColumn(name="country_id", referencedColumnName="country_id", nullable=false)
      */
     protected $cities;
 
@@ -48,7 +48,7 @@ class BaseCountry
      * Set the value of country_id.
      *
      * @param integer $country_id
-     * @return \Entity\Country
+     * @return \Blog\Entity\Country
      */
     public function setCountryId($country_id)
     {
@@ -71,7 +71,7 @@ class BaseCountry
      * Set the value of country.
      *
      * @param string $country
-     * @return \Entity\Country
+     * @return \Blog\Entity\Country
      */
     public function setCountry($country)
     {
@@ -94,7 +94,7 @@ class BaseCountry
      * Set the value of last_update.
      *
      * @param \DateTime $last_update
-     * @return \Entity\Country
+     * @return \Blog\Entity\Country
      */
     public function setLastUpdate(\DateTime $last_update)
     {
@@ -116,8 +116,8 @@ class BaseCountry
     /**
      * Add City entity to collection (one to many).
      *
-     * @param \Entity\City $city
-     * @return \Entity\Country
+     * @param \Blog\Entity\City $city
+     * @return \Blog\Entity\Country
      */
     public function addCity(City $city)
     {
@@ -129,8 +129,8 @@ class BaseCountry
     /**
      * Remove City entity from collection (one to many).
      *
-     * @param \Entity\City $city
-     * @return \Entity\Country
+     * @param \Blog\Entity\City $city
+     * @return \Blog\Entity\Country
      */
     public function removeCity(City $city)
     {

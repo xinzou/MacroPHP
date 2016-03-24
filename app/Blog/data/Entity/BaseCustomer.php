@@ -1,12 +1,12 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Entity\Customer
+ * Blog\Entity\Customer
  *
  * Table storing all customers. Holds foreign keys to the address table and the
  * store table where this customer is registered.
@@ -15,7 +15,7 @@ use Doctrine\Common\Collections\ArrayCollection;
  * the table itself. Same for the date the record was created and when the
  * information was last updated.
  *
- * @ORM\Entity(repositoryClass="CustomerRepository")
+ * @ORM\Entity(repositoryClass="Blog\CustomerRepository")
  * @ORM\Table(name="customer", indexes={@ORM\Index(name="idx_fk_store_id", columns={"store_id"}), @ORM\Index(name="idx_fk_address_id", columns={"address_id"}), @ORM\Index(name="idx_last_name", columns={"last_name"})})
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -72,25 +72,25 @@ class BaseCustomer
 
     /**
      * @ORM\OneToMany(targetEntity="Payment", mappedBy="customer")
-     * @ORM\JoinColumn(name="customer_id", referencedColumnName="customer_id")
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="customer_id", nullable=false)
      */
     protected $payments;
 
     /**
      * @ORM\OneToMany(targetEntity="Rental", mappedBy="customer")
-     * @ORM\JoinColumn(name="customer_id", referencedColumnName="customer_id")
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="customer_id", nullable=false)
      */
     protected $rentals;
 
     /**
      * @ORM\ManyToOne(targetEntity="Store", inversedBy="customers")
-     * @ORM\JoinColumn(name="store_id", referencedColumnName="store_id")
+     * @ORM\JoinColumn(name="store_id", referencedColumnName="store_id", nullable=false)
      */
     protected $store;
 
     /**
      * @ORM\ManyToOne(targetEntity="Address", inversedBy="customers")
-     * @ORM\JoinColumn(name="address_id", referencedColumnName="address_id")
+     * @ORM\JoinColumn(name="address_id", referencedColumnName="address_id", nullable=false)
      */
     protected $address;
 
@@ -104,7 +104,7 @@ class BaseCustomer
      * Set the value of customer_id.
      *
      * @param integer $customer_id
-     * @return \Entity\Customer
+     * @return \Blog\Entity\Customer
      */
     public function setCustomerId($customer_id)
     {
@@ -127,7 +127,7 @@ class BaseCustomer
      * Set the value of store_id.
      *
      * @param integer $store_id
-     * @return \Entity\Customer
+     * @return \Blog\Entity\Customer
      */
     public function setStoreId($store_id)
     {
@@ -150,7 +150,7 @@ class BaseCustomer
      * Set the value of first_name.
      *
      * @param string $first_name
-     * @return \Entity\Customer
+     * @return \Blog\Entity\Customer
      */
     public function setFirstName($first_name)
     {
@@ -173,7 +173,7 @@ class BaseCustomer
      * Set the value of last_name.
      *
      * @param string $last_name
-     * @return \Entity\Customer
+     * @return \Blog\Entity\Customer
      */
     public function setLastName($last_name)
     {
@@ -196,7 +196,7 @@ class BaseCustomer
      * Set the value of email.
      *
      * @param string $email
-     * @return \Entity\Customer
+     * @return \Blog\Entity\Customer
      */
     public function setEmail($email)
     {
@@ -219,7 +219,7 @@ class BaseCustomer
      * Set the value of address_id.
      *
      * @param integer $address_id
-     * @return \Entity\Customer
+     * @return \Blog\Entity\Customer
      */
     public function setAddressId($address_id)
     {
@@ -242,7 +242,7 @@ class BaseCustomer
      * Set the value of active.
      *
      * @param boolean $active
-     * @return \Entity\Customer
+     * @return \Blog\Entity\Customer
      */
     public function setActive($active)
     {
@@ -265,7 +265,7 @@ class BaseCustomer
      * Set the value of create_date.
      *
      * @param \DateTime $create_date
-     * @return \Entity\Customer
+     * @return \Blog\Entity\Customer
      */
     public function setCreateDate(\DateTime $create_date)
     {
@@ -288,7 +288,7 @@ class BaseCustomer
      * Set the value of last_update.
      *
      * @param \DateTime $last_update
-     * @return \Entity\Customer
+     * @return \Blog\Entity\Customer
      */
     public function setLastUpdate(\DateTime $last_update)
     {
@@ -310,8 +310,8 @@ class BaseCustomer
     /**
      * Add Payment entity to collection (one to many).
      *
-     * @param \Entity\Payment $payment
-     * @return \Entity\Customer
+     * @param \Blog\Entity\Payment $payment
+     * @return \Blog\Entity\Customer
      */
     public function addPayment(Payment $payment)
     {
@@ -323,8 +323,8 @@ class BaseCustomer
     /**
      * Remove Payment entity from collection (one to many).
      *
-     * @param \Entity\Payment $payment
-     * @return \Entity\Customer
+     * @param \Blog\Entity\Payment $payment
+     * @return \Blog\Entity\Customer
      */
     public function removePayment(Payment $payment)
     {
@@ -346,8 +346,8 @@ class BaseCustomer
     /**
      * Add Rental entity to collection (one to many).
      *
-     * @param \Entity\Rental $rental
-     * @return \Entity\Customer
+     * @param \Blog\Entity\Rental $rental
+     * @return \Blog\Entity\Customer
      */
     public function addRental(Rental $rental)
     {
@@ -359,8 +359,8 @@ class BaseCustomer
     /**
      * Remove Rental entity from collection (one to many).
      *
-     * @param \Entity\Rental $rental
-     * @return \Entity\Customer
+     * @param \Blog\Entity\Rental $rental
+     * @return \Blog\Entity\Customer
      */
     public function removeRental(Rental $rental)
     {
@@ -382,8 +382,8 @@ class BaseCustomer
     /**
      * Set Store entity (many to one).
      *
-     * @param \Entity\Store $store
-     * @return \Entity\Customer
+     * @param \Blog\Entity\Store $store
+     * @return \Blog\Entity\Customer
      */
     public function setStore(Store $store = null)
     {
@@ -395,7 +395,7 @@ class BaseCustomer
     /**
      * Get Store entity (many to one).
      *
-     * @return \Entity\Store
+     * @return \Blog\Entity\Store
      */
     public function getStore()
     {
@@ -405,8 +405,8 @@ class BaseCustomer
     /**
      * Set Address entity (many to one).
      *
-     * @param \Entity\Address $address
-     * @return \Entity\Customer
+     * @param \Blog\Entity\Address $address
+     * @return \Blog\Entity\Customer
      */
     public function setAddress(Address $address = null)
     {
@@ -418,7 +418,7 @@ class BaseCustomer
     /**
      * Get Address entity (many to one).
      *
-     * @return \Entity\Address
+     * @return \Blog\Entity\Address
      */
     public function getAddress()
     {

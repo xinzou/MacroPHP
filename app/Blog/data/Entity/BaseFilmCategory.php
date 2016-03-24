@@ -1,13 +1,13 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Entity\FilmCategory
+ * Blog\Entity\FilmCategory
  *
- * @ORM\Entity(repositoryClass="FilmCategoryRepository")
+ * @ORM\Entity(repositoryClass="Blog\FilmCategoryRepository")
  * @ORM\Table(name="film_category", indexes={@ORM\Index(name="fk_film_category_category_idx", columns={"category_id"}), @ORM\Index(name="fk_film_category_film_idx", columns={"film_id"})})
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -34,13 +34,13 @@ class BaseFilmCategory
 
     /**
      * @ORM\ManyToOne(targetEntity="Film", inversedBy="filmCategories")
-     * @ORM\JoinColumn(name="film_id", referencedColumnName="film_id")
+     * @ORM\JoinColumn(name="film_id", referencedColumnName="film_id", nullable=false)
      */
     protected $film;
 
     /**
      * @ORM\ManyToOne(targetEntity="Category", inversedBy="filmCategories")
-     * @ORM\JoinColumn(name="category_id", referencedColumnName="category_id")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="category_id", nullable=false)
      */
     protected $category;
 
@@ -52,7 +52,7 @@ class BaseFilmCategory
      * Set the value of film_id.
      *
      * @param integer $film_id
-     * @return \Entity\FilmCategory
+     * @return \Blog\Entity\FilmCategory
      */
     public function setFilmId($film_id)
     {
@@ -75,7 +75,7 @@ class BaseFilmCategory
      * Set the value of category_id.
      *
      * @param integer $category_id
-     * @return \Entity\FilmCategory
+     * @return \Blog\Entity\FilmCategory
      */
     public function setCategoryId($category_id)
     {
@@ -98,7 +98,7 @@ class BaseFilmCategory
      * Set the value of last_update.
      *
      * @param \DateTime $last_update
-     * @return \Entity\FilmCategory
+     * @return \Blog\Entity\FilmCategory
      */
     public function setLastUpdate(\DateTime $last_update)
     {
@@ -120,8 +120,8 @@ class BaseFilmCategory
     /**
      * Set Film entity (many to one).
      *
-     * @param \Entity\Film $film
-     * @return \Entity\FilmCategory
+     * @param \Blog\Entity\Film $film
+     * @return \Blog\Entity\FilmCategory
      */
     public function setFilm(Film $film = null)
     {
@@ -133,7 +133,7 @@ class BaseFilmCategory
     /**
      * Get Film entity (many to one).
      *
-     * @return \Entity\Film
+     * @return \Blog\Entity\Film
      */
     public function getFilm()
     {
@@ -143,8 +143,8 @@ class BaseFilmCategory
     /**
      * Set Category entity (many to one).
      *
-     * @param \Entity\Category $category
-     * @return \Entity\FilmCategory
+     * @param \Blog\Entity\Category $category
+     * @return \Blog\Entity\FilmCategory
      */
     public function setCategory(Category $category = null)
     {
@@ -156,7 +156,7 @@ class BaseFilmCategory
     /**
      * Get Category entity (many to one).
      *
-     * @return \Entity\Category
+     * @return \Blog\Entity\Category
      */
     public function getCategory()
     {

@@ -1,14 +1,14 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Entity\Actor
+ * Blog\Entity\Actor
  *
- * @ORM\Entity(repositoryClass="ActorRepository")
+ * @ORM\Entity(repositoryClass="Blog\ActorRepository")
  * @ORM\Table(name="actor", indexes={@ORM\Index(name="idx_actor_last_name", columns={"last_name"})})
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -40,7 +40,7 @@ class BaseActor
 
     /**
      * @ORM\OneToMany(targetEntity="FilmActor", mappedBy="actor")
-     * @ORM\JoinColumn(name="actor_id", referencedColumnName="actor_id")
+     * @ORM\JoinColumn(name="actor_id", referencedColumnName="actor_id", nullable=false)
      */
     protected $filmActors;
 
@@ -53,7 +53,7 @@ class BaseActor
      * Set the value of actor_id.
      *
      * @param integer $actor_id
-     * @return \Entity\Actor
+     * @return \Blog\Entity\Actor
      */
     public function setActorId($actor_id)
     {
@@ -76,7 +76,7 @@ class BaseActor
      * Set the value of first_name.
      *
      * @param string $first_name
-     * @return \Entity\Actor
+     * @return \Blog\Entity\Actor
      */
     public function setFirstName($first_name)
     {
@@ -99,7 +99,7 @@ class BaseActor
      * Set the value of last_name.
      *
      * @param string $last_name
-     * @return \Entity\Actor
+     * @return \Blog\Entity\Actor
      */
     public function setLastName($last_name)
     {
@@ -122,7 +122,7 @@ class BaseActor
      * Set the value of last_update.
      *
      * @param \DateTime $last_update
-     * @return \Entity\Actor
+     * @return \Blog\Entity\Actor
      */
     public function setLastUpdate(\DateTime $last_update)
     {
@@ -144,8 +144,8 @@ class BaseActor
     /**
      * Add FilmActor entity to collection (one to many).
      *
-     * @param \Entity\FilmActor $filmActor
-     * @return \Entity\Actor
+     * @param \Blog\Entity\FilmActor $filmActor
+     * @return \Blog\Entity\Actor
      */
     public function addFilmActor(FilmActor $filmActor)
     {
@@ -157,8 +157,8 @@ class BaseActor
     /**
      * Remove FilmActor entity from collection (one to many).
      *
-     * @param \Entity\FilmActor $filmActor
-     * @return \Entity\Actor
+     * @param \Blog\Entity\FilmActor $filmActor
+     * @return \Blog\Entity\Actor
      */
     public function removeFilmActor(FilmActor $filmActor)
     {

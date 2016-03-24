@@ -1,14 +1,14 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Entity\Category
+ * Blog\Entity\Category
  *
- * @ORM\Entity(repositoryClass="CategoryRepository")
+ * @ORM\Entity(repositoryClass="Blog\CategoryRepository")
  * @ORM\Table(name="category")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -35,7 +35,7 @@ class BaseCategory
 
     /**
      * @ORM\OneToMany(targetEntity="FilmCategory", mappedBy="category")
-     * @ORM\JoinColumn(name="category_id", referencedColumnName="category_id")
+     * @ORM\JoinColumn(name="category_id", referencedColumnName="category_id", nullable=false)
      */
     protected $filmCategories;
 
@@ -48,7 +48,7 @@ class BaseCategory
      * Set the value of category_id.
      *
      * @param integer $category_id
-     * @return \Entity\Category
+     * @return \Blog\Entity\Category
      */
     public function setCategoryId($category_id)
     {
@@ -71,7 +71,7 @@ class BaseCategory
      * Set the value of name.
      *
      * @param string $name
-     * @return \Entity\Category
+     * @return \Blog\Entity\Category
      */
     public function setName($name)
     {
@@ -94,7 +94,7 @@ class BaseCategory
      * Set the value of last_update.
      *
      * @param \DateTime $last_update
-     * @return \Entity\Category
+     * @return \Blog\Entity\Category
      */
     public function setLastUpdate(\DateTime $last_update)
     {
@@ -116,8 +116,8 @@ class BaseCategory
     /**
      * Add FilmCategory entity to collection (one to many).
      *
-     * @param \Entity\FilmCategory $filmCategory
-     * @return \Entity\Category
+     * @param \Blog\Entity\FilmCategory $filmCategory
+     * @return \Blog\Entity\Category
      */
     public function addFilmCategory(FilmCategory $filmCategory)
     {
@@ -129,8 +129,8 @@ class BaseCategory
     /**
      * Remove FilmCategory entity from collection (one to many).
      *
-     * @param \Entity\FilmCategory $filmCategory
-     * @return \Entity\Category
+     * @param \Blog\Entity\FilmCategory $filmCategory
+     * @return \Blog\Entity\Category
      */
     public function removeFilmCategory(FilmCategory $filmCategory)
     {

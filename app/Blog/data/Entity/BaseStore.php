@@ -1,14 +1,14 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Entity\Store
+ * Blog\Entity\Store
  *
- * @ORM\Entity(repositoryClass="StoreRepository")
+ * @ORM\Entity(repositoryClass="Blog\StoreRepository")
  * @ORM\Table(name="store", indexes={@ORM\Index(name="idx_fk_address_id", columns={"address_id"})}, uniqueConstraints={@ORM\UniqueConstraint(name="idx_unique_manager", columns={"manager_staff_id"})})
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -40,25 +40,25 @@ class BaseStore
 
     /**
      * @ORM\OneToMany(targetEntity="Customer", mappedBy="store")
-     * @ORM\JoinColumn(name="store_id", referencedColumnName="store_id")
+     * @ORM\JoinColumn(name="store_id", referencedColumnName="store_id", nullable=false)
      */
     protected $customers;
 
     /**
      * @ORM\OneToMany(targetEntity="Inventory", mappedBy="store")
-     * @ORM\JoinColumn(name="store_id", referencedColumnName="store_id")
+     * @ORM\JoinColumn(name="store_id", referencedColumnName="store_id", nullable=false)
      */
     protected $inventories;
 
     /**
      * @ORM\ManyToOne(targetEntity="Staff", inversedBy="stores")
-     * @ORM\JoinColumn(name="manager_staff_id", referencedColumnName="staff_id")
+     * @ORM\JoinColumn(name="manager_staff_id", referencedColumnName="staff_id", nullable=false)
      */
     protected $staff;
 
     /**
      * @ORM\ManyToOne(targetEntity="Address", inversedBy="stores")
-     * @ORM\JoinColumn(name="address_id", referencedColumnName="address_id")
+     * @ORM\JoinColumn(name="address_id", referencedColumnName="address_id", nullable=false)
      */
     protected $address;
 
@@ -72,7 +72,7 @@ class BaseStore
      * Set the value of store_id.
      *
      * @param integer $store_id
-     * @return \Entity\Store
+     * @return \Blog\Entity\Store
      */
     public function setStoreId($store_id)
     {
@@ -95,7 +95,7 @@ class BaseStore
      * Set the value of manager_staff_id.
      *
      * @param integer $manager_staff_id
-     * @return \Entity\Store
+     * @return \Blog\Entity\Store
      */
     public function setManagerStaffId($manager_staff_id)
     {
@@ -118,7 +118,7 @@ class BaseStore
      * Set the value of address_id.
      *
      * @param integer $address_id
-     * @return \Entity\Store
+     * @return \Blog\Entity\Store
      */
     public function setAddressId($address_id)
     {
@@ -141,7 +141,7 @@ class BaseStore
      * Set the value of last_update.
      *
      * @param \DateTime $last_update
-     * @return \Entity\Store
+     * @return \Blog\Entity\Store
      */
     public function setLastUpdate(\DateTime $last_update)
     {
@@ -163,8 +163,8 @@ class BaseStore
     /**
      * Add Customer entity to collection (one to many).
      *
-     * @param \Entity\Customer $customer
-     * @return \Entity\Store
+     * @param \Blog\Entity\Customer $customer
+     * @return \Blog\Entity\Store
      */
     public function addCustomer(Customer $customer)
     {
@@ -176,8 +176,8 @@ class BaseStore
     /**
      * Remove Customer entity from collection (one to many).
      *
-     * @param \Entity\Customer $customer
-     * @return \Entity\Store
+     * @param \Blog\Entity\Customer $customer
+     * @return \Blog\Entity\Store
      */
     public function removeCustomer(Customer $customer)
     {
@@ -199,8 +199,8 @@ class BaseStore
     /**
      * Add Inventory entity to collection (one to many).
      *
-     * @param \Entity\Inventory $inventory
-     * @return \Entity\Store
+     * @param \Blog\Entity\Inventory $inventory
+     * @return \Blog\Entity\Store
      */
     public function addInventory(Inventory $inventory)
     {
@@ -212,8 +212,8 @@ class BaseStore
     /**
      * Remove Inventory entity from collection (one to many).
      *
-     * @param \Entity\Inventory $inventory
-     * @return \Entity\Store
+     * @param \Blog\Entity\Inventory $inventory
+     * @return \Blog\Entity\Store
      */
     public function removeInventory(Inventory $inventory)
     {
@@ -235,8 +235,8 @@ class BaseStore
     /**
      * Set Staff entity (many to one).
      *
-     * @param \Entity\Staff $staff
-     * @return \Entity\Store
+     * @param \Blog\Entity\Staff $staff
+     * @return \Blog\Entity\Store
      */
     public function setStaff(Staff $staff = null)
     {
@@ -248,7 +248,7 @@ class BaseStore
     /**
      * Get Staff entity (many to one).
      *
-     * @return \Entity\Staff
+     * @return \Blog\Entity\Staff
      */
     public function getStaff()
     {
@@ -258,8 +258,8 @@ class BaseStore
     /**
      * Set Address entity (many to one).
      *
-     * @param \Entity\Address $address
-     * @return \Entity\Store
+     * @param \Blog\Entity\Address $address
+     * @return \Blog\Entity\Store
      */
     public function setAddress(Address $address = null)
     {
@@ -271,7 +271,7 @@ class BaseStore
     /**
      * Get Address entity (many to one).
      *
-     * @return \Entity\Address
+     * @return \Blog\Entity\Address
      */
     public function getAddress()
     {
