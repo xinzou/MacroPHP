@@ -1,14 +1,14 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Entity\Inventory
+ * Blog\Entity\Inventory
  *
- * @ORM\Entity(repositoryClass="InventoryRepository")
+ * @ORM\Entity(repositoryClass="Blog\InventoryRepository")
  * @ORM\Table(name="inventory", indexes={@ORM\Index(name="idx_fk_film_id", columns={"film_id"}), @ORM\Index(name="idx_store_id_film_id", columns={"store_id", "film_id"}), @ORM\Index(name="fk_inventory_store_idx", columns={"store_id"})})
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -40,25 +40,25 @@ class BaseInventory
 
     /**
      * @ORM\OneToMany(targetEntity="Rental", mappedBy="inventory")
-     * @ORM\JoinColumn(name="inventory_id", referencedColumnName="inventory_id")
+     * @ORM\JoinColumn(name="inventory_id", referencedColumnName="inventory_id", nullable=false)
      */
     protected $rentals;
 
     /**
      * @ORM\OneToMany(targetEntity="FilmText", mappedBy="inventory")
-     * @ORM\JoinColumn(name="film_id", referencedColumnName="film_id")
+     * @ORM\JoinColumn(name="film_id", referencedColumnName="film_id", nullable=false)
      */
     protected $filmTexts;
 
     /**
      * @ORM\ManyToOne(targetEntity="Film", inversedBy="inventories")
-     * @ORM\JoinColumn(name="film_id", referencedColumnName="film_id")
+     * @ORM\JoinColumn(name="film_id", referencedColumnName="film_id", nullable=false)
      */
     protected $film;
 
     /**
      * @ORM\ManyToOne(targetEntity="Store", inversedBy="inventories")
-     * @ORM\JoinColumn(name="store_id", referencedColumnName="store_id")
+     * @ORM\JoinColumn(name="store_id", referencedColumnName="store_id", nullable=false)
      */
     protected $store;
 
@@ -72,7 +72,7 @@ class BaseInventory
      * Set the value of inventory_id.
      *
      * @param integer $inventory_id
-     * @return \Entity\Inventory
+     * @return \Blog\Entity\Inventory
      */
     public function setInventoryId($inventory_id)
     {
@@ -95,7 +95,7 @@ class BaseInventory
      * Set the value of film_id.
      *
      * @param integer $film_id
-     * @return \Entity\Inventory
+     * @return \Blog\Entity\Inventory
      */
     public function setFilmId($film_id)
     {
@@ -118,7 +118,7 @@ class BaseInventory
      * Set the value of store_id.
      *
      * @param integer $store_id
-     * @return \Entity\Inventory
+     * @return \Blog\Entity\Inventory
      */
     public function setStoreId($store_id)
     {
@@ -141,7 +141,7 @@ class BaseInventory
      * Set the value of last_update.
      *
      * @param \DateTime $last_update
-     * @return \Entity\Inventory
+     * @return \Blog\Entity\Inventory
      */
     public function setLastUpdate(\DateTime $last_update)
     {
@@ -163,8 +163,8 @@ class BaseInventory
     /**
      * Add Rental entity to collection (one to many).
      *
-     * @param \Entity\Rental $rental
-     * @return \Entity\Inventory
+     * @param \Blog\Entity\Rental $rental
+     * @return \Blog\Entity\Inventory
      */
     public function addRental(Rental $rental)
     {
@@ -176,8 +176,8 @@ class BaseInventory
     /**
      * Remove Rental entity from collection (one to many).
      *
-     * @param \Entity\Rental $rental
-     * @return \Entity\Inventory
+     * @param \Blog\Entity\Rental $rental
+     * @return \Blog\Entity\Inventory
      */
     public function removeRental(Rental $rental)
     {
@@ -199,8 +199,8 @@ class BaseInventory
     /**
      * Add FilmText entity to collection (one to many).
      *
-     * @param \Entity\FilmText $filmText
-     * @return \Entity\Inventory
+     * @param \Blog\Entity\FilmText $filmText
+     * @return \Blog\Entity\Inventory
      */
     public function addFilmText(FilmText $filmText)
     {
@@ -212,8 +212,8 @@ class BaseInventory
     /**
      * Remove FilmText entity from collection (one to many).
      *
-     * @param \Entity\FilmText $filmText
-     * @return \Entity\Inventory
+     * @param \Blog\Entity\FilmText $filmText
+     * @return \Blog\Entity\Inventory
      */
     public function removeFilmText(FilmText $filmText)
     {
@@ -235,8 +235,8 @@ class BaseInventory
     /**
      * Set Film entity (many to one).
      *
-     * @param \Entity\Film $film
-     * @return \Entity\Inventory
+     * @param \Blog\Entity\Film $film
+     * @return \Blog\Entity\Inventory
      */
     public function setFilm(Film $film = null)
     {
@@ -248,7 +248,7 @@ class BaseInventory
     /**
      * Get Film entity (many to one).
      *
-     * @return \Entity\Film
+     * @return \Blog\Entity\Film
      */
     public function getFilm()
     {
@@ -258,8 +258,8 @@ class BaseInventory
     /**
      * Set Store entity (many to one).
      *
-     * @param \Entity\Store $store
-     * @return \Entity\Inventory
+     * @param \Blog\Entity\Store $store
+     * @return \Blog\Entity\Inventory
      */
     public function setStore(Store $store = null)
     {
@@ -271,7 +271,7 @@ class BaseInventory
     /**
      * Get Store entity (many to one).
      *
-     * @return \Entity\Store
+     * @return \Blog\Entity\Store
      */
     public function getStore()
     {

@@ -1,14 +1,14 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Entity\Address
+ * Blog\Entity\Address
  *
- * @ORM\Entity(repositoryClass="AddressRepository")
+ * @ORM\Entity(repositoryClass="Blog\AddressRepository")
  * @ORM\Table(name="address", indexes={@ORM\Index(name="idx_fk_city_id", columns={"city_id"})})
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -60,25 +60,25 @@ class BaseAddress
 
     /**
      * @ORM\OneToMany(targetEntity="Customer", mappedBy="address")
-     * @ORM\JoinColumn(name="address_id", referencedColumnName="address_id")
+     * @ORM\JoinColumn(name="address_id", referencedColumnName="address_id", nullable=false)
      */
     protected $customers;
 
     /**
      * @ORM\OneToMany(targetEntity="Staff", mappedBy="address")
-     * @ORM\JoinColumn(name="address_id", referencedColumnName="address_id")
+     * @ORM\JoinColumn(name="address_id", referencedColumnName="address_id", nullable=false)
      */
     protected $staff;
 
     /**
      * @ORM\OneToMany(targetEntity="Store", mappedBy="address")
-     * @ORM\JoinColumn(name="address_id", referencedColumnName="address_id")
+     * @ORM\JoinColumn(name="address_id", referencedColumnName="address_id", nullable=false)
      */
     protected $stores;
 
     /**
      * @ORM\ManyToOne(targetEntity="City", inversedBy="addresses")
-     * @ORM\JoinColumn(name="city_id", referencedColumnName="city_id")
+     * @ORM\JoinColumn(name="city_id", referencedColumnName="city_id", nullable=false)
      */
     protected $city;
 
@@ -93,7 +93,7 @@ class BaseAddress
      * Set the value of address_id.
      *
      * @param integer $address_id
-     * @return \Entity\Address
+     * @return \Blog\Entity\Address
      */
     public function setAddressId($address_id)
     {
@@ -116,7 +116,7 @@ class BaseAddress
      * Set the value of address.
      *
      * @param string $address
-     * @return \Entity\Address
+     * @return \Blog\Entity\Address
      */
     public function setAddress($address)
     {
@@ -139,7 +139,7 @@ class BaseAddress
      * Set the value of address2.
      *
      * @param string $address2
-     * @return \Entity\Address
+     * @return \Blog\Entity\Address
      */
     public function setAddress2($address2)
     {
@@ -162,7 +162,7 @@ class BaseAddress
      * Set the value of district.
      *
      * @param string $district
-     * @return \Entity\Address
+     * @return \Blog\Entity\Address
      */
     public function setDistrict($district)
     {
@@ -185,7 +185,7 @@ class BaseAddress
      * Set the value of city_id.
      *
      * @param integer $city_id
-     * @return \Entity\Address
+     * @return \Blog\Entity\Address
      */
     public function setCityId($city_id)
     {
@@ -208,7 +208,7 @@ class BaseAddress
      * Set the value of postal_code.
      *
      * @param string $postal_code
-     * @return \Entity\Address
+     * @return \Blog\Entity\Address
      */
     public function setPostalCode($postal_code)
     {
@@ -231,7 +231,7 @@ class BaseAddress
      * Set the value of phone.
      *
      * @param string $phone
-     * @return \Entity\Address
+     * @return \Blog\Entity\Address
      */
     public function setPhone($phone)
     {
@@ -254,7 +254,7 @@ class BaseAddress
      * Set the value of last_update.
      *
      * @param \DateTime $last_update
-     * @return \Entity\Address
+     * @return \Blog\Entity\Address
      */
     public function setLastUpdate(\DateTime $last_update)
     {
@@ -276,8 +276,8 @@ class BaseAddress
     /**
      * Add Customer entity to collection (one to many).
      *
-     * @param \Entity\Customer $customer
-     * @return \Entity\Address
+     * @param \Blog\Entity\Customer $customer
+     * @return \Blog\Entity\Address
      */
     public function addCustomer(Customer $customer)
     {
@@ -289,8 +289,8 @@ class BaseAddress
     /**
      * Remove Customer entity from collection (one to many).
      *
-     * @param \Entity\Customer $customer
-     * @return \Entity\Address
+     * @param \Blog\Entity\Customer $customer
+     * @return \Blog\Entity\Address
      */
     public function removeCustomer(Customer $customer)
     {
@@ -312,8 +312,8 @@ class BaseAddress
     /**
      * Add Staff entity to collection (one to many).
      *
-     * @param \Entity\Staff $staff
-     * @return \Entity\Address
+     * @param \Blog\Entity\Staff $staff
+     * @return \Blog\Entity\Address
      */
     public function addStaff(Staff $staff)
     {
@@ -325,8 +325,8 @@ class BaseAddress
     /**
      * Remove Staff entity from collection (one to many).
      *
-     * @param \Entity\Staff $staff
-     * @return \Entity\Address
+     * @param \Blog\Entity\Staff $staff
+     * @return \Blog\Entity\Address
      */
     public function removeStaff(Staff $staff)
     {
@@ -348,8 +348,8 @@ class BaseAddress
     /**
      * Add Store entity to collection (one to many).
      *
-     * @param \Entity\Store $store
-     * @return \Entity\Address
+     * @param \Blog\Entity\Store $store
+     * @return \Blog\Entity\Address
      */
     public function addStore(Store $store)
     {
@@ -361,8 +361,8 @@ class BaseAddress
     /**
      * Remove Store entity from collection (one to many).
      *
-     * @param \Entity\Store $store
-     * @return \Entity\Address
+     * @param \Blog\Entity\Store $store
+     * @return \Blog\Entity\Address
      */
     public function removeStore(Store $store)
     {
@@ -384,8 +384,8 @@ class BaseAddress
     /**
      * Set City entity (many to one).
      *
-     * @param \Entity\City $city
-     * @return \Entity\Address
+     * @param \Blog\Entity\City $city
+     * @return \Blog\Entity\Address
      */
     public function setCity(City $city = null)
     {
@@ -397,7 +397,7 @@ class BaseAddress
     /**
      * Get City entity (many to one).
      *
-     * @return \Entity\City
+     * @return \Blog\Entity\City
      */
     public function getCity()
     {

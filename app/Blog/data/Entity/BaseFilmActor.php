@@ -1,13 +1,13 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Entity\FilmActor
+ * Blog\Entity\FilmActor
  *
- * @ORM\Entity(repositoryClass="FilmActorRepository")
+ * @ORM\Entity(repositoryClass="Blog\FilmActorRepository")
  * @ORM\Table(name="film_actor", indexes={@ORM\Index(name="idx_fk_film_id", columns={"film_id"}), @ORM\Index(name="fk_film_actor_actor_idx", columns={"actor_id"})})
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -34,13 +34,13 @@ class BaseFilmActor
 
     /**
      * @ORM\ManyToOne(targetEntity="Actor", inversedBy="filmActors")
-     * @ORM\JoinColumn(name="actor_id", referencedColumnName="actor_id")
+     * @ORM\JoinColumn(name="actor_id", referencedColumnName="actor_id", nullable=false)
      */
     protected $actor;
 
     /**
      * @ORM\ManyToOne(targetEntity="Film", inversedBy="filmActors")
-     * @ORM\JoinColumn(name="film_id", referencedColumnName="film_id")
+     * @ORM\JoinColumn(name="film_id", referencedColumnName="film_id", nullable=false)
      */
     protected $film;
 
@@ -52,7 +52,7 @@ class BaseFilmActor
      * Set the value of actor_id.
      *
      * @param integer $actor_id
-     * @return \Entity\FilmActor
+     * @return \Blog\Entity\FilmActor
      */
     public function setActorId($actor_id)
     {
@@ -75,7 +75,7 @@ class BaseFilmActor
      * Set the value of film_id.
      *
      * @param integer $film_id
-     * @return \Entity\FilmActor
+     * @return \Blog\Entity\FilmActor
      */
     public function setFilmId($film_id)
     {
@@ -98,7 +98,7 @@ class BaseFilmActor
      * Set the value of last_update.
      *
      * @param \DateTime $last_update
-     * @return \Entity\FilmActor
+     * @return \Blog\Entity\FilmActor
      */
     public function setLastUpdate(\DateTime $last_update)
     {
@@ -120,8 +120,8 @@ class BaseFilmActor
     /**
      * Set Actor entity (many to one).
      *
-     * @param \Entity\Actor $actor
-     * @return \Entity\FilmActor
+     * @param \Blog\Entity\Actor $actor
+     * @return \Blog\Entity\FilmActor
      */
     public function setActor(Actor $actor = null)
     {
@@ -133,7 +133,7 @@ class BaseFilmActor
     /**
      * Get Actor entity (many to one).
      *
-     * @return \Entity\Actor
+     * @return \Blog\Entity\Actor
      */
     public function getActor()
     {
@@ -143,8 +143,8 @@ class BaseFilmActor
     /**
      * Set Film entity (many to one).
      *
-     * @param \Entity\Film $film
-     * @return \Entity\FilmActor
+     * @param \Blog\Entity\Film $film
+     * @return \Blog\Entity\FilmActor
      */
     public function setFilm(Film $film = null)
     {
@@ -156,7 +156,7 @@ class BaseFilmActor
     /**
      * Get Film entity (many to one).
      *
-     * @return \Entity\Film
+     * @return \Blog\Entity\Film
      */
     public function getFilm()
     {

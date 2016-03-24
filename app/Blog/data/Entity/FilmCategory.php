@@ -1,12 +1,12 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Entity\BaseFilmCategory;
+use Blog\Entity\BaseFilmCategory;
 
 /**
- * Entity\FilmCategory
+ * Blog\Entity\FilmCategory
  *
  * @ORM\Entity(repositoryClass="FilmCategoryRepository")
  */

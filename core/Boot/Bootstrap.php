@@ -1,10 +1,15 @@
 <?php
 namespace Boot;
 
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
 use Doctrine\Common\Cache\MemcacheCache;
 use Doctrine\Common\Cache\RedisCache;
 use Doctrine\Common\EventManager;
 use Doctrine\DBAL\DriverManager;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+use Doctrine\ORM\Tools\Setup;
 use Respect\Validation\Validator;
 use Zend\Cache\Storage\Adapter\Filesystem;
 use Zend\ServiceManager\ServiceManager;
@@ -114,7 +119,6 @@ class Bootstrap
         /*Zend ServiceManager*/
         self::$pimpleContainer['serviceManager'] = function ($pimpleConfig) {
             $serviceManager = new ServiceManager();
-            print_r(get_class_methods($serviceManager));
             return $serviceManager;
         };
     }
@@ -134,13 +138,22 @@ class Bootstrap
         $db = NULL;
         if (isset($dbConfig[$dbName]) && $dbConfig[$dbName]) {
             $config = $dbConfig[$dbName];
-            $configuration = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(array(
-                APP_PATH . '/data/Entity/',
-            ), APPLICATION_ENV == 'development', APP_PATH . '/data/Proxies/', self::$pimpleContainer["memcacheCacheDriver"], true);
-            /*  $configuration = \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
-                APP_PATH . "/app/data/Yaml/"
-                ), APPLICATION_ENV == 'development', APP_PATH . '/app/data/Proxies/', new \Doctrine\Common\Cache\ArrayCache()), */
-            /*self::createEventManager()*/
+            $useSimpleAnnotationReader = $config['useSimpleAnnotationReader'];
+            unset($config['useSimpleAnnotationReader']);
+            if (!$useSimpleAnnotationReader) {
+                $configuration = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(array(
+                    APP_PATH . '/data/Entity/',
+                ), APPLICATION_ENV == 'development', APP_PATH . '/data/Proxies/', self::$pimpleContainer["memcacheCacheDriver"], $useSimpleAnnotationReader);
+                /*  $configuration = \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
+                    APP_PATH . "/data/Yaml/"
+                    ), APPLICATION_ENV == 'development', APP_PATH . '/data/Proxies/', self::$pimpleContainer["memcacheCacheDriver"]), */
+            } else {
+                $isDevMode = false;
+                $configuration = Setup::createConfiguration($isDevMode);
+                $cacheDriver = new AnnotationDriver(new AnnotationReader(), APP_PATH . "/data/Entity");
+                AnnotationRegistry::registerLoader("class_exists");
+                $configuration->setMetadataDriverImpl($cacheDriver);
+            }
             if ($type == "entityManager") {
                 $db = \Doctrine\ORM\EntityManager::create($config
                     , $configuration, self::getPimple("eventManager"));

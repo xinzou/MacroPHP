@@ -1,14 +1,14 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * Entity\Language
+ * Blog\Entity\Language
  *
- * @ORM\Entity(repositoryClass="LanguageRepository")
+ * @ORM\Entity(repositoryClass="Blog\LanguageRepository")
  * @ORM\Table(name="`language`")
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discr", type="string")
@@ -35,13 +35,13 @@ class BaseLanguage
 
     /**
      * @ORM\OneToMany(targetEntity="Film", mappedBy="languageRelatedByLanguageId")
-     * @ORM\JoinColumn(name="language_id", referencedColumnName="language_id")
+     * @ORM\JoinColumn(name="language_id", referencedColumnName="language_id", nullable=false)
      */
     protected $filmRelatedByLanguageIds;
 
     /**
      * @ORM\OneToMany(targetEntity="Film", mappedBy="languageRelatedByOriginalLanguageId")
-     * @ORM\JoinColumn(name="language_id", referencedColumnName="original_language_id")
+     * @ORM\JoinColumn(name="language_id", referencedColumnName="original_language_id", nullable=false)
      */
     protected $filmRelatedByOriginalLanguageIds;
 
@@ -55,7 +55,7 @@ class BaseLanguage
      * Set the value of language_id.
      *
      * @param integer $language_id
-     * @return \Entity\Language
+     * @return \Blog\Entity\Language
      */
     public function setLanguageId($language_id)
     {
@@ -78,7 +78,7 @@ class BaseLanguage
      * Set the value of name.
      *
      * @param string $name
-     * @return \Entity\Language
+     * @return \Blog\Entity\Language
      */
     public function setName($name)
     {
@@ -101,7 +101,7 @@ class BaseLanguage
      * Set the value of last_update.
      *
      * @param \DateTime $last_update
-     * @return \Entity\Language
+     * @return \Blog\Entity\Language
      */
     public function setLastUpdate(\DateTime $last_update)
     {
@@ -123,8 +123,8 @@ class BaseLanguage
     /**
      * Add Film entity related by `language_id` to collection (one to many).
      *
-     * @param \Entity\Film $film
-     * @return \Entity\Language
+     * @param \Blog\Entity\Film $film
+     * @return \Blog\Entity\Language
      */
     public function addFilmRelatedByLanguageId(Film $film)
     {
@@ -136,8 +136,8 @@ class BaseLanguage
     /**
      * Remove Film entity related by `language_id` from collection (one to many).
      *
-     * @param \Entity\Film $film
-     * @return \Entity\Language
+     * @param \Blog\Entity\Film $film
+     * @return \Blog\Entity\Language
      */
     public function removeFilmRelatedByLanguageId(Film $film)
     {
@@ -159,8 +159,8 @@ class BaseLanguage
     /**
      * Add Film entity related by `original_language_id` to collection (one to many).
      *
-     * @param \Entity\Film $film
-     * @return \Entity\Language
+     * @param \Blog\Entity\Film $film
+     * @return \Blog\Entity\Language
      */
     public function addFilmRelatedByOriginalLanguageId(Film $film)
     {
@@ -172,8 +172,8 @@ class BaseLanguage
     /**
      * Remove Film entity related by `original_language_id` from collection (one to many).
      *
-     * @param \Entity\Film $film
-     * @return \Entity\Language
+     * @param \Blog\Entity\Film $film
+     * @return \Blog\Entity\Language
      */
     public function removeFilmRelatedByOriginalLanguageId(Film $film)
     {

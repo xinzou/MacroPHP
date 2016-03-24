@@ -29,7 +29,8 @@
     "zendframework/zend-cache": "2.*",
     "zendframework/zend-serializer": "2.*",
     "zendframework/zend-inputfilter": "2.*",
-    "pimple/pimple": "~3.0"
+    "pimple/pimple": "~3.0",
+    "php-amqplib/php-amqplib": "~2.0"
   },
   "require-dev": {
     "composer/composer": "1.*",
@@ -37,7 +38,9 @@
     "satooshi/php-coveralls": "dev-master",
     "phpunit/phpunit": "~4.0",
     "phpunit/dbunit": "1.*",
-    "facebook/webdriver": "~1.0"
+    "facebook/webdriver": "~1.0",
+    "mysql-workbench-schema-exporter/mysql-workbench-schema-exporter": "^3.0.0",
+    "mysql-workbench-schema-exporter/doctrine2-exporter": "^3.0.0"
   },
   "bin": [
     "composer/bin/dbunit"
@@ -46,7 +49,7 @@
   "config": {
     "bin-dir": "bin",
     "github-oauth": {
-      "github.com": "cf89acb909258049362ff447a473967710ace561"
+      "github.com": "ab48d1fed55cf174e0f81a4d9639e44c8c19d102"
     }
   },
 

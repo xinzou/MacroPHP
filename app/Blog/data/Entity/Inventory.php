@@ -1,12 +1,12 @@
 <?php
 
-namespace Entity;
+namespace Blog\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Entity\BaseInventory;
+use Blog\Entity\BaseInventory;
 
 /**
- * Entity\Inventory
+ * Blog\Entity\Inventory
  *
  * @ORM\Entity(repositoryClass="InventoryRepository")
  */
