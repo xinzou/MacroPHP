@@ -117,16 +117,16 @@ class Hello extends \Controller\Controller
     {
         $em = $this->getDbInstance(self::ENTITY, "db1");
         $actor = new Actor();
-        /*$query = $em->createQuery('SELECT u FROM Blog\\Entity\\Actor u WHERE u.actor_id = ?1');
+        $query = $em->createQuery('SELECT u FROM Blog\\Entity\\Actor u WHERE u.actor_id = ?1');
         $query->setParameter(1, 1);
         $query->setResultCacheDriver($this->getPimple("redisCacheDriver"));
         $query->useResultCache(true)
-            ->setResultCacheLifeTime($seconds = 3600);*/
+            ->setResultCacheLifeTime($seconds = 3600);
         //$result = $query->getResult(); // cache miss
         //$query->expireResultCache(true);
         //$result = $query->getResult(); // forced expire, cache miss
         //$query->setResultCacheId('aaaaaaa');
-        //$result = $query->getResult(); // saved in given result cache id.
+        $result = $query->getResult(); // saved in given result cache id.
         $redis = $this->getPimple("redisCache");
         $redis->setItem("key1", "Key Key...");
         $redis->setItem("key2", "sdadadasd");
