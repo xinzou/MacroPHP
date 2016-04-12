@@ -65,72 +65,10 @@ class Controller
      */
     public function __construct()
     {
-        $this->app = $this->getPimple("app");
-        $this->analyzeRequestParams();
+        $this->app = Bootstrap::getApp();
         $this->sessionManager = Bootstrap::getPimple('sessionManager');
         $this->sessionContainer = Bootstrap::getPimple('sessionContainer');
-        $this->registerHooks();
         $this->initSession();
-    }
-
-    /**
-     * 注册每个控制器自定义的Hooks
-     *
-     * @author macro chen <macro_fengye@163.com>
-     */
-    protected function registerHooks()
-    {
-    }
-
-    /**
-     * 应用自定义的 Hooks
-     *
-     * @author macro chen <macro_fengye@163.com>
-     * @param string $name
-     * @param mixed $data
-     */
-    protected function applyHook($name, $data)
-    {
-        $this->app->applyHook($name, $data);
-    }
-
-    /**
-     * 分析请求的参数
-     *
-     * @author macro chen <macro_fengye@163.com>
-     */
-    private function analyzeRequestParams()
-    {
-        $method = $this->app->request()->getMethod();
-        $method = strtolower($method);
-        $method == "get" ? $this->params = $this->app->router()
-            ->getCurrentRoute()
-            ->getParams() : $this->params = $this->app->request()->$method();
-        return $this->params;
-    }
-
-    /**
-     * 根据key获取指定的参数
-     *
-     * @author amcro chen <macro_fengye@163.com>
-     * @return mixed
-     */
-    protected function param($key)
-    {
-        return (isset($this->params[$key]) ? $this->params[$key] : "");
-    }
-
-    /**
-     * 渲染模板
-     *
-     * @author macro chen <macro_fengye@163.com>
-     * @param string $template
-     * @param array $data
-     * @param string $status
-     */
-    protected function render($template, $data = array(), $status = null)
-    {
-        $this->app->render($template, $data, $status);
     }
 
     /**

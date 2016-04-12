@@ -134,3 +134,39 @@ function authcode($string, $key, $operation = 'DECODE', $expiry = 0)
         return $keyc . urlSafeBase64Code($result, 'ENCODE');
     }
 }
+
+/**
+ * 错误处理
+ * @param $request
+ * @param $response
+ * @param $exception
+ */
+function errorHandler($request, $response, $exception)
+{
+}
+
+/**
+ * @param $request
+ * @param $response
+ * @param $allowedHttpMethods
+ */
+function notAllowedHandler($request, $response, $allowedHttpMethods)
+{
+    echo "nnnnn";
+}
+
+/**
+ * @param $request
+ * @param $response
+ */
+function notFound($request, $response)
+{
+    echo __FUNCTION__;
+}
+
+function fatal_handler()
+{
+    if (!is_null(error_get_last())) {
+        echo('There is a fatal error!');
+    }
+}

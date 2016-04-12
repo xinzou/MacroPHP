@@ -1,4 +1,5 @@
 <?php
-function haha(){
+function haha()
+{
     echo "hahahahhasssss";
 }

@@ -1,13 +1,9 @@
 <?php
-$app = \Boot\Bootstrap::getPimple("app");
+$app = \Boot\Bootstrap::getApp();
 
-$app->map("/hello/show(/)(:name)(/)(:age)", APP_NAME."\\controller\\Hello:show")
-    ->via('GET', 'POST', 'PUT')
-    ->name('show')->setMiddleware([function () {
-        echo __FILE__;
-    }]);
+$app->get("/hello/show", "Blog\controller\Hello:show")->setName("hello.show");
 
-$app->map("/hello/test(/)(:name)", APP_NAME."\\controller\\Hello:test")->via("GET")->name("test");
+/*$app->map("/hello/test(/)(:name)", APP_NAME."\\controller\\Hello:test")->via("GET")->name("test");
 
 $app->map("/hello/index", APP_NAME."\\controller\\Hello:index")
     ->via("GET")
@@ -22,4 +18,4 @@ $app->map("/hello/index", APP_NAME."\\controller\\Hello:index")
 
 $app->map("/hello/rbac", APP_NAME."\\controller\\Hello:rbac")
     ->via("POST")
-    ->name("rbac"); 
+    ->name("rbac");*/

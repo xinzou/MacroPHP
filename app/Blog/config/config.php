@@ -8,9 +8,7 @@ $config = array(
     ),
 
     //Pimple 容器的配置
-    'pimpleConfig'=>array(
-
-    ),
+    'pimpleConfig' => array(),
 
     //缓存的配置
     'cache' => array(
@@ -27,29 +25,28 @@ $config = array(
 
     // 应用的配置
     'slim' => array(
-        'controller.param_prefix' => 'prefix',
         'mode' => APPLICATION_ENV,
-        'templates.path' => APP_PATH . 'templates',
-        'log.level' => Slim\Log::ERROR,
-        'log.enabled' => true,
-        'view' => new \Slim\Views\Twig(),
-        'controller.class_prefix' => '\\controller',
-        'controller.method_suffix' => 'Action',
-        'controller.template_suffix' => 'twig',
-        "routes.case_sensitive" => true,
-        'debug' => false,
-        "cookies.httponly" => true,
-        "slim.errors" => APP_PATH . "log/error.log",
-        'log.writer' => new \Slim\LogWriter(@fopen(APP_PATH . "log/error.log", "a")),
+        'notFoundHandler' => "notFound",
+        "errorHandler" => "errorHandler",
+        "notAllowedHandler" => "notAllowedHandler",
+        'settings' => [
+            'determineRouteBeforeAppMiddleware' => false,
+            'displayErrorDetails' => false,
+            'logger' => [
+                'name' => 'slim-app',
+                'level' => Monolog\Logger::DEBUG,
+                'path' => APP_PATH . 'log/error.log',
+            ]
+        ],
     ),
 
     // 配置模板实例
     'twig' => array(
-        'charset' => 'utf-8',
+        //'charset' => 'utf-8',
         'cache' => APP_PATH . '/templates/cache',
-        'auto_reload' => true,
+        /*'auto_reload' => true,
         'strict_variables' => false,
-        'autoescape' => true,
+        'autoescape' => true,*/
     ),
 
     // 配置事件监听器与事件订阅者
@@ -100,12 +97,12 @@ $config = array(
                 'user' => 'root',
                 'password' => 'root',
                 'dbname' => 'sakila',
-                "charset"=>"UTF8",
+                "charset" => "UTF8",
                 'sharding' => array(
                     'federationName' => 'my_database',
                     'distributionKey' => 'customer_id',
                 ),
-                "useSimpleAnnotationReader"=>true,
+                "useSimpleAnnotationReader" => true,
             ),
             "db2" => array(
                 'driver' => 'pdo_mysql',
@@ -114,12 +111,12 @@ $config = array(
                 'user' => 'root',
                 'password' => 'root',
                 'dbname' => 'sakila',
-                "charset"=>"UTF8",
+                "charset" => "UTF8",
                 'sharding' => array(
                     'federationName' => 'my_database',
                     'distributionKey' => 'customer_id',
                 ),
-                "useSimpleAnnotationReader"=>true
+                "useSimpleAnnotationReader" => true
             ),
             "db3" => array(
                 'driver' => 'pdo_mysql',
@@ -128,12 +125,12 @@ $config = array(
                 'user' => 'root',
                 'password' => 'root',
                 'dbname' => 'sakila',
-                "charset"=>"UTF8",
+                "charset" => "UTF8",
                 'sharding' => array(
                     'federationName' => 'my_database',
                     'distributionKey' => 'customer_id',
                 ),
-                "useSimpleAnnotationReader"=>true
+                "useSimpleAnnotationReader" => true
             )),
         // 生产模式
         'production' => array(
@@ -144,12 +141,12 @@ $config = array(
                 'user' => 'username',
                 'password' => 'password',
                 'dbname' => 'production_dbname',
-                "charset"=>"UTF8",
+                "charset" => "UTF8",
                 'sharding' => array(
                     'federationName' => 'my_database',
                     'distributionKey' => 'customer_id',
                 ),
-                "useSimpleAnnotationReader"=>true
+                "useSimpleAnnotationReader" => true
             ),
             "db2" => array(
                 'driver' => 'pdo_mysql',
@@ -158,12 +155,12 @@ $config = array(
                 'user' => 'username',
                 'password' => 'password',
                 'dbname' => 'production_dbname',
-                "charset"=>"UTF8",
+                "charset" => "UTF8",
                 'sharding' => array(
                     'federationName' => 'my_database',
                     'distributionKey' => 'customer_id',
                 ),
-                "useSimpleAnnotationReader"=>true
+                "useSimpleAnnotationReader" => true
             )
         ),
     ),

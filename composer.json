@@ -3,9 +3,10 @@
   "prefer-stable": true,
   "require": {
     "php": ">=5.5.0",
-    "slim/slim": "2.*",
-    "slim/views": "*",
+    "slim/slim": "3.*",
+    "slim/twig-view": "*",
     "twig/twig": "*",
+    "monolog/monolog":"~1.18",
     "doctrine/common": "*",
     "doctrine/orm": "*",
     "rych/phpass": "2.*",
@@ -49,7 +50,7 @@
   "config": {
     "bin-dir": "bin",
     "github-oauth": {
-      "github.com": "ab48d1fed55cf174e0f81a4d9639e44c8c19d102"
+      "github.com": "1692dbc97f4728fddf15e89d0841e0b70c6d8da9"
     }
   },
 
