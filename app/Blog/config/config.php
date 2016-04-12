@@ -29,18 +29,18 @@ $config = array(
     'slim' => array(
         'controller.param_prefix' => 'prefix',
         'mode' => APPLICATION_ENV,
-        'templates.path' => APP_PATH . '/templates',
+        'templates.path' => APP_PATH . 'templates',
         'log.level' => Slim\Log::ERROR,
         'log.enabled' => true,
         'view' => new \Slim\Views\Twig(),
         'controller.class_prefix' => '\\controller',
         'controller.method_suffix' => 'Action',
         'controller.template_suffix' => 'twig',
-        "routes.case_sensitive" => "true",
-        'debug' => true,
+        "routes.case_sensitive" => true,
+        'debug' => false,
         "cookies.httponly" => true,
-        "slim.errors" => APP_PATH . "/log/error.log",
-        'log.writer' => new \Slim\LogWriter(@fopen(APP_PATH . "/log/error.log", "w")),
+        "slim.errors" => APP_PATH . "log/error.log",
+        'log.writer' => new \Slim\LogWriter(@fopen(APP_PATH . "log/error.log", "a")),
     ),
 
     // 配置模板实例

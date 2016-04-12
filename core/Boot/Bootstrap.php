@@ -203,6 +203,7 @@ class Bootstrap
         self::registerHook("slim.stop", self::slimStop(), 10);
         // 处理500错误
         $app->error(function (\Exception $e) use ($app) {
+            new LogWriter($e);
             $app->render('error.html');
         });
         // 处理404
