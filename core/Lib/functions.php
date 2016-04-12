@@ -143,6 +143,7 @@ function authcode($string, $key, $operation = 'DECODE', $expiry = 0)
  */
 function errorHandler($request, $response, $exception)
 {
+    print_r($exception);
 }
 
 /**
