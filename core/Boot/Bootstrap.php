@@ -162,17 +162,18 @@ class Bootstrap
             if (!$useSimpleAnnotationReader) {
                 $configuration = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(array(
                     DATA_PATH . '/data/Entity/',
-                ), APPLICATION_ENV == 'development', DATA_PATH . '/data/Proxies/', self::$pimpleContainer["memcacheCacheDriver"], $useSimpleAnnotationReader);
+                ), APPLICATION_ENV == 'development', DATA_PATH . '/data/Proxies/', self::getPimple("memcacheCacheDriver"), $useSimpleAnnotationReader);
                 /*  $configuration = \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
                     APP_PATH . "/data/Yaml/"
                     ), APPLICATION_ENV == 'development', APP_PATH . '/data/Proxies/', self::$pimpleContainer["memcacheCacheDriver"]), */
             } else {
                 $isDevMode = false;
                 $configuration = Setup::createConfiguration($isDevMode);
-                $cacheDriver = new AnnotationDriver(new AnnotationReader(), APP_PATH . "/data/Entity");
+                $cacheDriver = new AnnotationDriver(new AnnotationReader(), DATA_PATH . "/data/Entity");
                 AnnotationRegistry::registerLoader("class_exists");
                 $configuration->setMetadataDriverImpl($cacheDriver);
             }
+            $configuration->getDefaultRepositoryClassName();
             if ($type == "entityManager") {
                 $db = \Doctrine\ORM\EntityManager::create($config
                     , $configuration, self::getPimple("eventManager"));
@@ -346,8 +347,8 @@ class Bootstrap
      */
     public static function getPimple($componentName)
     {
-        if (self::$app->getContainer()->offsetExists($componentName)) {
-            return self::$app->getContainer()->get($componentName);
+        if (self::getApp()->getContainer()->offsetExists($componentName)) {
+            return self::getApp()->getContainer()->get($componentName);
         }
         return null;
     }
