@@ -11,28 +11,12 @@ use Boot\Bootstrap;
 class Controller
 {
     /**
-     * 每个控制器可以自定义$hooks
-     *
-     * @author macro chen <macro_fengye@163.com>
-     * @var array $hooks
-     */
-    protected $hooks;
-
-    /**
      * 整个应用
      *
      * @author macro chen <macro_fengye@163.com>
      * @var Slim APP $app
      */
     protected $app;
-
-    /**
-     * 应用的请求参数
-     *
-     * @author macro chen <macro_fengye@163.com>
-     * @var array $params
-     */
-    protected $params;
 
     /**
      * 获取应用的SessionManager
@@ -115,9 +99,21 @@ class Controller
      * @param string $dbName
      * @return \Doctrine\Common\EventManager
      */
-    public function getDbInstanceEvm($type, $dbName)
+    protected function getDbInstanceEvm($type, $dbName)
     {
-        return Bootstrap::getDbInstanceEvm($type , $dbName);
+        return Bootstrap::getDbInstanceEvm($type, $dbName);
+    }
+
+    /**
+     * 模板渲染
+     * @author macro chen <macro_fengye@163.com>
+     * @param $response 响应的对象
+     * @param $template 模板文件
+     * @param $data 传递到模板的数据
+     */
+    protected function render($response, $template, $data)
+    {
+        return $this->app->getContainer()->get('view')->render($response, $template, $data);
     }
 }
 

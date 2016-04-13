@@ -17,6 +17,7 @@ use Zend\ServiceManager\ServiceManager;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
 use Zend\Session\SessionManager;
+use Zend\Session\Storage\SessionArrayStorage;
 
 class Bootstrap
 {
@@ -118,6 +119,7 @@ class Bootstrap
             $config = new SessionConfig();
             $config->setOptions(self::getConfig("session")['manager']);
             $sessionManager = new SessionManager($config);
+            $sessionManager->setStorage(new SessionArrayStorage());
             $sessionManager->start();
             return $sessionManager;
         };
@@ -159,8 +161,8 @@ class Bootstrap
             unset($config['useSimpleAnnotationReader']);
             if (!$useSimpleAnnotationReader) {
                 $configuration = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(array(
-                    APP_PATH . '/data/Entity/',
-                ), APPLICATION_ENV == 'development', APP_PATH . '/data/Proxies/', self::$pimpleContainer["memcacheCacheDriver"], $useSimpleAnnotationReader);
+                    DATA_PATH . '/data/Entity/',
+                ), APPLICATION_ENV == 'development', DATA_PATH . '/data/Proxies/', self::$pimpleContainer["memcacheCacheDriver"], $useSimpleAnnotationReader);
                 /*  $configuration = \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
                     APP_PATH . "/data/Yaml/"
                     ), APPLICATION_ENV == 'development', APP_PATH . '/data/Proxies/', self::$pimpleContainer["memcacheCacheDriver"]), */
@@ -204,29 +206,6 @@ class Bootstrap
     }
 
     /**
-     * 配置Cookie中间件
-     * 如果zendframework-session设置了使用Cookie(use_cookies : true)
-     *
-     * @author macro chen <macro_fengye@163.com>
-     */
-    private static function cookieStart()
-    {
-        self::getPimple("app")->add(new \Slim\Middleware\SessionCookie(self::getConfig('cookies')));
-    }
-
-    /**
-     * 配置并启动session管理器
-     *
-     * @author macro chen <macro_fengye@163.com>
-     */
-    private static function sessionStart()
-    {
-        if (self::getConfig('session')['manager']['use_cookies'] && self::getConfig("customer")['use_seesioncookie_middleware']) {
-            self::cookieStart();
-        }
-    }
-
-    /**
      * 获取APP
      * @author macro chen <macro_fengye@163.com>
      * @return Slim\App
@@ -242,8 +221,8 @@ class Bootstrap
     private static function dealRoute()
     {
         $pathInfo = self::$app->getContainer()->get('request')->getUri()->getPath();
-        $pathArr = explode("/", trim($pathInfo));
-        $controller = isset($pathArr[1]) ? $pathArr[1] : "home";
+        $pathArr = explode("/", $pathInfo);
+        $controller = (isset($pathArr[1]) && !empty($pathArr[1])) ? $pathArr[1] : "home";
         $action = (isset($pathArr[2]) && !empty($pathArr[2])) ? $pathArr[2] : "index";
         $route_name = $controller . '.' . $action;
         $isDynamicAddRoute = true;
@@ -264,12 +243,7 @@ class Bootstrap
                 return;
             }
             $route = APP_NAME . "\\controller\\" . ucfirst($controller) . ":" . $action;
-            if (!isset($pathArr[2]) || empty($pathArr[2])) {
-                $url = isset($pathArr[2]) ? "/" . $pathArr[1] . "/" : "/" . $pathArr[1];
-            } else {
-                $url = "/" . $pathArr[1] . "/" . $pathArr[2] . (strrchr($pathInfo, "/") == "/" ? "/" : "");
-            }
-            self::$app->map(["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], $url, $route)->setName($route_name);
+            self::$app->map(["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], $pathInfo, $route)->setName($route_name)->add('checkLogin');
         }
     }
 
@@ -373,7 +347,7 @@ class Bootstrap
     public static function getPimple($componentName)
     {
         if (self::$app->getContainer()->offsetExists($componentName)) {
-            return self::$app->getContainer()[$componentName];
+            return self::$app->getContainer()->get($componentName);
         }
         return null;
     }
