@@ -135,34 +135,28 @@ function authcode($string, $key, $operation = 'DECODE', $expiry = 0)
     }
 }
 
-/**
- * 错误处理
- * @param $request
- * @param $response
- * @param $exception
- */
-function errorHandler($request, $response, $exception)
-{
-    print_r($exception);
-}
 
 /**
- * @param $request
- * @param $response
- * @param $allowedHttpMethods
+ * 获取客户端真实IP
+ * @author macro chen <macro_fengye@163.com>
  */
-function notAllowedHandler($request, $response, $allowedHttpMethods)
+function getIP()
 {
-    echo "nnnnn";
-}
-
-/**
- * @param $request
- * @param $response
- */
-function notFound($request, $response)
-{
-    echo __FUNCTION__;
+    if (isset($_SERVER['HTTP_CLIENT_IP']) && $_SERVER['HTTP_CLIENT_IP'])
+        $IP = $_SERVER['HTTP_CLIENT_IP'];
+    else if (isset($_SERVER['HTTP_X_FORWARDED_FOR']) && $_SERVER['HTTP_X_FORWARDED_FOR'])
+        $IP = $_SERVER['HTTP_X_FORWARDED_FOR'];
+    else if (isset($_SERVER['HTTP_X_FORWARDED']) && $_SERVER['HTTP_X_FORWARDED'])
+        $IP = $_SERVER['HTTP_X_FORWARDED'];
+    else if (isset($_SERVER['HTTP_FORWARDED_FOR']) && $_SERVER['HTTP_FORWARDED_FOR'])
+        $IP = $_SERVER['HTTP_FORWARDED_FOR'];
+    else if (isset($_SERVER['HTTP_FORWARDED']) && $_SERVER['HTTP_FORWARDED'])
+        $IP = $_SERVER['HTTP_FORWARDED'];
+    else if (isset($_SERVER['REMOTE_ADDR']) && $_SERVER['REMOTE_ADDR'])
+        $IP = $_SERVER['REMOTE_ADDR'];
+    else
+        $IP = '0.0.0.0';
+    return ip2long($IP);
 }
 
 function fatal_handler()

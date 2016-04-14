@@ -4,10 +4,10 @@ namespace Blog\controller;
 class Home extends \Controller\Controller
 {
 
-    public function index()
+    public function index($request , $response , $args)
     {echo "This is Blog...";
         $this->sessionContainer->user = array("username"=>20 , "age"=>30);
-        $this->render('/home/index.twig', array(
+        $this->render($response , '/home/index.twig', array(
             'somevar' => date('c'),
         ));
     }

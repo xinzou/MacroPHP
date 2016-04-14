@@ -42,11 +42,15 @@ class Bootstrap
      */
     public static function start()
     {
-        self::$app = new \Slim\App(self::getConfig('slim'));
-        self::initContainer();
-        self::dealRoute();
-        // register_shutdown_function('fatal_handler');
-        self::$app->run();
+        try {
+            self::$app = new \Slim\App(self::getConfig('slim'));
+            self::initContainer();
+            self::dealRoute();
+            //register_shutdown_function('fatal_handler');
+            self::$app->run();
+        } catch (\Exception $e) {
+
+        }
         echo convert(memory_get_usage(true));
         echo convert(memory_get_peak_usage(true));
     }
@@ -69,6 +73,32 @@ class Bootstrap
     private static function initContainer()
     {
         $container = self::$app->getContainer();
+        $container['errorHandler'] = function ($c) {
+            return function ($request, $response, $exception) use ($c) {
+                /*return $c['response']->withStatus(500)
+                    ->withHeader('Content-Type', 'text/html')
+                    ->write('Something went wrong!');*/
+                return self::$app->getContainer()->get('view')->render($response, '/error.twig', []);
+            };
+        };
+        $container['notFoundHandler'] = function ($c) {
+            return function ($request, $response) use ($c) {
+                /*return $c['response']
+                    ->withStatus(404)
+                    ->withHeader('Content-Type', 'text/html')
+                    ->write('Page not found');*/
+                return self::$app->getContainer()->get('view')->render($response, '/404.twig', []);
+            };
+        };
+        $container['notAllowedHandler'] = function ($c) {
+            return function ($request, $response, $methods) use ($c) {
+                return $c['response']
+                    ->withStatus(405)
+                    ->withHeader('Allow', implode(', ', $methods))
+                    ->withHeader('Content-type', 'text/html')
+                    ->write('Method must be one of: ' . implode(', ', $methods));
+            };
+        };
         $container['view'] = function ($container) {
             $view = new Twig(APP_PATH . 'templates', self::getConfig('twig'));
             $view->addExtension(new TwigExtension($container['router'], $container['request']->getUri()));
@@ -209,7 +239,7 @@ class Bootstrap
     /**
      * 获取APP
      * @author macro chen <macro_fengye@163.com>
-     * @return Slim\App
+     * @return \Slim\App
      */
     public static function getApp()
     {
@@ -227,6 +257,9 @@ class Bootstrap
         $action = (isset($pathArr[2]) && !empty($pathArr[2])) ? $pathArr[2] : "index";
         $route_name = $controller . '.' . $action;
         $isDynamicAddRoute = true;
+        if (!method_exists(APP_NAME . "\\controller\\" . ucfirst($controller), $action)) {
+            return;
+        }
         if (file_exists(APP_PATH . '/routes/' . $pathArr[1] . '_route.php')) {
             require_once APP_PATH . '/routes/' . $pathArr[1] . '_route.php';
             try {
@@ -240,9 +273,6 @@ class Bootstrap
             };
         }
         if ($isDynamicAddRoute) {
-            if (!method_exists(APP_NAME . "\\controller\\" . ucfirst($controller), $action)) {
-                return;
-            }
             $route = APP_NAME . "\\controller\\" . ucfirst($controller) . ":" . $action;
             self::$app->map(["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], $pathInfo, $route)->setName($route_name)->add('checkLogin');
         }
