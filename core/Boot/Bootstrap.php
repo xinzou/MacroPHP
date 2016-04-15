@@ -78,7 +78,8 @@ class Bootstrap
                 /*return $c['response']->withStatus(500)
                     ->withHeader('Content-Type', 'text/html')
                     ->write('Something went wrong!');*/
-                return self::$app->getContainer()->get('view')->render($response, '/error.twig', []);
+               // return self::$app->getContainer()->get('view')->render($response, '/error.twig', []);
+                print_r((string)$exception);
             };
         };
         $container['notFoundHandler'] = function ($c) {
