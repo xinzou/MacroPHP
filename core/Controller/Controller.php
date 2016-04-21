@@ -43,6 +43,12 @@ class Controller
     const DRIVER = "driverManager";
 
     /**
+     * 缓存的类型
+     */
+    const REDIS = "redis";
+    const MEMCACHE = "memcache";
+
+    /**
      * 控制器构造函数
      *
      * @author macro chen <macro_fengye@163.com>
@@ -50,8 +56,8 @@ class Controller
     public function __construct()
     {
         $this->app = Bootstrap::getApp();
-        $this->sessionManager = Bootstrap::getPimple('sessionManager');
-        $this->sessionContainer = Bootstrap::getPimple('sessionContainer');
+        $this->sessionManager = Bootstrap::getContainer('sessionManager');
+        $this->sessionContainer = Bootstrap::getContainer('sessionContainer');
         $this->initSession();
     }
 
@@ -70,9 +76,9 @@ class Controller
      * @param $componentName
      * @return mixed
      */
-    protected function getPimple($componentName)
+    protected function getContainer($componentName)
     {
-        return Bootstrap::getPimple($componentName);
+        return Bootstrap::getContainer($componentName);
     }
 
     /**
@@ -87,6 +93,19 @@ class Controller
     protected function getDbInstance($type, $dbName)
     {
         return Bootstrap::getDbInstance($type, $dbName);
+    }
+
+    /**
+     * 缓存对象的实例
+     * @author macro chen <macro_fengye@163.com>
+     * @param $type 缓存的类型
+     * @param string $server_name 服务器的名字
+     * @param bool $lookup 是否继续寻找其他的服务器是否可以链接
+     * @return mixed
+     */
+    protected function getCacheInstance($type, $server_name, $lookup = true)
+    {
+        return Bootstrap::getCacheInstance($type, $server_name, $lookup);
     }
 
     /**
@@ -114,6 +133,17 @@ class Controller
     protected function render($response, $template, $data)
     {
         return $this->app->getContainer()->get('view')->render($response, $template, $data);
+    }
+
+    /**
+     * 获取应用的配置
+     * @author macro chen <macro_fengye@163.com>
+     * @param $key 响应的对象
+     * @return \Zend\Config\Config
+     */
+    protected function getConfig($key)
+    {
+        return Bootstrap::getConfig($key);
     }
 }
 

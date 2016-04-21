@@ -30,6 +30,7 @@
     "zendframework/zend-cache": "2.*",
     "zendframework/zend-serializer": "2.*",
     "zendframework/zend-inputfilter": "2.*",
+    "zendframework/zend-config":"2.*",
     "pimple/pimple": "~3.0",
     "php-amqplib/php-amqplib": "~2.0"
   },
@@ -58,13 +59,13 @@
     "psr-4": {
       "Boot\\": "core\\Boot",
       "Controller\\":"core\\Controller",
-      "Blog\\Entity\\": "app\\Blog\\data\\Entity",
+      "Blog\\Entity\\": "app\\Blog\\models\\Entity",
       "Blog\\controller\\": "app\\Blog\\controller",
       "Blog\\validate\\": "app\\Blog\\validate",
       "Blog\\listener\\": "app\\Blog\\listener",
       "Blog\\subscriber\\": "app\\Blog\\subscriber",
       "Blog\\event\\": "app\\Blog\\event",
-      "CMS\\Entity\\": "app\\CMS\\data\\Entity",
+      "CMS\\Entity\\": "app\\CMS\\models\\Entity",
       "CMS\\controller\\": "app\\CMS\\controller",
       "CMS\\validate\\": "app\\CMS\\validate",
       "CMS\\listener\\": "app\\CMS\\listener",

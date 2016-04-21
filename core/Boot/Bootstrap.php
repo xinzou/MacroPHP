@@ -1,7 +1,6 @@
 <?php
 namespace Boot;
 
-use Respect\Validation\Validator;
 use Slim\Views\Twig;
 use Slim\Views\TwigExtension;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -13,6 +12,7 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Doctrine\ORM\Tools\Setup;
 use Zend\Cache\Storage\Adapter\Filesystem;
+use Zend\Config\Config;
 use Zend\ServiceManager\ServiceManager;
 use Zend\Session\Config\SessionConfig;
 use Zend\Session\Container;
@@ -36,6 +36,12 @@ class Bootstrap
     );
 
     /**
+     * 缓存的类型
+     */
+    const REDIS = "redis";
+    const MEMCACHE = "memcache";
+
+    /**
      * 引导应用
      *
      * @author macro chen <macro_fengye@163.com>
@@ -43,7 +49,8 @@ class Bootstrap
     public static function start()
     {
         try {
-            self::$app = new \Slim\App(self::getConfig('slim'));
+            $slim_config = self::getConfig('slim') ? self::getConfig('slim')->toArray() : [];
+            self::$app = new \Slim\App($slim_config);
             self::initContainer();
             self::dealRoute();
             //register_shutdown_function('fatal_handler');
@@ -62,6 +69,8 @@ class Bootstrap
      */
     public static function startConsole()
     {
+        $slim_config = self::getConfig('slim') ? self::getConfig('slim')->toArray() : [];
+        self::$app = new \Slim\App($slim_config);
         self::initContainer();
     }
 
@@ -78,7 +87,7 @@ class Bootstrap
                 /*return $c['response']->withStatus(500)
                     ->withHeader('Content-Type', 'text/html')
                     ->write('Something went wrong!');*/
-               // return self::$app->getContainer()->get('view')->render($response, '/error.twig', []);
+                // return self::$app->getContainer()->get('view')->render($response, '/error.twig', []);
                 print_r((string)$exception);
             };
         };
@@ -101,41 +110,37 @@ class Bootstrap
             };
         };
         $container['view'] = function ($container) {
-            $view = new Twig(APP_PATH . 'templates', self::getConfig('twig'));
+            $twig_config = self::getConfig('twig') ? self::getConfig('twig')->toArray() : [];
+            $view = new Twig(APP_PATH . 'templates', self::getConfig('twig')->toArray());
             $view->addExtension(new TwigExtension($container['router'], $container['request']->getUri()));
             return $view;
         };
-        /*Validate Object*/
-        $container["v"] = function ($container) {
-            return Validator::create();
-        };
         /*Doctrine2 Memcache Driver*/
         $container["memcacheCacheDriver"] = function ($container) {
-            $memcacheConfig = self::getConfig('cache')['memcache'];
-            $memcache = new \Memcache();
-            $memcache->connect($memcacheConfig['host'], $memcacheConfig['port']);
+            $memcache = self::getCacheInstance(self::MEMCACHE, 'server1');
             $memcacheCacheDriver = new MemcacheCache();
             $memcacheCacheDriver->setMemcache($memcache);
             return $memcacheCacheDriver;
         };
         /*Doctrine2 Redis Driver*/
         $container["redisCacheDriver"] = function ($container) {
-            $redisConfig = self::getConfig("cache")['redis'];
-            $redis = new \Redis();
-            $redis->connect($redisConfig['host'], $redisConfig['port']);
             $redisCacheDriver = new RedisCache();
+            $redis = self::getCacheInstance(self::REDIS, 'server1');
             //设置缓存的命名空间
-            $redisCacheDriver->setNamespace("redisCache");
+            $redisCacheDriver->setNamespace('redisCacheDriver_namespace');
             $redisCacheDriver->setRedis($redis);
             return $redisCacheDriver;
         };
         /*ZendFrameWork Redis Object*/
         $container["redisCache"] = function ($container) {
-            $redis = new \Zend\Cache\Storage\Adapter\Redis(array(
-                'server' => self::getConfig("cache")['redis'],
-            ));
-            //设置缓存的命名空间
-            $redis->getOptions()->setNamespace("macrophp");
+            $redisConfig = self::getConfig("cache");
+            $redis = NULL;
+            if ($redisConfig->redis) {
+                $redis = new \Zend\Cache\Storage\Adapter\Redis();
+                //设置缓存的命名空间
+                $redis->getOptions()->getResourceManager()->setResource('default', self::getCacheInstance(self::REDIS, 'server1'));
+                $redis->getOptions()->setNamespace('redisCache_namespace');
+            }
             return $redis;
         };
         /*ZendFrameWork FileSystemCache*/
@@ -156,7 +161,7 @@ class Bootstrap
         };
         /*SessionManager Container Object*/
         $container["sessionContainer"] = function ($container) {
-            $sessionManager = self::getPimple("sessionManager");
+            $sessionManager = self::getContainer("sessionManager");
             Container::setDefaultManager($sessionManager);
             $container = new Container(self::getConfig("session")['container']['namespace']);
             return $container;
@@ -187,33 +192,32 @@ class Bootstrap
         $dbConfig = self::getConfig('db')[APPLICATION_ENV];
         $db = NULL;
         if (isset($dbConfig[$dbName]) && $dbConfig[$dbName]) {
-            $config = $dbConfig[$dbName];
+            $config = $dbConfig->$dbName ? $dbConfig->$dbName->toArray() : [];
             $useSimpleAnnotationReader = $config['useSimpleAnnotationReader'];
             unset($config['useSimpleAnnotationReader']);
             if (!$useSimpleAnnotationReader) {
                 $configuration = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(array(
-                    DATA_PATH . '/data/Entity/',
-                ), APPLICATION_ENV == 'development', DATA_PATH . '/data/Proxies/', self::getPimple("memcacheCacheDriver"), $useSimpleAnnotationReader);
+                    DATA_PATH . '/models/Entity/',
+                ), APPLICATION_ENV == 'development', DATA_PATH . '/models/Proxies/', self::getContainer("memcacheCacheDriver"), $useSimpleAnnotationReader);
                 /*  $configuration = \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
                     APP_PATH . "/data/Yaml/"
                     ), APPLICATION_ENV == 'development', APP_PATH . '/data/Proxies/', self::$pimpleContainer["memcacheCacheDriver"]), */
             } else {
-                $isDevMode = false;
-                $configuration = Setup::createConfiguration($isDevMode);
-                $cacheDriver = new AnnotationDriver(new AnnotationReader(), DATA_PATH . "/data/Entity");
+                echo "aaa";
+                $configuration = Setup::createConfiguration(APPLICATION_ENV == 'development');
+                $cacheDriver = new AnnotationDriver(new AnnotationReader(), DATA_PATH . "/models/Entity");
                 AnnotationRegistry::registerLoader("class_exists");
                 $configuration->setMetadataDriverImpl($cacheDriver);
             }
-            $configuration->getDefaultRepositoryClassName();
             if ($type == "entityManager") {
                 $db = \Doctrine\ORM\EntityManager::create($config
-                    , $configuration, self::getPimple("eventManager"));
+                    , $configuration, self::getContainer("eventManager"));
             } else if ($type == "driverManager") {
                 $db = DriverManager::getConnection($config
-                    , $configuration, self::getPimple("eventManager"));
+                    , $configuration, self::getContainer("eventManager"));
             }
         }
-        if (!self::getPimple("dataBase" . $type . $dbName)) {
+        if (!self::getContainer("dataBase" . $type . $dbName)) {
             $container = self::$app->getContainer();
             $container["dataBase" . $type . $dbName] = $db;
         }
@@ -224,17 +228,20 @@ class Bootstrap
      * 获取指定键的配置文件
      *
      * @author macro chen <macro_fengye@163.com>
-     * @param string $key
-     * @return []
+     * @params string $first_key
+     * @params string $second_key
+     * @return mixed
      */
-    private static function getConfig($key)
+    public static function getConfig($key)
     {
         /*App Config*/
-        $config = require APP_PATH . '/config/config.php';
-        if (isset($config[$key])) {
-            return $config[$key];
+        $config_file = require APP_PATH . '/config/config.php';
+        $config = new Config($config_file);
+        if (!$config->$key) {
+            echo "{$key}不存在！";
+            return NULL;
         }
-        return null;
+        return $config->$key;
     }
 
     /**
@@ -252,17 +259,18 @@ class Bootstrap
      */
     private static function dealRoute()
     {
-        $pathInfo = self::$app->getContainer()->get('request')->getUri()->getPath();
-        $pathArr = explode("/", $pathInfo);
-        $controller = (isset($pathArr[1]) && !empty($pathArr[1])) ? $pathArr[1] : "home";
-        $action = (isset($pathArr[2]) && !empty($pathArr[2])) ? $pathArr[2] : "index";
+        $path_info = self::$app->getContainer()->get('request')->getUri()->getPath();
+        $path_arr = explode("/", ltrim($path_info, '/'));
+        $controller = (isset($path_arr[0]) && !empty($path_arr[0])) ? $path_arr[0] : "home";
+        $action = (isset($path_arr[1]) && !empty($path_arr[1])) ? $path_arr[1] : "index";
         $route_name = $controller . '.' . $action;
+        self::getContainer('sessionContainer')->current_path_arr = $path_arr;
         $isDynamicAddRoute = true;
         if (!method_exists(APP_NAME . "\\controller\\" . ucfirst($controller), $action)) {
             return;
         }
-        if (file_exists(APP_PATH . '/routes/' . $pathArr[1] . '_route.php')) {
-            require_once APP_PATH . '/routes/' . $pathArr[1] . '_route.php';
+        if (file_exists(APP_PATH . '/routes/' . $path_arr[0] . '_route.php')) {
+            require_once APP_PATH . '/routes/' . $path_arr[0] . '_route.php';
             try {
                 if (self::$app->getContainer()->get('router')->getNamedRoute($route_name)) {
                     $isDynamicAddRoute = false;
@@ -275,7 +283,14 @@ class Bootstrap
         }
         if ($isDynamicAddRoute) {
             $route = APP_NAME . "\\controller\\" . ucfirst($controller) . ":" . $action;
-            self::$app->map(["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], $pathInfo, $route)->setName($route_name)->add('checkLogin');
+            $pattern = "/" . $controller . '/' . $action . '[/{param:.*}]';
+            self::$app->map(["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"], $pattern, $route)->setName($route_name);
+            if (isset(self::getConfig('customer')['is_check_login']) && self::getConfig('customer')['is_check_login']) {
+                self::$app->add('checkLogin');
+            }
+            if (isset(self::getConfig('customer')['is_check_permission']) && self::getConfig('customer')['is_check_permission']) {
+                self::$app->add('checkPermission');
+            }
         }
     }
 
@@ -318,16 +333,16 @@ class Bootstrap
     {
         if (isset($evmConfig['listener'])) {
             foreach ($evmConfig['listener'] as $key => $listener) {
-                self::getPimple('eventManager')->addEventListener(array(
+                self::getContainer('eventManager')->addEventListener(array(
                     self::$eventTypeMapping[$key],
                 ), new $listener());
             }
         }
         if (isset($evmConfig['subscriber'])) {
             foreach ($evmConfig['subscriber'] as $key => $subscriber) {
-                self::getPimple('eventManager')->addEventSubscriber(new $subscriber());
+                self::getContainer('eventManager')->addEventSubscriber(new $subscriber());
             }
-            return self::getPimple('eventManager');
+            return self::getContainer('eventManager');
         }
     }
 
@@ -343,8 +358,8 @@ class Bootstrap
      */
     public static function getDbInstanceEvm($type, $dbName)
     {
-        if (self::getPimple("dataBase" . $type . $dbName)) {
-            $db = self::getPimple("dataBase" . $type . $dbName);
+        if (self::getContainer("dataBase" . $type . $dbName)) {
+            $db = self::getContainer("dataBase" . $type . $dbName);
         } else {
             $db = self::databaseConnection($type, $dbName);
         }
@@ -362,12 +377,56 @@ class Bootstrap
      */
     public static function getDbInstance($type, $dbName)
     {
-        if (self::getPimple("dataBase" . $type . $dbName)) {
-            $db = self::getPimple("dataBase" . $type . $dbName);
+        if (self::getContainer("dataBase" . $type . $dbName)) {
+            $db = self::getContainer("dataBase" . $type . $dbName);
         } else {
             $db = self::databaseConnection($type, $dbName);
         }
         return $db;
+    }
+
+    /**
+     * 获取缓存的实例
+     * @author macro chen <macro_fengye@163.com>
+     * @param $type 缓存的类型
+     * @param string $server_name 服务器的名字
+     * @param bool $lookup 是否继续寻找其他的服务器是否可以链接
+     * @return mixed
+     */
+    public static function getCacheInstance($type, $server_name, $lookup = true)
+    {
+        $config = self::getConfig('cache');
+        if ($config) {
+            if ($type == self::REDIS) {
+                $redis = new \Redis();
+                $is_conn = $redis->connect($config->$type->$server_name->host, $config->$type->$server_name->port, $config->$type->$server_name->timeout);
+                if (!$is_conn && $lookup) {
+                    foreach ($config->$type as $key => $value) {
+                        if ($key != $server_name) {
+                            $is_conn = $redis->connect($value->host, $value->port, $value->timeout);
+                            if ($is_conn) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                return $is_conn ? $redis : NULL;
+            } elseif ($type == self::MEMCACHE && $lookup) {
+                $memcache = new \Memcache();
+                $is_conn = $memcache->connect($config->$type->$server_name->host, $config->$type->$server_name->port, $config->$type->$server_name->timeout);
+                if (!$is_conn) {
+                    foreach ($config->$type as $key => $value) {
+                        if ($key != $server_name) {
+                            $is_conn = $memcache->connect($value->host, $value->port, $value->timeout);
+                            if ($is_conn) {
+                                break;
+                            }
+                        }
+                    }
+                }
+                return $is_conn ? $memcache : NULL;
+            }
+        }
     }
 
     /**
@@ -376,7 +435,7 @@ class Bootstrap
      * @param $componentName
      * @return mixed
      */
-    public static function getPimple($componentName)
+    public static function getContainer($componentName)
     {
         if (self::getApp()->getContainer()->offsetExists($componentName)) {
             return self::getApp()->getContainer()->get($componentName);

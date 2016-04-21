@@ -5,6 +5,8 @@ $config = array(
     'customer' => array(
         'use_seesioncookie_middleware' => true,
         'show_use_memory' => true,
+        'is_check_login' => 0, //是否打开登录检测
+        'is_check_permission' => 0, //是否打开权限管理检测
     ),
 
     //Pimple 容器的配置
@@ -13,12 +15,36 @@ $config = array(
     //缓存的配置
     'cache' => array(
         'memcache' => array(
-            "host" => "127.0.0.1",
-            "port" => 11211
+            'server1' => [
+                "host" => "127.0.0.1",
+                "port" => 11211,
+                'alias' => 'memcache01',
+                'timeout' => 10,
+                'namespace' => 'Namespace-memcache01',
+            ],
+            'server2' => [
+                "host" => "192.168.0.181",
+                "port" => 11211,
+                'alias' => 'memcache02',
+                'timeout' => 10,
+                'namespace' => 'Namespace-memcache02',
+            ]
         ),
         "redis" => array(
-            "host" => "127.0.0.1",
-            "port" => 6379
+            'server1' => [
+                "host" => "127.0.0.1",
+                "port" => 6379,
+                'timeout' => 10,
+                'alias' => 'redis01',
+                'namespace' => 'Namespace-redis01',
+            ],
+            'server2' => [
+                "host" => "192.168.0.181",
+                "port" => 6379,
+                'timeout' => 10,
+                'alias' => 'redis02',
+                'namespace' => 'Namespace-redis02',
+            ]
         ),
         "memcached" => array(),
     ),
@@ -31,7 +57,7 @@ $config = array(
         "notAllowedHandler" => "notAllowedHandler",
         'settings' => [
             'determineRouteBeforeAppMiddleware' => false,
-            'displayErrorDetails' => false,
+            'displayErrorDetails' => true,
             'logger' => [
                 'name' => 'slim-app',
                 'level' => Monolog\Logger::DEBUG,
@@ -47,6 +73,8 @@ $config = array(
         /*'auto_reload' => true,
         'strict_variables' => false,
         'autoescape' => true,*/
+        'debug' => true,
+        'auto_reload' => true,
     ),
 
     // 配置事件监听器与事件订阅者
@@ -136,17 +164,17 @@ $config = array(
         'production' => array(
             "db1" => array(
                 'driver' => 'pdo_mysql',
-                'host' => 'localhost',
+                'host' => '127.0.0.1',
                 'port' => '3306',
-                'user' => 'username',
-                'password' => 'password',
-                'dbname' => 'production_dbname',
+                'user' => 'root',
+                'password' => 'root',
+                'dbname' => 'feidai',
                 "charset" => "UTF8",
                 'sharding' => array(
                     'federationName' => 'my_database',
                     'distributionKey' => 'customer_id',
                 ),
-                "useSimpleAnnotationReader" => true
+                "useSimpleAnnotationReader" => false
             ),
             "db2" => array(
                 'driver' => 'pdo_mysql',
@@ -165,18 +193,8 @@ $config = array(
         ),
     ),
 
-    // 登录的URL
-    'login.url' => '/login',
-
-    // 后台管理URL
-    'secured.urls' => array(
-        array(
-            'path' => '/admin',
-        ),
-        array(
-            'path' => '/admin/.+',
-        ),
-    ),
+    // 没有权限访问URL跳转到的默认地址
+    'default.url' => '/home/index',
 );
 
 return $config;
