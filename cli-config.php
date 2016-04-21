@@ -1,6 +1,12 @@
 <?php
-use boot\Bootstrap;
-require_once "vendor/autoload.php";
-define('APPLICATION_ENV', 'development');
-define("APP_PATH", (__DIR__));
-return \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet(Bootstrap::getEntityManager());
+use Boot\Bootstrap;
+
+define("ROOT_PATH", __DIR__);
+define("APP_NAME", "Admin");
+define("APP_PATH", ROOT_PATH . "/app/" . APP_NAME . "/");
+define("DATA_PATH", ROOT_PATH . "/app/Admin/");
+require ROOT_PATH . '/vendor/autoload.php';
+defined('APPLICATION_ENV') || define('APPLICATION_ENV', 'production');
+
+Bootstrap::startConsole();
+return \Doctrine\ORM\Tools\Console\ConsoleRunner::createHelperSet(Bootstrap::getDbInstance('entityManager', 'db1'));
