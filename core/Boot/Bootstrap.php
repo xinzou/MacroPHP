@@ -119,6 +119,7 @@ class Bootstrap
         $container["memcacheCacheDriver"] = function ($container) {
             $memcache = self::getCacheInstance(self::MEMCACHE, 'server1');
             $memcacheCacheDriver = new MemcacheCache();
+            $memcacheCacheDriver->setNamespace("memcacheCacheDriver_namespace");
             $memcacheCacheDriver->setMemcache($memcache);
             return $memcacheCacheDriver;
         };
@@ -195,20 +196,22 @@ class Bootstrap
             $config = $dbConfig->$dbName ? $dbConfig->$dbName->toArray() : [];
             $useSimpleAnnotationReader = $config['useSimpleAnnotationReader'];
             unset($config['useSimpleAnnotationReader']);
-            if (!$useSimpleAnnotationReader) {
+            if ($useSimpleAnnotationReader) {
+                $configuration = Setup::createConfiguration(APPLICATION_ENV == 'development');
+                $annotationDriver = new AnnotationDriver(new AnnotationReader(), DATA_PATH . "/models/Entity");
+                AnnotationRegistry::registerLoader("class_exists");
+                $configuration->setMetadataDriverImpl($annotationDriver);
+            } else {
                 $configuration = \Doctrine\ORM\Tools\Setup::createAnnotationMetadataConfiguration(array(
                     DATA_PATH . '/models/Entity/',
                 ), APPLICATION_ENV == 'development', DATA_PATH . '/models/Proxies/', self::getContainer("memcacheCacheDriver"), $useSimpleAnnotationReader);
                 /*  $configuration = \Doctrine\ORM\Tools\Setup::createYAMLMetadataConfiguration(array(
                     APP_PATH . "/data/Yaml/"
                     ), APPLICATION_ENV == 'development', APP_PATH . '/data/Proxies/', self::$pimpleContainer["memcacheCacheDriver"]), */
-            } else {
-                echo "aaa";
-                $configuration = Setup::createConfiguration(APPLICATION_ENV == 'development');
-                $cacheDriver = new AnnotationDriver(new AnnotationReader(), DATA_PATH . "/models/Entity");
-                AnnotationRegistry::registerLoader("class_exists");
-                $configuration->setMetadataDriverImpl($cacheDriver);
             }
+            //设置缓存组件
+            $configuration->setQueryCacheImpl(self::getContainer('redisCacheDriver'));
+            $configuration->setResultCacheImpl(self::getContainer('redisCacheDriver'));
             if ($type == "entityManager") {
                 $db = \Doctrine\ORM\EntityManager::create($config
                     , $configuration, self::getContainer("eventManager"));

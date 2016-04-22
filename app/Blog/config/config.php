@@ -68,11 +68,11 @@ $config = array(
 
     // 配置模板实例
     'twig' => array(
-        //'charset' => 'utf-8',
+        'charset' => 'utf-8',
         //'cache' => APP_PATH . '/templates/cache',
-        /*'auto_reload' => true,
-        'strict_variables' => false,
+        /*'strict_variables' => false,
         'autoescape' => true,*/
+        'strict_variables' => false,
         'debug' => true,
         'auto_reload' => true,
     ),
@@ -119,6 +119,8 @@ $config = array(
         // 开发模式
         'development' => array(
             "db1" => array(
+                'wrapperClass' => 'Doctrine\DBAL\Sharding\PoolingShardConnection',
+                'shardChoser' => 'Doctrine\DBAL\Sharding\ShardChoser\MultiTenantShardChoser',
                 'driver' => 'pdo_mysql',
                 'host' => '127.0.0.1',
                 'port' => '3306',
@@ -126,11 +128,34 @@ $config = array(
                 'password' => 'root',
                 'dbname' => 'feidai',
                 "charset" => "UTF8",
-                'sharding' => array(
-                    'federationName' => 'feidai',
-                    'distributionKey' => 'id',
+                'global' => array(
+                    'global' => true,
+                    'dbname' => 'feidai',
+                    'host' => '127.0.0.1',
+                    'user' => 'root',
+                    'password' => 'root',
+                    'charset' => 'UTF8',),
+                'shards' => array(
+                    array(
+                        'id' => 1,
+                        'host' => '127.0.0.1',
+                        'user' => 'root',
+                        'password' => 'root',
+                        'dbname' => 'feidai',
+                        'charset' => 'UTF8',
+                        'port' => 3306
+                    ),
+                    array(
+                        'id' => 2,
+                        'host' => '192.168.0.182',
+                        'user' => 'root',
+                        'password' => '111111',
+                        'dbname' => 'uc',
+                        'charset' => 'UTF8',
+                        'port' => 3308
+                    )
                 ),
-                "useSimpleAnnotationReader" => false,
+                "useSimpleAnnotationReader" => true,
             ),
             "db2" => array(
                 'driver' => 'pdo_mysql',
@@ -144,7 +169,7 @@ $config = array(
                     'federationName' => 'my_database',
                     'distributionKey' => 'customer_id',
                 ),
-                "useSimpleAnnotationReader" => true
+                "useSimpleAnnotationReader" => false
             ),
             "db3" => array(
                 'driver' => 'pdo_mysql',

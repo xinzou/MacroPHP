@@ -7,6 +7,7 @@
 namespace Controller;
 
 use Boot\Bootstrap;
+use Doctrine\DBAL\Sharding\PoolingShardManager;
 
 class Controller
 {
@@ -87,7 +88,7 @@ class Controller
      * @param $type
      * $type == entityManager的实例可以支持事务
      * $type == driverManager支持分库分表
-     * @param string $dbName
+     * @param string $dbName 数据库配置的键名
      * @return \Doctrine\Common\EventManager
      */
     protected function getDbInstance($type, $dbName)
@@ -144,6 +145,23 @@ class Controller
     protected function getConfig($key)
     {
         return Bootstrap::getConfig($key);
+    }
+
+    /**
+     * @param string $type 数据库实体类型
+     * @param string $server_name 服务器的名字
+     * @param integer $shard_id 分库的ID
+     * @return \Doctrine\DBAL\Sharding\PoolingShardManager $shardManager
+     */
+    protected function getShards($type, $server_name, $shard_id)
+    {
+        $em = $this->getDbInstance($type, $server_name);
+        $qb = $em->createQueryBuilder();
+        $conn = $qb->getConnection();
+        $shardManager = new PoolingShardManager($conn);
+        $shardManager->selectGlobal();
+        $shardManager->selectShard(1);
+        return $shardManager;
     }
 }
 
