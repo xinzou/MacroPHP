@@ -1,6 +1,10 @@
 <?php
 namespace Boot;
 
+use Monolog\Handler\StreamHandler;
+use Monolog\Logger;
+use Monolog\Processor\UidProcessor;
+use Slim\Http\Body;
 use Slim\Views\Twig;
 use Slim\Views\TwigExtension;
 use Doctrine\Common\Annotations\AnnotationReader;
@@ -58,8 +62,10 @@ class Bootstrap
         } catch (\Exception $e) {
 
         }
-        echo convert(memory_get_usage(true));
-        echo convert(memory_get_peak_usage(true));
+        if (self::getConfig('customer')['show_use_memory']) {
+            echo convert(memory_get_usage(true));
+            echo convert(memory_get_peak_usage(true));
+        }
     }
 
     /**
@@ -82,39 +88,51 @@ class Bootstrap
     private static function initContainer()
     {
         $container = self::$app->getContainer();
-        $container['errorHandler'] = function ($c) {
-            return function ($request, $response, $exception) use ($c) {
-                /*return $c['response']->withStatus(500)
+        $container['errorHandler'] = function ($container) {
+            return function ($request, $response, $exception) use ($container) {
+                self::getContainer('logger')->error((string)$exception);
+                $body = new Body(@fopen(APP_PATH . 'templates/error.twig', 'r'));
+                return $container['response']
+                    ->withStatus(500)
                     ->withHeader('Content-Type', 'text/html')
-                    ->write('Something went wrong!');*/
-                // return self::$app->getContainer()->get('view')->render($response, '/error.twig', []);
-                print_r((string)$exception);
+                    ->withBody($body);
             };
         };
-        $container['notFoundHandler'] = function ($c) {
-            return function ($request, $response) use ($c) {
-                /*return $c['response']
+        $container['notFoundHandler'] = function ($container) {
+            return function ($request, $response) use ($container) {
+                $body = new Body(@fopen(APP_PATH . 'templates/404.twig', 'r'));
+                return $container['response']
                     ->withStatus(404)
                     ->withHeader('Content-Type', 'text/html')
-                    ->write('Page not found');*/
-                return self::$app->getContainer()->get('view')->render($response, '/404.twig', []);
+                    ->withBody($body);
             };
         };
-        $container['notAllowedHandler'] = function ($c) {
-            return function ($request, $response, $methods) use ($c) {
-                return $c['response']
+        $container['notAllowedHandler'] = function ($container) {
+            return function ($request, $response, $methods) use ($container) {
+                return $container['response']
                     ->withStatus(405)
                     ->withHeader('Allow', implode(', ', $methods))
                     ->withHeader('Content-type', 'text/html')
                     ->write('Method must be one of: ' . implode(', ', $methods));
             };
         };
+
         $container['view'] = function ($container) {
             $twig_config = self::getConfig('twig') ? self::getConfig('twig')->toArray() : [];
             $view = new Twig(APP_PATH . 'templates', self::getConfig('twig')->toArray());
             $view->addExtension(new TwigExtension($container['router'], $container['request']->getUri()));
             return $view;
         };
+
+        /* Monolog */
+        $container['logger'] = function ($container) {
+            $settings = self::getConfig('slim')['settings'];
+            $logger = new Logger($settings['logger']['name']);
+            $logger->pushProcessor(new UidProcessor());
+            $logger->pushHandler(new StreamHandler($settings['logger']['path'], $settings['logger']['level']));
+            return $logger;
+        };
+
         /*Doctrine2 Memcache Driver*/
         $container["memcacheCacheDriver"] = function ($container) {
             $memcache = self::getCacheInstance(self::MEMCACHE, 'server1');
@@ -266,14 +284,14 @@ class Bootstrap
         $path_arr = explode("/", ltrim($path_info, '/'));
         $controller = (isset($path_arr[0]) && !empty($path_arr[0])) ? $path_arr[0] : "home";
         $action = (isset($path_arr[1]) && !empty($path_arr[1])) ? $path_arr[1] : "index";
-        $route_name = $controller . '.' . $action;
+        $route_name = APP_NAME . '.' . $controller . '.' . $action;
         self::getContainer('sessionContainer')->current_path_arr = $path_arr;
         $isDynamicAddRoute = true;
         if (!method_exists(APP_NAME . "\\controller\\" . ucfirst($controller), $action)) {
             return;
         }
-        if (file_exists(APP_PATH . '/routes/' . $path_arr[0] . '_route.php')) {
-            require_once APP_PATH . '/routes/' . $path_arr[0] . '_route.php';
+        if (file_exists(APP_PATH . '/routes/' . $controller . '_route.php')) {
+            require_once APP_PATH . '/routes/' . $controller . '_route.php';
             try {
                 if (self::$app->getContainer()->get('router')->getNamedRoute($route_name)) {
                     $isDynamicAddRoute = false;

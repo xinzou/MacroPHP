@@ -148,19 +148,18 @@ class Controller
     }
 
     /**
-     * @param string $type 数据库实体类型
-     * @param string $server_name 服务器的名字
+     * 获取分库分表的管理器,当getDbInstance的type==driverManager方可使用
+     * @param string \Doctrine\ORM\EntityManager $em
      * @param integer $shard_id 分库的ID
      * @return \Doctrine\DBAL\Sharding\PoolingShardManager $shardManager
      */
-    protected function getShards($type, $server_name, $shard_id)
+    protected function getConnection($em, $shard_id)
     {
-        $em = $this->getDbInstance($type, $server_name);
         $qb = $em->createQueryBuilder();
         $conn = $qb->getConnection();
         $shardManager = new PoolingShardManager($conn);
         $shardManager->selectGlobal();
-        $shardManager->selectShard(1);
+        $shardManager->selectShard($shard_id);
         return $shardManager;
     }
 }
