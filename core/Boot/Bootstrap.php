@@ -57,14 +57,15 @@ class Bootstrap
             self::$app = new \Slim\App($slim_config);
             self::initContainer();
             self::dealRoute();
-            //register_shutdown_function('fatal_handler');
+            register_shutdown_function('fatal_handler');
             self::$app->run();
         } catch (\Exception $e) {
 
         }
         if (self::getConfig('customer')['show_use_memory']) {
-            echo convert(memory_get_usage(true));
-            echo convert(memory_get_peak_usage(true));
+            echo "分配内存量 : ".convert(memory_get_usage(true));
+            echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+            echo "内存的峰值 : ".convert(memory_get_peak_usage(true));
         }
     }
 
@@ -90,7 +91,8 @@ class Bootstrap
         $container = self::$app->getContainer();
         $container['errorHandler'] = function ($container) {
             return function ($request, $response, $exception) use ($container) {
-                self::getContainer('logger')->error((string)$exception);
+                //self::getContainer('logger')->error((string)$exception);
+                self::getContainer('logger')->error($exception);
                 $body = new Body(@fopen(APP_PATH . 'templates/error.twig', 'r'));
                 return $container['response']
                     ->withStatus(500)
@@ -107,6 +109,11 @@ class Bootstrap
                     ->withBody($body);
             };
         };
+
+        $container['phpErrorHandler'] = function ($container) {
+            return $container['errorHandler'];
+        };
+
         $container['notAllowedHandler'] = function ($container) {
             return function ($request, $response, $methods) use ($container) {
                 return $container['response']
@@ -211,9 +218,9 @@ class Bootstrap
         $dbConfig = self::getConfig('db')[APPLICATION_ENV];
         $db = NULL;
         if (isset($dbConfig[$dbName]) && $dbConfig[$dbName]) {
-            $config = $dbConfig->$dbName ? $dbConfig->$dbName->toArray() : [];
-            $useSimpleAnnotationReader = $config['useSimpleAnnotationReader'];
-            unset($config['useSimpleAnnotationReader']);
+            $conn_config = $dbConfig->$dbName ? $dbConfig->$dbName->toArray() : [];
+            $useSimpleAnnotationReader = $conn_config['useSimpleAnnotationReader'];
+            unset($conn_config['useSimpleAnnotationReader']);
             if ($useSimpleAnnotationReader) {
                 $configuration = Setup::createConfiguration(APPLICATION_ENV == 'development');
                 $annotationDriver = new AnnotationDriver(new AnnotationReader(), DATA_PATH . "/models/Entity");
@@ -228,13 +235,17 @@ class Bootstrap
                     ), APPLICATION_ENV == 'development', APP_PATH . '/data/Proxies/', self::$pimpleContainer["memcacheCacheDriver"]), */
             }
             //设置缓存组件
-            $configuration->setQueryCacheImpl(self::getContainer('redisCacheDriver'));
-            $configuration->setResultCacheImpl(self::getContainer('redisCacheDriver'));
+            if (self::getConfig('customer')['query_cache']['is_open']) {
+                $configuration->setQueryCacheImpl(self::getContainer(self::getConfig('customer')['query_cache']['cache_name']));
+            }
+            if (self::getConfig('customer')['result_cache']['is_open']) {
+                $configuration->setResultCacheImpl(self::getContainer(self::getConfig('customer')['result_cache']['cache_name']));
+            }
             if ($type == "entityManager") {
-                $db = \Doctrine\ORM\EntityManager::create($config
+                $db = \Doctrine\ORM\EntityManager::create($conn_config
                     , $configuration, self::getContainer("eventManager"));
-            } else if ($type == "driverManager") {
-                $db = DriverManager::getConnection($config
+            } else if ($type == "Connection") {
+                $db = DriverManager::getConnection($conn_config
                     , $configuration, self::getContainer("eventManager"));
             }
         }

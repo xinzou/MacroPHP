@@ -41,7 +41,7 @@ class Controller
      * @var SessionContainer $sessionContainer
      */
     const ENTITY = "entityManager";
-    const DRIVER = "driverManager";
+    const CONNECTION = "Connection";
 
     /**
      * 缓存的类型

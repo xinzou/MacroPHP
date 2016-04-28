@@ -1,29 +1,12 @@
 <?php
 /**
- * 动态的添加应该包含的路由表
- * @param \Slim\Slim $app
- * @return string
- * {{{
- */
-function requireRouteFile($app)
-{
-    $path_info = $app->request->getPathInfo();
-    $file = explode("/", $path_info)[1];
-    if (empty($file) && strcmp($path_info, "/") === 0) {
-        $file = "home";
-    }
-    return $file;
-}
-//}}}
-
-/**
  * 字节转换
  * @param $size
  * @return string
  */
 function convert($size)
 {
-    $unit = array('b', 'kb', 'mb', 'gb', 'tb', 'pb');
+    $unit = array('b', 'KB', 'MB', 'GB', 'TB', 'PB');
     return @round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . ' ' . $unit[$i];
 }
 
@@ -130,9 +113,12 @@ function getIP()
     return ip2long($IP);
 }
 
+
 function fatal_handler()
 {
-    if (!is_null(error_get_last())) {
-        echo('There is a fatal error!');
+    $error = error_get_last();
+    if ($error["type"] == E_ERROR) {
+        $msg = 'Type : ' . $error["type"] . '\nMessage : ' . $error["message"] . '\nFile : ' . $error["file"] . '\nLine : ' . $error["line"];
+        \Boot\Bootstrap::getContainer('logger')->error($msg);
     }
 }

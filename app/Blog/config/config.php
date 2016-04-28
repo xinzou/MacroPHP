@@ -2,12 +2,20 @@
 // 整个引用的配置
 $config = array(
     // 自定义的配置(额外的配置)
-    'customer' => array(
-        'use_seesioncookie_middleware' => true,
+    'customer' => [
+        'use_session_cookie_middleware' => true,
         'show_use_memory' => true,
+        'query_cache' => [
+            'is_open' => true,
+            'cache_name' => 'redisCacheDriver'
+        ],
+        'result_cache' => [
+            'is_open' => true,
+            'cache_name' => 'redisCacheDriver'
+        ],
         'is_check_login' => 0, //是否打开登录检测
         'is_check_permission' => 0, //是否打开权限管理检测
-    ),
+    ],
 
     //Pimple 容器的配置
     'pimpleConfig' => array(),
@@ -20,14 +28,14 @@ $config = array(
                 "port" => 11211,
                 'alias' => 'memcache01',
                 'timeout' => 10,
-                'namespace' => 'Namespace-memcache01',
+                'namespace' => APP_NAME . '-memcache01',
             ],
             'server2' => [
                 "host" => "192.168.0.181",
                 "port" => 11211,
                 'alias' => 'memcache02',
                 'timeout' => 10,
-                'namespace' => 'Namespace-memcache02',
+                'namespace' => APP_NAME . '-memcache02',
             ]
         ),
         "redis" => array(
@@ -36,14 +44,14 @@ $config = array(
                 "port" => 6379,
                 'timeout' => 10,
                 'alias' => 'redis01',
-                'namespace' => 'Namespace-redis01',
+                'namespace' => APP_NAME . '-redis01',
             ],
             'server2' => [
                 "host" => "192.168.0.181",
                 "port" => 6379,
                 'timeout' => 10,
                 'alias' => 'redis02',
-                'namespace' => 'Namespace-redis02',
+                'namespace' => APP_NAME . '-redis02',
             ]
         ),
         "memcached" => array(),
@@ -80,10 +88,10 @@ $config = array(
     // 配置事件监听器与事件订阅者
     'evm' => array(
         "listener" => array(
-            "Events::prePersist" => 'Blog\listener\MyEventListener',
+            "Events::prePersist" => 'Admin\listener\MyEventListener',
         ),
         'subscriber' => array(
-            "" => "Blog\subscriber\MyEventSubscriber",
+            "" => "Admin\subscriber\MyEventSubscriber",
         ),
     ),
 
@@ -129,15 +137,18 @@ $config = array(
                 'dbname' => 'feidai',
                 "charset" => "UTF8",
                 'global' => array(
-                    'global' => true,
-                    'dbname' => 'feidai',
+                    'driver' => 'pdo_mysql',
                     'host' => '127.0.0.1',
+                    'port' => '3306',
+                    'dbname' => 'feidai',
                     'user' => 'root',
                     'password' => 'root',
-                    'charset' => 'UTF8',),
+                    'charset' => 'UTF8'
+                ),
                 'shards' => array(
                     array(
                         'id' => 1,
+                        'driver' => 'pdo_mysql',
                         'host' => '127.0.0.1',
                         'user' => 'root',
                         'password' => 'root',
@@ -147,12 +158,13 @@ $config = array(
                     ),
                     array(
                         'id' => 2,
-                        'host' => '192.168.0.182',
+                        'driver' => 'pdo_mysql',
+                        'host' => '127.0.0.1',
                         'user' => 'root',
-                        'password' => '111111',
-                        'dbname' => 'uc',
+                        'password' => 'root',
+                        'dbname' => 'test',
                         'charset' => 'UTF8',
-                        'port' => 3308
+                        'port' => 3306
                     )
                 ),
                 "useSimpleAnnotationReader" => true,
