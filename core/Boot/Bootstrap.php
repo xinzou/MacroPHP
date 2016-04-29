@@ -63,9 +63,9 @@ class Bootstrap
 
         }
         if (self::getConfig('customer')['show_use_memory']) {
-            echo "分配内存量 : ".convert(memory_get_usage(true));
+            echo "分配内存量 : " . convert(memory_get_usage(true));
             echo "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
-            echo "内存的峰值 : ".convert(memory_get_peak_usage(true));
+            echo "内存的峰值 : " . convert(memory_get_peak_usage(true));
         }
     }
 
