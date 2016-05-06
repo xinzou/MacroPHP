@@ -52,6 +52,12 @@ class Bootstrap
      */
     public static function start()
     {
+        if (APPLICATION_ENV == 'production') {
+            if (!ini_get('display_errors')) {
+                ini_set('display_errors', 'off');
+            }
+            error_reporting(0);
+        }
         try {
             $slim_config = self::getConfig('slim') ? self::getConfig('slim')->toArray() : [];
             self::$app = new \Slim\App($slim_config);
@@ -76,6 +82,12 @@ class Bootstrap
      */
     public static function startConsole()
     {
+        if (APPLICATION_ENV == 'production') {
+            if (!ini_get('display_errors')) {
+                ini_set('display_errors', 'off');
+            }
+            error_reporting(0);
+        }
         $slim_config = self::getConfig('slim') ? self::getConfig('slim')->toArray() : [];
         self::$app = new \Slim\App($slim_config);
         self::initContainer();
@@ -93,20 +105,35 @@ class Bootstrap
             return function ($request, $response, $exception) use ($container) {
                 //self::getContainer('logger')->error((string)$exception);
                 self::getContainer('logger')->error($exception);
-                $body = new Body(@fopen(APP_PATH . 'templates/error.twig', 'r'));
-                return $container['response']
-                    ->withStatus(500)
-                    ->withHeader('Content-Type', 'text/html')
-                    ->withBody($body);
+                if (self::getConfig('customer')['is_rest']) {
+                    return $container['response']
+                        ->withStatus(500)
+                        ->withHeader('Content-Type', 'application/json')
+                        ->withJson(['code' => 500, 'msg' => '500 status', 'data' => []]);
+                } else {
+                    $body = new Body(@fopen(APP_PATH . 'templates/error.twig', 'r'));
+                    return $container['response']
+                        ->withStatus(500)
+                        ->withHeader('Content-Type', 'text/html')
+                        ->withBody($body);
+                };
             };
         };
+
         $container['notFoundHandler'] = function ($container) {
             return function ($request, $response) use ($container) {
-                $body = new Body(@fopen(APP_PATH . 'templates/404.twig', 'r'));
-                return $container['response']
-                    ->withStatus(404)
-                    ->withHeader('Content-Type', 'text/html')
-                    ->withBody($body);
+                if (self::getConfig('customer')['is_rest']) {
+                    return $container['response']
+                        ->withStatus(404)
+                        ->withHeader('Content-Type', 'application/json')
+                        ->withJson(['code' => 1, 'msg' => '404', 'data' => []]);
+                } else {
+                    $body = new Body(@fopen(APP_PATH . 'templates/404.twig', 'r'));
+                    return $container['response']
+                        ->withStatus(404)
+                        ->withHeader('Content-Type', 'text/html')
+                        ->withBody($body);
+                }
             };
         };
 
@@ -129,6 +156,20 @@ class Bootstrap
             $view = new Twig(APP_PATH . 'templates', self::getConfig('twig')->toArray());
             $view->addExtension(new TwigExtension($container['router'], $container['request']->getUri()));
             return $view;
+        };
+
+
+        $container['csrf'] = function ($container) {
+            $guard = new \Slim\Csrf\Guard();
+            $guard->setFailureCallable(function ($request, $response, $next) {
+                $request = $request->withAttribute("csrf_status", false);
+                return $next($request, $response);
+            });
+            return $guard;
+        };
+
+        $container['flash'] = function () {
+            return new \Slim\Flash\Messages();
         };
 
         /* Monolog */
@@ -267,8 +308,14 @@ class Bootstrap
     public static function getConfig($key)
     {
         /*App Config*/
-        $config_file = require APP_PATH . '/config/config.php';
-        $config = new Config($config_file);
+        $config_data = [];
+        foreach (glob(APP_PATH . "config/*.php") as $filename) {
+            $temp = require $filename;
+            if (is_array($temp)) {
+                $config_data = array_merge($config_data, $temp);
+            }
+        }
+        $config = new Config($config_data);
         if (!$config->$key) {
             echo "{$key}不存在！";
             return NULL;

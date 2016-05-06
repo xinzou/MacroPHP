@@ -113,7 +113,10 @@ function getIP()
     return ip2long($IP);
 }
 
-
+/**
+ * PHP错误处理函数
+ * @author <macro_fengye@163.com> macro chen
+ */
 function fatal_handler()
 {
     $error = error_get_last();
@@ -121,4 +124,89 @@ function fatal_handler()
         $msg = 'Type : ' . $error["type"] . '\nMessage : ' . $error["message"] . '\nFile : ' . $error["file"] . '\nLine : ' . $error["line"];
         \Boot\Bootstrap::getContainer('logger')->error($msg);
     }
+}
+
+/**
+ * 发送短信-凌凯接口
+ * @author <macro_fengye@163.com> macro chen
+ * @param string $phone
+ * @param $msg
+ * @return int
+ */
+function LK_SMS($phone = '', $msg)
+{
+    $uid = 'LKSDK0002829';
+    $password = '@edai#627';
+    $client = new SoapClient('http://mb345.com:999/ws/LinkWS.asmx?wsdl', array('encoding' => 'UTF-8'));
+    $sendParam = array(
+        'CorpID' => $uid,
+        'Pwd' => $password,
+        'Mobile' => $phone,
+        'Content' => $msg,
+        'Cell' => '',
+        'SendTime' => ''
+    );
+    $result = $client->BatchSend($sendParam);
+    $result = $result->BatchSendResult;
+    if ($result == 1) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+
+
+/**
+ * 验证来源IP合法性，是否在允许IP列表内
+ * checkFromIpValidity('127.0.0.1', array('127.0.0.1', '192.168.0.'))
+ * 允许IP列表支持不完全匹配
+ *
+ * @author fengxu
+ * @param string $fromIp 来源IP
+ * @param array $allowIps 允许IP列表
+ * @return boolean
+ */
+function checkFromIPValidity($fromIp = '', array $allowIps = array())
+{
+    $fromIp = $fromIp ? $fromIp : getIp();
+    $res = false;
+    if ($allowIps) {
+        foreach ($allowIps as $allowIp) {
+            if (!strncmp($fromIp, $allowIp, strlen($allowIp))) {
+                $res = true;
+                break;
+            }
+        }
+    }
+    return $res;
+}
+
+/**
+ *
+ * 验证密码复杂度
+ *
+ * @author fengxu
+ * @param string $password
+ * @param integer $minPwdLen 密码最小长度
+ * @return integer 密码复杂度等级，安位求或
+ */
+function verifyPwdComplexity($password, $minPwdLen = 6)
+{
+    $complexity = 0;
+    if (strlen($password) >= (int)$minPwdLen) {
+        $complexity = 1;
+        if (preg_match('@[a-zA-Z]+@', $password)) {
+            $complexity |= 2;
+        }
+        if (preg_match('@[0-9]+@', $password)) {
+            $complexity |= 4;
+        }
+        if (preg_match('@[A-Z]+@', $password)) {
+            $complexity |= 8;
+        }
+        if (preg_match('@[\W]+@', $password)) { // 字母数字外的其他字符
+            $complexity |= 16;
+        }
+    }
+    return $complexity;
 }
